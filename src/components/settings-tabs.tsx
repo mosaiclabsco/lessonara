@@ -1,4 +1,33 @@
 "use client";
-import {useEffect,useState,type ReactNode} from "react";import {useI18n} from "./browser-preferences-provider";import {Icon} from "./icon";
-const tabs=[{id:"general",label:"Geral",icon:"settings"},{id:"integrations",label:"Integrações",icon:"calendar"},{id:"holidays",label:"Feriados",icon:"calendar"},{id:"plans",label:"Planos",icon:"book"},{id:"subscription",label:"Plano da empresa",icon:"book"},{id:"support",label:"Ajuda e contato",icon:"chat"}] as const;
-export function SettingsTabs({general,integrations,holidays,plans,subscription,support}:{general:ReactNode;integrations:ReactNode;holidays:ReactNode;plans:ReactNode;subscription:ReactNode;support:ReactNode}){const {t}=useI18n();const [active,setActive]=useState("general");useEffect(()=>{const read=()=>{const hash=location.hash.slice(1);if(tabs.some(tab=>tab.id===hash))setActive(hash);};read();window.addEventListener("hashchange",read);return()=>window.removeEventListener("hashchange",read);},[]);const panels={general,integrations,holidays,plans,subscription,support};return <><div className="portal-tabs profile-tab-bar" role="tablist" aria-label={t("Configurações")}>{tabs.map(tab=><button type="button" role="tab" key={tab.id} id={`settings-${tab.id}`} tabIndex={active===tab.id?0:-1} aria-selected={active===tab.id} onKeyDown={event=>{const index=tabs.findIndex(item=>item.id===tab.id);const next=event.key==="ArrowRight"?(index+1)%tabs.length:event.key==="ArrowLeft"?(index+tabs.length-1)%tabs.length:event.key==="Home"?0:event.key==="End"?tabs.length-1:null;if(next===null)return;event.preventDefault();setActive(tabs[next].id);history.replaceState(window.history.state,"",`#${tabs[next].id}`);document.getElementById(`settings-${tabs[next].id}`)?.focus();}} aria-controls={`settings-panel-${tab.id}`} onClick={()=>{setActive(tab.id);history.replaceState(window.history.state,"",`#${tab.id}`);}}><Icon name={tab.icon} className="h-4 w-4"/>{t(tab.label)}</button>)}</div>{tabs.map(tab=><section key={tab.id} id={`settings-panel-${tab.id}`} role="tabpanel" aria-labelledby={`settings-${tab.id}`} hidden={active!==tab.id} className="space-y-6">{panels[tab.id]}</section>)}</>;}
+import {useEffect,useTransition,type ReactNode} from "react";
+import {useRouter} from "next/navigation";
+import {useI18n} from "./browser-preferences-provider";
+import {Icon} from "./icon";
+import {settingsTabs,settingsTab,settingsHref,type SettingsTab} from "@/lib/settings-navigation";
+
+export function SettingsTabs({active,children}:{active:SettingsTab;children:ReactNode}) {
+  const {t}=useI18n();
+  const router=useRouter();
+  const [pending,startTransition]=useTransition();
+  // Preserve bookmarked links from before tabs had their own server navigation.
+  useEffect(()=>{
+    const read=()=>{
+      const hash=location.hash.slice(1);
+      if(hash&&settingsTab(hash)===hash&&hash!==active)router.replace(settingsHref(settingsTab(hash)),{scroll:false});
+    };
+    read();window.addEventListener("hashchange",read);
+    return()=>window.removeEventListener("hashchange",read);
+  },[active,router]);
+  const navigate=(tab:SettingsTab)=>startTransition(()=>router.push(settingsHref(tab),{scroll:false}));
+  return <>
+    <div className="portal-tabs profile-tab-bar" role="tablist" aria-label={t("Configurações")}>
+      {settingsTabs.map((tab,index)=><button type="button" role="tab" key={tab.id} id={`settings-${tab.id}`} tabIndex={active===tab.id?0:-1} aria-selected={active===tab.id} aria-controls={active===tab.id?`settings-panel-${active}`:undefined} onClick={()=>navigate(tab.id)} onKeyDown={event=>{
+        const next=event.key==="ArrowRight"?(index+1)%settingsTabs.length:event.key==="ArrowLeft"?(index+settingsTabs.length-1)%settingsTabs.length:event.key==="Home"?0:event.key==="End"?settingsTabs.length-1:null;
+        if(next===null)return;event.preventDefault();navigate(settingsTabs[next].id);document.getElementById(`settings-${settingsTabs[next].id}`)?.focus();
+      }}><Icon name={tab.icon} className="h-4 w-4"/>{t(tab.label)}</button>)}
+    </div>
+    <section id={`settings-panel-${active}`} role="tabpanel" aria-labelledby={`settings-${active}`} aria-busy={pending} className="space-y-6">
+      {pending?<p role="status" className="text-sm text-muted flex items-center gap-2"><Icon name="clock" className="h-4 w-4"/>{t("Carregando…")}</p>:children}
+    </section>
+  </>;
+}

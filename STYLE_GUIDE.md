@@ -31,3 +31,5 @@ Aplicam-se ao portal do professor, ao portal do aluno e às telas web da sala. R
 - Cards de documentos reservam a mesma linha para o assunto, mesmo sem assunto. Textos longos truncam com acesso ao texto completo pelo título.
 - Planos salvos aparecem como resumo; criar e editar usam o mesmo modal. A ordem salva deve ser usada também nas seleções de plano.
 - Respeite contraste, teclado, nomes acessíveis e layout móvel. Cores devem vir das variáveis do tema.
+
+- No menu recolhido, o controle de expandir e os links usam a mesma caixa de 44 px e o mesmo eixo central. Indicadores e badges ocultos não podem reservar margem ou deslocar os ícones.

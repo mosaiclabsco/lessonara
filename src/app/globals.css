@@ -1111,3 +1111,12 @@ html:has(.app-shell){scrollbar-gutter:auto;overflow:hidden;}
 
 @media(max-width:767px){.app-shell .sidebar{visibility:visible;transition:transform 220ms ease,visibility 0s;}.menu-collapsed .sidebar{visibility:hidden;transition:transform 220ms ease,visibility 0s linear 220ms;}}
 @media(prefers-reduced-motion:reduce){.app-shell .sidebar{transition:none;}}
+
+/* Keep compact navigation controls on one axis, including hidden menu badges. */
+@media(min-width:768px){
+ .sidebar-head .sidebar-toggle{display:grid;place-items:center;width:44px;height:44px;min-height:44px;padding:0;}
+ .sidebar-toggle .busy-label{justify-content:center;}
+ .menu-collapsed .sidebar-head{width:100%;}
+ .menu-collapsed .nav-link{align-self:center;width:44px;height:44px;padding:0;justify-content:center;}
+ .menu-collapsed .nav-link>.nav-dot,.menu-collapsed .nav-link>.count-badge{display:none;}
+}

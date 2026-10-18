@@ -10,5 +10,5 @@ export default function StudentsPage() {
 }
 
 async function PageContent() {
-  const state=await loadOnboarding();return <>{!state.ready&&<OnboardingGuide state={state}/>}<Dashboard setupReady={state.ready} directoryOnly {...await loadTeacherOverview()} /></>;
+  const [state,overview]=await Promise.all([loadOnboarding(),loadTeacherOverview("directory")]);return <>{!state.ready&&<OnboardingGuide state={state}/>}<Dashboard setupReady={state.ready} directoryOnly {...overview} /></>;
 }

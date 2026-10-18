@@ -1,3 +1,4 @@
+import {measure,measuredFetch} from "../performance";
 import {cache} from "react";
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
@@ -13,6 +14,7 @@ export const createClient=cache(async function createClient() {
   await connection();
   const cookieStore = await cookies();
   return createServerClient(url, publishableKey, {
+    global: { fetch: measuredFetch },
     cookies: {
       getAll: () => cookieStore.getAll(),
       setAll(cookiesToSet) {
@@ -35,9 +37,9 @@ export function createAdminClient() {
 
 export const requireUser=cache(async function requireUser() {
   const supabase = await createClient();
-  const { data } = await supabase.auth.getClaims();
+  const { data } = await measure("auth.session",()=>supabase.auth.getClaims());
   if (!data?.claims) throw new Error("Não autenticado");
-  const teacher = await supabase.from("teachers").select("id").eq("id", data.claims.sub).maybeSingle();
+  const teacher = await measure("auth.teacher", () => supabase.from("teachers").select("id,name,email,lesson_minutes,profile_completed_at,platform_plan").eq("id", data.claims.sub).maybeSingle());
   if (teacher.error || !teacher.data) throw new Error("Acesso de professor(a) necessário.");
-  return { supabase, userId: data.claims.sub as string };
+  return { supabase, userId: data.claims.sub as string, teacher: teacher.data };
 });

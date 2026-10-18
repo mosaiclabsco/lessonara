@@ -8,6 +8,6 @@ export default function PaymentsPage() {
 }
 
 async function PaymentData() {
-  const { paymentRows } = await loadTeacherOverview();
+  const { paymentRows } = await loadTeacherOverview("payments");
   return <PaymentCenter rows={paymentRows} />;
 }
