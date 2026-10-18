@@ -1,7 +1,8 @@
 import type { SVGProps } from "react";
 
-export type IconName = "menu" | "close" | "chevron" | "edit" | "more" | "up" | "down" | "chart" | "grid" | "users" | "calendar" | "settings" | "arrow" | "plus" | "search" | "book" | "logout" | "clock" | "check" | "download" | "language" | "sun" | "moon" | "archive" | "trash" | "mail" | "chat" | "copy" | "save" | "video";
+export type IconName = "back" | "grip" | "menu" | "close" | "chevron" | "edit" | "more" | "up" | "down" | "chart" | "grid" | "users" | "calendar" | "settings" | "arrow" | "plus" | "search" | "book" | "logout" | "clock" | "check" | "download" | "language" | "sun" | "moon" | "archive" | "trash" | "mail" | "chat" | "copy" | "save" | "video";
 const paths: Record<IconName, string> = {
+ back:"M19 12H5 M10 7l-5 5 5 5",grip:"M9 5h.01 M15 5h.01 M9 12h.01 M15 12h.01 M9 19h.01 M15 19h.01",
  menu:"M3 6h18 M3 12h18 M3 18h18",close:"M6 6l12 12 M6 18L18 6",chevron:"M6 9l6 6 6-6",edit:"M15 4l5 5 M4 20l4-1 12-12-4-4L4 15z",more:"M5 12h.01 M12 12h.01 M19 12h.01",up:"M6 14l6-6 6 6",down:"M6 10l6 6 6-6",
   video:"M3 5h12v14H3z M15 9l6-4v14l-6-4",
   archive:"M3 3h18v5H3z M5 8v13h14V8 M9 12h6",

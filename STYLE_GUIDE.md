@@ -9,6 +9,9 @@ Aplicam-se ao portal do professor, ao portal do aluno e às telas web da sala. R
 - Use `FormActions`: cancelar, voltar e fechar à esquerda; confirmar, salvar, criar e enviar à direita. Mantenha 24 px entre os campos e as ações, sem aproximar o rodapé da borda do card.
 - Durante uma ação, mostre o spinner somente no controle acionado e desabilite as ações concorrentes. Não altere a largura do botão quando o rótulo mudar.
 
+- Menus de contexto, perfil e ações de três pontos usam `DropdownMenu` / `menu-action`: sem borda, sem sombra individual e destaque discreto somente ao passar o mouse ou focar. Ações destrutivas usam texto vermelho.
+- Use ícone `back` para voltar; `arrow` indica avanço. Ordenação usa `SortableList`, com alça para arrastar, suporte a toque e alternativa por teclado.
+
 ## Campos
 
 - Texto, select, data, seletor de documento e moeda usam altura de 46 px, fonte de 14 px, raio de 12 px e o mesmo anel de foco de 3 px. Textareas crescem conforme o conteúdo.
@@ -24,7 +27,7 @@ Aplicam-se ao portal do professor, ao portal do aluno e às telas web da sala. R
 
 ## Estrutura e listas
 
-- O header é fixo, com controle do menu e conta do professor. O título da página identifica a tela; não repetir slogans acima dele.
+- O header permanece visível e contém a conta do professor; o scroll é da área de conteúdo. O controle de recolher integra o menu lateral no desktop e aparece no header no celular. O título da página identifica a tela; não repetir slogans acima dele.
 - Cards de documentos reservam a mesma linha para o assunto, mesmo sem assunto. Textos longos truncam com acesso ao texto completo pelo título.
 - Planos salvos aparecem como resumo; criar e editar usam o mesmo modal. A ordem salva deve ser usada também nas seleções de plano.
 - Respeite contraste, teclado, nomes acessíveis e layout móvel. Cores devem vir das variáveis do tema.

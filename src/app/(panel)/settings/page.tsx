@@ -1,3 +1,4 @@
+import {SupportContact} from "@/components/support-contact";
 import {FormActions} from "@/components/button";
 import {PlanManager} from "@/components/plan-manager";
 import {IntegrationCatalog} from "@/components/integration-catalog";
@@ -41,7 +42,7 @@ async function PageContent() {
     return (<main className="form-page space-y-6">
       <div><h1 className="text-3xl font-semibold tracking-tight">{t("Configura\u00E7\u00F5es")}</h1><p className="page-description">{t("Seu perfil e os planos que fazem sentido para suas aulas.")}</p></div>
 
-{!onboarding.ready&&<OnboardingGuide state={onboarding}/>}<SettingsTabs subscription={<SubscriptionPlan active={onboarding.platformPlan}/>} general={<><ActionForm action={updateTeacher} className="card space-y-3">
+{!onboarding.ready&&<OnboardingGuide state={onboarding}/>}<SettingsTabs support={<SupportContact/>} subscription={<SubscriptionPlan active={onboarding.platformPlan}/>} general={<><ActionForm action={updateTeacher} className="card space-y-3">
         <div>
           <label className="label" htmlFor="teacher-name">{t("Seu nome (aparece para os alunos)")}</label>
           <input className="input" id="teacher-name" name="name" required maxLength={120} defaultValue={teacher?.name}/>
