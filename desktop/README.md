@@ -39,3 +39,9 @@ O fluxo de captura verifica permissões negadas antes de enumerar fontes. A enum
 A barra externa usa proteção de conteúdo somente no Windows, sem proteger o canvas dos desenhos. Em Windows 10 versão 2004 ou posterior, essa proteção solicita a exclusão da barra da captura; isso ainda precisa ser conferido numa chamada real. No macOS, ScreenCaptureKit pode ignorar essa proteção, portanto a barra pode aparecer ao aluno durante o compartilhamento da tela inteira. Não há garantia de ocultação no Mac.
 
 O texto não captura mais o ponteiro do canvas no clique que abre o editor. O evento evita a mudança de foco padrão; Enter confirma, Shift+Enter mantém a quebra de linha, e composição de teclado não encerra o editor antecipadamente. As atualizações Mac de teste continuam usando assinatura ad-hoc e podem exigir refazer a permissão de tela.
+
+## Distribuição pública dos instaladores
+
+O código e o workflow de compilação permanecem no repositório privado. Os instaladores para download ficam em `gabrielgoncalvesr/lessonara-downloads`, separado do código do produto. O workflow Windows publica sua pré-release no repositório privado; a cópia para distribuição pública é manual.
+
+Após conferir os testes e os hashes, publique somente os instaladores e seus arquivos `.sha256` na release pública correspondente. Nunca envie o repositório de código nem os arquivos de ambiente. Atualize `src/lib/desktop-links.ts` apenas para arquivos públicos existentes e confira os downloads sem autenticação.
