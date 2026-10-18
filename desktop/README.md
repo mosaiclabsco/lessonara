@@ -22,3 +22,11 @@ Durante o compartilhamento de Tela inteira, uma barra própria e arrastável fic
 - A sala tem um quadro compartilhado próprio. PDFs podem ser abertos no computador e apresentados por compartilhamento de tela/janela; não há mais um seletor de PDF dentro da sala. Documentos do portal continuam disponíveis.
 
 O quadro e as anotações externas são superfícies distintas: as externas chegam pela captura de tela; o quadro usa o transporte autenticado de material da aula. A barra externa só é criada após o professor selecionar um monitor para compartilhar. Os IPCs da barra validam janela, quadro principal, ferramenta e cor.
+
+## Permissão de tela após atualizar uma versão de teste
+
+As versões atuais têm assinatura ad-hoc. A identidade designada inclui o hash do executável e pode mudar entre builds; uma entrada ativada nos Ajustes pode corresponder à versão anterior. Uma assinatura Developer ID consistente é necessária para manter a identidade nas atualizações distribuídas.
+
+Se o seletor não abrir mesmo com a permissão ativada, feche o Lessonara com ⌘Q. Em Privacidade e Segurança → Gravação do Áudio do Sistema e da Tela, remova somente a entrada Lessonara e adicione `/Applications/Lessonara.app` novamente. Autorize e reabra. Não apague permissões de outros aplicativos nem desative proteções do sistema.
+
+O fluxo de captura verifica permissões negadas antes de enumerar fontes. A enumeração tem limite de 20 segundos, explica falhas e permite tentar novamente; resultados atrasados não abrem seletores de requisições já encerradas. Isso evita espera silenciosa, mas não concede nem restaura a autorização do macOS. A captura continua exigindo uma seleção explícita de tela/janela.
