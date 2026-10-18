@@ -1114,7 +1114,7 @@ html:has(.app-shell){scrollbar-gutter:auto;overflow:hidden;}
 
 /* Keep compact navigation controls on one axis, including hidden menu badges. */
 @media(min-width:768px){
- .sidebar-head .sidebar-toggle{display:grid;place-items:center;width:44px;height:44px;min-height:44px;padding:0;}
+ .sidebar-head .sidebar-toggle{display:flex;align-items:center;justify-content:center;width:44px;height:44px;min-height:44px;padding:0;}
  .sidebar-toggle .busy-label{justify-content:center;}
  .menu-collapsed .sidebar-head{width:100%;}
  .menu-collapsed .nav-link{align-self:center;width:44px;height:44px;padding:0;justify-content:center;}
