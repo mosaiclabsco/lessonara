@@ -8,13 +8,13 @@ function setupOverlay(onToolChange){let canvas=null,toolbar=null,tool=null,color
  const state=()=>send('overlay:state',{tool,color,palette});
  const clear=()=>send('overlay:clear');
  const close=()=>{for(const window of [canvas,toolbar])if(window&&!window.isDestroyed())window.destroy();canvas=null;toolbar=null;tool=null;displayId=null;};
- function create(file,bounds){const window=new BrowserWindow({...bounds,frame:false,transparent:true,hasShadow:false,resizable:false,skipTaskbar:true,alwaysOnTop:true,title:'Lessonara · Anotações',webPreferences:{preload:path.join(__dirname,'overlay-preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,backgroundThrottling:false}});
+ function create(file,bounds){const window=new BrowserWindow({...bounds,frame:false,acceptFirstMouse:true,transparent:true,hasShadow:false,resizable:false,skipTaskbar:true,alwaysOnTop:true,title:'Lessonara · Anotações',webPreferences:{preload:path.join(__dirname,'overlay-preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,backgroundThrottling:false}});
   window.setAlwaysOnTop(true,'floating');window.setVisibleOnAllWorkspaces(true,{visibleOnFullScreen:true});window.webContents.setWindowOpenHandler(()=>({action:'deny'}));window.webContents.on('will-navigate',(event,url)=>{if(url!==pathToFileURL(path.join(__dirname,file)).href)event.preventDefault();});
   window.webContents.once('did-finish-load',()=>{window.webContents.send('overlay:tool',tool);window.webContents.send('overlay:color',color);state();});void window.loadFile(path.join(__dirname,file));return window;
  }
  function present(id){const display=screen.getAllDisplays().find(d=>String(d.id)===String(id));if(!display)return false;if(displayId!==id)close();displayId=id;
   if(!canvas){canvas=create('overlay.html',display.bounds);canvas.setIgnoreMouseEvents(true,{forward:true});canvas.on('closed',()=>{canvas=null;});}
-  if(!toolbar){const area=display.workArea,width=Math.min(670,area.width);toolbar=create('annotation-toolbar.html',{x:area.x+Math.round((area.width-width)/2),y:area.y+12,width,height:110});toolbar.on('closed',()=>{toolbar=null;});}
+  if(!toolbar){const area=display.workArea,width=Math.min(670,area.width);toolbar=create('annotation-toolbar.html',{x:area.x+Math.round((area.width-width)/2),y:area.y+12,width,height:110});if(process.platform==='win32')toolbar.setContentProtection(true);toolbar.on('closed',()=>{toolbar=null;});}
   toolbar.showInactive();return true;
  }
  function set(mode,id=displayId){if(!tools.has(mode))return;if(mode&&!present(id))return;tool=mode;canvas?.setIgnoreMouseEvents(!mode,{forward:true});send('overlay:tool',mode);state();if(mode){canvas?.show();canvas?.focus();toolbar?.moveTop();}}

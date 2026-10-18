@@ -1,4 +1,4 @@
-# Lessonara Chamadas 0.3.0 — teste para Mac
+# Lessonara Chamadas 0.3.1 — teste para Mac e Windows
 
 O aplicativo contém login, lista de chamadas e sala. O portal e suas configurações abrem no navegador. Links lessonara:// identificam uma ocorrência, sem senha/JWT. A sessão permanece separada do navegador. Mudanças de sala exigem confirmação.
 
@@ -30,3 +30,12 @@ As versões atuais têm assinatura ad-hoc. A identidade designada inclui o hash 
 Se o seletor não abrir mesmo com a permissão ativada, feche o Lessonara com ⌘Q. Em Privacidade e Segurança → Gravação do Áudio do Sistema e da Tela, remova somente a entrada Lessonara e adicione `/Applications/Lessonara.app` novamente. Autorize e reabra. Não apague permissões de outros aplicativos nem desative proteções do sistema.
 
 O fluxo de captura verifica permissões negadas antes de enumerar fontes. A enumeração tem limite de 20 segundos, explica falhas e permite tentar novamente; resultados atrasados não abrem seletores de requisições já encerradas. Isso evita espera silenciosa, mas não concede nem restaura a autorização do macOS. A captura continua exigindo uma seleção explícita de tela/janela.
+
+
+## Windows 0.3.1
+
+`npm run package:windows` gera instalador NSIS x64 para o usuário atual, sem exigir instalação administrativa. O instalador registra `lessonara://` e atalhos; o app continua restrito a chamadas. O workflow manual `Desktop Windows` compila e testa em Windows, verifica instalação silenciosa, registro do protocolo e inicialização e publica uma pré-release com SHA-256. Não sobrescreve releases existentes. A janela de compartilhamento nunca é escolhida automaticamente.
+
+A barra externa usa proteção de conteúdo somente no Windows, sem proteger o canvas dos desenhos. Em Windows 10 versão 2004 ou posterior, essa proteção solicita a exclusão da barra da captura; isso ainda precisa ser conferido numa chamada real. No macOS, ScreenCaptureKit pode ignorar essa proteção, portanto a barra pode aparecer ao aluno durante o compartilhamento da tela inteira. Não há garantia de ocultação no Mac.
+
+O texto não captura mais o ponteiro do canvas no clique que abre o editor. O evento evita a mudança de foco padrão; Enter confirma, Shift+Enter mantém a quebra de linha, e composição de teclado não encerra o editor antecipadamente. As atualizações Mac de teste continuam usando assinatura ad-hoc e podem exigir refazer a permissão de tela.

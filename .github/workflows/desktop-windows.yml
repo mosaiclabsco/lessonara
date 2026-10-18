@@ -1,0 +1,100 @@
+name: Desktop Windows
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: desktop-windows-release
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    timeout-minutes: 25
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    defaults:
+      run:
+        working-directory: desktop
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - id: version
+        name: Read release version
+        run: |
+          $version = node -p "require('./package.json').version"
+          if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid desktop version' }
+          "version=$version" >> $env:GITHUB_OUTPUT
+      - run: npm ci --no-audit --no-fund
+      - run: npm test
+      - run: npm run package:windows
+      - name: Verify installer, protocol registration and app startup
+        run: |
+          $version = '${{ steps.version.outputs.version }}'
+          $installer = (Resolve-Path "out/windows/Lessonara-$version-windows-x64-setup.exe").Path
+          $installDir = Join-Path $env:LOCALAPPDATA 'Programs/Lessonara'
+          $setup = Start-Process -FilePath $installer -ArgumentList '/S' -Wait -PassThru
+          if ($setup.ExitCode -ne 0) { throw "Installer failed: $($setup.ExitCode)" }
+          $executable = Join-Path $installDir 'Lessonara.exe'
+          if (!(Test-Path $executable)) { throw 'Installed executable missing' }
+          $protocol = Get-ItemProperty 'Registry::HKEY_CURRENT_USER\Software\Classes\lessonara\shell\open\command'
+          if ($protocol.'(default)' -notlike '*Lessonara.exe*') { throw 'Classroom protocol missing' }
+          $appProcess = Start-Process -FilePath $executable -PassThru
+          try {
+            Start-Sleep -Seconds 5
+            if ($appProcess.HasExited) { throw "App exited on startup: $($appProcess.ExitCode)" }
+          } finally {
+            if (!$appProcess.HasExited) { taskkill /PID $appProcess.Id /T /F }
+          }
+          $hash = (Get-FileHash $installer -Algorithm SHA256).Hash.ToLower()
+          "$hash  $(Split-Path $installer -Leaf)" | Set-Content "$installer.sha256" -Encoding ascii
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: windows-installer
+          path: |
+            desktop/out/windows/*-setup.exe
+            desktop/out/windows/*-setup.exe.sha256
+          if-no-files-found: error
+          retention-days: 3
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: windows-installer
+          path: installer
+      - name: Publish desktop preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_VERSION: ${{ needs.build.outputs.version }}
+          RELEASE_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          RELEASE_TAG="desktop-v$RELEASE_VERSION"
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo 'Release already exists; refusing to overwrite assets.'
+            exit 1
+          fi
+          cat > notes.md <<'NOTES'
+          Versão de teste do Lessonara para chamadas.
+
+          - Instalador Windows x64 com abertura dos links lessonara://.
+          - Correção do foco e da edição da caixa de texto das anotações.
+          - Barra de ferramentas excluída da captura no Windows compatível; desenhos continuam visíveis.
+          - Recuperação de erros e timeout do seletor de telas e janelas.
+
+          O instalador Windows passou por testes automatizados de instalação, registro do protocolo e inicialização. Câmera, áudio e transmissão ainda precisam de validação numa chamada real no Windows. Distribuição de teste sem assinatura de editor; não desative proteções do sistema.
+          NOTES
+          gh release create "$RELEASE_TAG" --target "$RELEASE_COMMIT" --prerelease --title "Lessonara Desktop $RELEASE_VERSION" --notes-file notes.md installer/*
