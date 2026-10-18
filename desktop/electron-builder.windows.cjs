@@ -5,5 +5,5 @@ module.exports={
  asar:true,npmRebuild:false,publish:null,
  protocols:[{name:'Lessonara',schemes:['lessonara']}],
  win:{target:[{target:'nsis',arch:['x64']}],icon:'icon.png',requestedExecutionLevel:'asInvoker'},
- nsis:{oneClick:false,perMachine:false,allowElevation:false,allowToChangeInstallationDirectory:true,createDesktopShortcut:true,artifactName:'Lessonara-${version}-windows-x64-setup.${ext}'},
+ nsis:{include:'installer-windows.nsh',oneClick:false,perMachine:false,allowElevation:false,allowToChangeInstallationDirectory:true,createDesktopShortcut:true,artifactName:'Lessonara-${version}-windows-x64-setup.${ext}'},
 };
