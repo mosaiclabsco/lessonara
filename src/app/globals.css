@@ -16,7 +16,7 @@
 .public-copy h2 { font-size: 19px; line-height: 1.4; font-weight: 600; margin: 28px 0 12px; }
 .public-copy h2:first-child { margin-top: 0; }
 .public-copy p + p { margin-top: 14px; }
-.public-copy a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.public-copy a:not(.btn):not(.btn-ghost) { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
 .public-policy { max-width: 840px; margin: 0 auto; padding: clamp(24px, 4vw, 42px); }
 .public-updated { color: var(--muted); font-size: 12px; margin: 14px 0 28px; }
 .public-footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
