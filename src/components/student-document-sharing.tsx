@@ -1,4 +1,5 @@
 "use client";
+import {ConfirmDialog} from "./dialog";
 import {Toast} from "./toast";
 import {DocumentPicker} from "./document-picker";
 import {BusyContent} from "@/components/busy-content";
@@ -33,22 +34,18 @@ function SharedItem({ share, studentId, today }: {
                     setMessage("Não foi possível atualizar o prazo.");
                 }
             });
-        }}><label className="label" htmlFor={`expiry-${share.id}`}>{t("Validade para este aluno (opcional)")}</label><div className="flex gap-2"><input id={`expiry-${share.id}`} className="input" type="date" min={today} value={expiry} onChange={(event) => setExpiry(event.target.value)} disabled={pending}/><button type="submit" aria-busy={pending&&busyAction==="save"} className="btn-xs" disabled={pending}><Icon name="save" className="h-4 w-4"/><BusyContent pending={pending&&busyAction==="save"}>{t("Salvar prazo")}</BusyContent></button></div><div className="mt-2 flex items-center gap-3"><button type="button" className="portal-text-button text-xs" disabled={pending} onClick={() => setExpiry("")}>{t("Sem prazo")}</button><span className="text-[10px] text-muted">{t("Escolha e salve o prazo de acesso.")}</span></div></form><button className="btn-xs btn-danger" aria-busy={pending&&busyAction==="revoke"} disabled={pending} onClick={() => {
-            if (!confirmRevoke) {
-                setConfirmRevoke(true);
-                return;
-            }
-            setBusyAction("revoke");setMessage("");startTransition(async () => {
+        }}><label className="label" htmlFor={`expiry-${share.id}`}>{t("Validade para este aluno (opcional)")}</label><div className="flex gap-2"><input id={`expiry-${share.id}`} className="input" type="date" min={today} value={expiry} onChange={(event) => setExpiry(event.target.value)} disabled={pending}/><button type="submit" aria-busy={pending&&busyAction==="save"} className="btn-xs" disabled={pending}><Icon name="save" className="h-4 w-4"/><BusyContent pending={pending&&busyAction==="save"}>{t("Salvar prazo")}</BusyContent></button></div><div className="mt-2 flex items-center gap-3"><button type="button" className="portal-text-button text-xs" disabled={pending} onClick={() => setExpiry("")}>{t("Sem prazo")}</button><span className="text-[10px] text-muted">{t("Escolha e salve o prazo de acesso.")}</span></div></form><button className="btn-xs btn-danger" aria-busy={pending&&busyAction==="revoke"} disabled={pending} onClick={() => setConfirmRevoke(true)}><Icon name="archive" className="h-4 w-4"/><BusyContent pending={pending&&busyAction==="revoke"}>{confirmRevoke ? t("Confirmar encerramento") : t("Encerrar acesso")}</BusyContent></button><ConfirmDialog open={confirmRevoke} onClose={()=>setConfirmRevoke(false)} title="Encerrar acesso" message="Este aluno perderá o acesso. O arquivo e os demais alunos serão mantidos." confirmLabel="Encerrar acesso" danger pending={pending} onConfirm={()=>{            setBusyAction("revoke");setMessage("");startTransition(async () => {
                 try {
                     const result = await revokeDocumentShare(studentId, share.id);
                     if (!result.ok)
                         setMessage(result.message);
+                    else setConfirmRevoke(false);
                 }
                 catch {
                     setMessage("Não foi possível encerrar o acesso.");
                 }
             });
-        }}><Icon name="archive" className="h-4 w-4"/><BusyContent pending={pending&&busyAction==="revoke"}>{confirmRevoke ? t("Confirmar encerramento") : t("Encerrar acesso")}</BusyContent></button>{confirmRevoke && <><p role="alert" className="text-xs text-muted">{t("Este aluno perder\u00E1 o acesso. O arquivo e os demais alunos ser\u00E3o mantidos.")}</p><button type="button" className="btn-xs" disabled={pending} onClick={() => setConfirmRevoke(false)}>{t("Cancelar encerramento")}</button></>}{message && <Toast message={t(message)}/>}</div></li>;
+}}/>{message && <Toast message={t(message)}/>}</div></li>;
 }
 export function StudentDocumentSharing({ studentId, documents, shares, today, ready }: {
     studentId: string;
@@ -73,5 +70,5 @@ export function StudentDocumentSharing({ studentId, documents, shares, today, re
                         setMessage("Não foi possível compartilhar o material.");
                     }
                 });
-            }} className="document-share-form"><div><label className="label" htmlFor="share-document">{t("Documento")}</label><DocumentPicker key={message} documents={documents.map(d=>({id:d.id,title:d.title,file_name:d.file_name}))} name="document_id" disabled={pending}/></div><div><label className="label" htmlFor="share-expiry">{t("Dispon\u00EDvel at\u00E9 (opcional)")}</label><input id="share-expiry" className="input" name="expires_on" type="date" min={today} disabled={pending}/></div><button className="btn" type="submit" disabled={pending}><BusyContent pending={pending}>{pending ? t("Compartilhando\u2026") : t("Compartilhar material")}</BusyContent></button><p className="document-share-note">{t("Sem data, o acesso fica sem prazo. Compartilhar um material j\u00E1 enviado atualiza a validade dele.")}</p></form> : <div className="document-sharing-empty"><Icon name="book" className="mb-3 h-6 w-6 text-accent"/><p className="text-sm text-muted">{ready ? t("Adicione um documento para compartilhar com este aluno.") : t("A área de Documentos está em preparação. Os materiais poder\u00E3o ser compartilhados assim que ela estiver dispon\u00EDvel.")}</p></div>}{message && <Toast message={t(message)}/>}{shares.length ? <ul>{shares.map((share) => <SharedItem key={`${share.id}-${share.expiresOn}`} share={share} studentId={studentId} today={today}/>)}</ul> : ready && <p className="mt-5 text-xs text-muted">{t("Nenhum material compartilhado com este aluno ainda.")}</p>}</section>;
+            }} className="document-share-form"><div><label className="label" htmlFor="share-document">{t("Documento")}</label><DocumentPicker key={message} documents={documents.map(d=>({id:d.id,title:d.title,file_name:d.file_name}))} name="document_id" disabled={pending}/></div><div><label className="label" htmlFor="share-expiry">{t("Dispon\u00EDvel at\u00E9 (opcional)")}</label><input id="share-expiry" className="input" name="expires_on" type="date" min={today} disabled={pending}/></div><button className="btn" type="submit" disabled={pending}><BusyContent pending={pending}><Icon name="book" className="h-4 w-4"/>{pending ? t("Compartilhando\u2026") : t("Compartilhar material")}</BusyContent></button><p className="document-share-note">{t("Sem data, o acesso fica sem prazo. Compartilhar um material j\u00E1 enviado atualiza a validade dele.")}</p></form> : <div className="document-sharing-empty"><Icon name="book" className="mb-3 h-6 w-6 text-accent"/><p className="text-sm text-muted">{ready ? t("Adicione um documento para compartilhar com este aluno.") : t("A área de Documentos está em preparação. Os materiais poder\u00E3o ser compartilhados assim que ela estiver dispon\u00EDvel.")}</p></div>}{message && <Toast message={t(message)}/>}{shares.length ? <ul>{shares.map((share) => <SharedItem key={`${share.id}-${share.expiresOn}`} share={share} studentId={studentId} today={today}/>)}</ul> : ready && <p className="mt-5 text-xs text-muted">{t("Nenhum material compartilhado com este aluno ainda.")}</p>}</section>;
 }

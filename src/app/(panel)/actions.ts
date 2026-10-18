@@ -178,7 +178,8 @@ function planFields(f:FormData){return {is_active:true,name:str(f,"name")??"Plan
 
 export async function createPlan(f: FormData) {
   const { supabase, userId } = await requireUser();
-  check(await supabase.from("plans").insert({ ...planFields(f), teacher_id: userId }));
+  const last=check(await supabase.from("plans").select("sort_order").eq("teacher_id",userId).order("sort_order",{ascending:false}).limit(1));
+  check(await supabase.from("plans").insert({ ...planFields(f), teacher_id: userId,sort_order:(last.data?.[0]?.sort_order??-1)+1 }));
   revalidatePath("/settings");
 }
 
@@ -197,4 +198,11 @@ export async function deletePlan(id: string) {
 export async function cancelLesson(studentId:string,date:string,time:string){
  const {supabase,userId}=await requireUser();const student=check(await supabase.from("students").select("id").eq("id",studentId).eq("teacher_id",userId).maybeSingle()).data;if(!student)throw new Error("Aluno não encontrado.");
  const {data}=check(await supabase.from("lesson_events").insert({student_id:studentId,date,time,kind:"desmarcada"}).select("id").single());after(async()=>{try{await processCalendarJobs(userId);}catch{console.error("calendar_queue_failed");}});revalidatePath(`/students/${studentId}`);revalidatePath("/","layout");return data!.id as string;
+}
+
+export async function reorderPlans(ids:string[]) {
+ const {supabase}=await requireUser();
+ if(!Array.isArray(ids)||ids.length>1000||ids.some(id=>typeof id!=="string"||!/^[0-9a-f-]{36}$/i.test(id))||new Set(ids).size!==ids.length)throw new Error("Ordem de planos inválida.");
+ check(await supabase.rpc("reorder_teacher_plans",{plan_ids:ids}));
+ revalidatePath("/","layout");
 }

@@ -32,6 +32,6 @@ function NavLinks({ pathname,platformPlan="essential" }: {
     const { t } = useI18n();
     return <nav className="panel-nav" aria-label={t("Navega\u00E7\u00E3o principal")}>{links.map(({ href, label, icon }) => {
             const active = pathname !== undefined && (href === "/students" ? pathname === "/students" || pathname.startsWith("/students/") : pathname === href);
-            return <Link key={href} href={href} aria-current={active ? "page" : undefined} className={`nav-link ${active ? "nav-active" : ""}`}><Icon name={icon}/><span>{t(label)}</span>{href==="/emails"&&!hasPlatformFeature(platformPlan,"emails")&&<span className="count-badge">Pro</span>}{active && <span className="nav-dot"/>}</Link>;
+            return <Link key={href} href={href} title={t(label)} aria-label={t(label)} aria-current={active ? "page" : undefined} className={`nav-link ${active ? "nav-active" : ""}`}><Icon name={icon}/><span>{t(label)}</span>{href==="/emails"&&!hasPlatformFeature(platformPlan,"emails")&&<span className="count-badge">Pro</span>}{active && <span className="nav-dot"/>}</Link>;
         })}</nav>;
 }

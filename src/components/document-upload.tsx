@@ -1,4 +1,5 @@
 "use client";
+import {FileInput} from "./file-input";
 import {usePlatformPlan} from "./platform-plan-provider";
 import {formatFileSize as uploadSize} from "@/lib/document-rules";
 import {Toast} from "./toast";
@@ -67,6 +68,6 @@ export function DocumentUpload({ available }: {
             }
         });
     }
-    return <section className="card document-upload"><h2 className="h2">{t("Adicionar documento")}</h2><p className="mb-5 text-xs leading-relaxed text-muted">{t("Envie uma vez e reutilize com vários alunos. Até {value0} por arquivo.",{value0:uploadSize(plan.maxFileBytes)})}</p><form ref={form} onSubmit={upload}><fieldset disabled={!available || pending} className="document-upload-fields"><div><label className="label" htmlFor="document-file">{t("Arquivo")}</label><input id="document-file" name="file" type="file" accept={DOCUMENT_ACCEPT} required className="input" onChange={(event) => { const file = event.target.files?.[0]; if (file && !title)
+    return <section className="card document-upload"><h2 className="h2">{t("Adicionar documento")}</h2><p className="mb-5 text-xs leading-relaxed text-muted">{t("Envie uma vez e reutilize com vários alunos. Até {value0} por arquivo.",{value0:uploadSize(plan.maxFileBytes)})}</p><form ref={form} onSubmit={upload}><fieldset disabled={!available || pending} className="document-upload-fields"><div><label className="label" htmlFor="document-file">{t("Arquivo")}</label><FileInput id="document-file" name="file"  accept={DOCUMENT_ACCEPT} required className="input" onChange={(event) => { const file = event.target.files?.[0]; if (file && !title)
         setTitle(file.name.replace(/\.[^.]+$/, "")); }}/></div><div><label className="label" htmlFor="document-title">{t("Título do documento")}</label><input id="document-title" name="title" className="input" required maxLength={120} value={title} onChange={(event) => setTitle(event.target.value)} placeholder={t("Ex.: Voz passiva \u00B7 exerc\u00EDcios")}/></div><div><label className="label" htmlFor="document-subject">{t("Assunto (opcional)")}</label><input id="document-subject" name="subject" className="input" maxLength={80} placeholder={t("Ex.: Gram\u00E1tica \u00B7 B1")}/></div><button className="btn" type="submit"><Icon name="save" className="h-4 w-4"/>{pending ? t("Enviando arquivo\u2026") : t("Salvar documento")}</button></fieldset></form>{pending && <progress className="document-upload-progress" aria-label={t("Enviando documento")}/>}{message && <Toast message={t(message)}/>}</section>;
 }

@@ -1,3 +1,4 @@
+import {FormActions} from "@/components/button";
 import {needsSchedule} from "@/lib/student-setup";
 import {ReplacementPrompt,CancelLessonButton} from "@/components/cancel-lesson-button";
 import {planFrequency} from "@/lib/plan-frequency";
@@ -39,7 +40,7 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
     const { supabase, userId } = await requireUser();
     const [{ data: student }, { data: plansData }] = await Promise.all([
         supabase.from("students").select("*").eq("id", id).maybeSingle<Student>(),
-        supabase.from("plans").select("*").order("lessons"),
+        supabase.from("plans").select("*").order("sort_order").order("created_at").order("id"),
     ]);
     if (!student)
         notFound();
@@ -147,7 +148,7 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
               <StudentFields student={student} plans={plans}/>
               <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" name="active" defaultChecked={student.active}/>{t(" Ativo (recebe lembretes) ")}</label>
-              <SubmitButton className="btn">{t("Salvar")}</SubmitButton>
+              <FormActions><SubmitButton className="btn">{t("Salvar")}</SubmitButton></FormActions>
             </ActionForm>
             <div className="flex flex-wrap gap-2 border-t border-line pt-3">
               <ActionForm action={regenerateLink.bind(null, id)}>

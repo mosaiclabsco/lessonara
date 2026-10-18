@@ -3,7 +3,7 @@ export async function DashboardLoading() {
     const { t } = await getTranslator();
     return (<div className="dashboard" role="status" aria-label={t("Carregando vis\u00E3o geral")}>
       <div className="page-heading">
-        <div><p className="eyebrow">{t("SUA ROTINA, ORGANIZADA")}</p><h1>{t("Vis\u00E3o geral")}</h1><p className="page-description">{t("Carregando suas aulas e seus alunos\u2026")}</p></div>
+        <div><h1>{t("Vis\u00E3o geral")}</h1><p className="page-description">{t("Carregando suas aulas e seus alunos\u2026")}</p></div>
       </div>
       <div aria-hidden="true" className="motion-safe:animate-pulse">
         <div className="overview-grid">

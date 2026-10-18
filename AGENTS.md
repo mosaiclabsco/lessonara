@@ -1,3 +1,5 @@
+Leia `STYLE_GUIDE.md` antes de alterar interfaces. Reutilize os componentes compartilhados e valide os portais do professor e do aluno.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know

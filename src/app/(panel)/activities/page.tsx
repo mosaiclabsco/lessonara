@@ -14,5 +14,5 @@ async function Content() {
     const [loaded, documents, students] = await Promise.all([loadActivities(supabase, userId), supabase.from("documents").select("id,title,file_name").eq("teacher_id", userId).eq("status", "ready").order("title").returns<ActivityDocument[]>(), supabase.from("students").select("id,name,active").eq("teacher_id", userId).order("name")]);
     if (students.error)
         throw students.error;
-    return <main><div className="page-heading"><div><p className="eyebrow">{t("UM EXERC\u00CDCIO, UM NOVO PASSO")}</p><h1>{t("Atividades")}</h1><p className="page-description">{t("Envie exerc\u00EDcios, acompanhe prazos e confira as entregas dos alunos.")}</p></div></div><TeacherActivities activities={loaded.activities} documents={documents.data ?? []} students={students.data ?? []} today={nowInTZ().today} ready={loaded.ready}/></main>;
+    return <main><div className="page-heading"><div><h1>{t("Atividades")}</h1><p className="page-description">{t("Envie exerc\u00EDcios, acompanhe prazos e confira as entregas dos alunos.")}</p></div></div><TeacherActivities activities={loaded.activities} documents={documents.data ?? []} students={students.data ?? []} today={nowInTZ().today} ready={loaded.ready}/></main>;
 }
