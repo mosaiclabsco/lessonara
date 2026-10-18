@@ -1,7 +1,8 @@
 import type { SVGProps } from "react";
 
-export type IconName = "pointer"|"laser"|"text"|"eraser"|"undo"|"board"| "back" | "grip" | "menu" | "close" | "chevron" | "edit" | "more" | "up" | "down" | "chart" | "grid" | "users" | "calendar" | "settings" | "arrow" | "plus" | "search" | "book" | "logout" | "clock" | "check" | "download" | "language" | "sun" | "moon" | "archive" | "trash" | "mail" | "chat" | "copy" | "save" | "video";
+export type IconName = "refresh"|"pointer"|"laser"|"text"|"eraser"|"undo"|"board"| "back" | "grip" | "menu" | "close" | "chevron" | "edit" | "more" | "up" | "down" | "chart" | "grid" | "users" | "calendar" | "settings" | "arrow" | "plus" | "search" | "book" | "logout" | "clock" | "check" | "download" | "language" | "sun" | "moon" | "archive" | "trash" | "mail" | "chat" | "copy" | "save" | "video";
 const paths: Record<IconName, string> = {
+ refresh:"M20 7v5h-5 M4 17v-5h5 M6 7a7 7 0 0 1 12-2l2 7 M4 12l2 7a7 7 0 0 0 12-2",
  pointer:"M5 3l14 9-7 1-3 7z",laser:"M3 21l8-8 M12 4v3 M20 12h-3 M18 6l-3 3 M6 6l3 3 M16 17l2 2",text:"M4 5h16 M12 5v15 M8 20h8",eraser:"M3 14l9-10 8 7-9 10H9z M8 10l8 7 M11 21h10",undo:"M9 5L4 10l5 5 M4 10h10a6 6 0 0 1 0 12",board:"M3 4h18v13H3z M8 21l4-4 4 4",
 
  back:"M19 12H5 M10 7l-5 5 5 5",grip:"M9 5h.01 M15 5h.01 M9 12h.01 M15 12h.01 M9 19h.01 M15 19h.01",
