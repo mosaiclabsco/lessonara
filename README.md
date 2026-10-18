@@ -199,7 +199,7 @@ O histórico por mês inclui programação e aulas anteriores. Por pacote, inclu
 
 ## App desktop de teste
 
-`desktop/` contém um app Electron para Mac Apple Silicon. Para desenvolvimento: `npm ci` e `npm test` nessa pasta. Empacote com `npm run package:mac`; a distribuição pública inicial é a release `desktop-v0.1.0`.
+`desktop/` contém um app Electron para Mac Apple Silicon e Windows x64. Para desenvolvimento: `npm ci` e `npm test` nessa pasta. Empacote com `npm run package:mac` ou `npm run package:windows`; a distribuição de teste atual é a release `desktop-v0.3.1`. O workflow manual `Desktop Windows` gera e valida o instalador antes de publicá-lo.
 
 O app possui sessão própria. Um link `lessonara://classroom/<student>/<kind>/<source>/<date>` leva à ocorrência no domínio canônico, sem senha ou JWT no link. No primeiro acesso, faça login no app. O acesso continua sendo autorizado pelo backend e exige Pro, vínculo e horário válidos. A troca de sala é manual; links para outras salas pedem confirmação antes de sair da atual. O aluno pode permanecer no navegador.
 
@@ -208,6 +208,6 @@ Este teste usa as ferramentas atuais da sala. Não implementa overlay de anotaç
 
 ### Chamadas desktop e campanhas de email
 
-O desktop 0.3.0 reúne apenas login, lista e sala de chamadas; o portal fica na web. Há escolha explícita de monitor inteiro ou janela, modo flutuante preservando a chamada e anotação nativa sobre a tela inteira. Ver `desktop/README.md` e `CLASSROOM.md`.
+O desktop 0.3.1 reúne apenas login, lista e sala de chamadas; o portal fica na web. Há escolha explícita de monitor inteiro ou janela, modo flutuante preservando a chamada e anotação nativa sobre a tela inteira. Ver `desktop/README.md` e `CLASSROOM.md`.
 
 Emails do Pro agora permite preparar uma campanha, selecionar até 100 alunos e revisar antes de confirmar. A função `queue_email_campaign` valida escopo, Pro, estado dos alunos, opt-out, deduplicação por email, idempotência e limites por professor. A confirmação agenda um `after()` que processa somente os trabalhos da campanha, espaçando envios; pendências continuam visíveis e podem ser retomadas pelo worker existente. Mensagens são texto escapado e os corpos em fila seguem criptografados. O cancelamento de campanhas promocionais tem confirmação e não impede emails de acesso ou avisos das aulas. Migração: `0017_campaign_emails.sql`. Nenhuma campanha real foi enviada durante a validação de desenvolvimento.

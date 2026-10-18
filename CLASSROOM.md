@@ -47,10 +47,12 @@ Testes de unidade cobrem janela, ocorrência, identidade da sala, papéis, aula 
 A página, o endpoint de entrada e o endpoint de material verificam o plano da empresa proprietária da turma. Emails e sala integrada são recursos Pro. O professor pode escolher navegador ou app; o aluno continua no navegador. O link nativo transporta somente a identidade da ocorrência, e o app autentica seu próprio usuário. Ver `desktop/README.md` para empacotamento e limites desta versão.
 
 
-## Desktop 0.3.0 focado em chamadas
+## Desktop 0.3.1 focado em chamadas
 
 `/calls` exibe login e lista de aulas sem a navegação do portal. O app abre somente essa rota e ocorrências validadas; os links do portal abrem no navegador. O destino de login é limitado a `/calls` ou `/`, sem redirecionamento externo.
 
 O seletor nativo do aplicativo lista monitores inteiros e janelas, com miniaturas, e só concede a fonte explicitamente selecionada. Cancelar, mudar de sala ou fechar o seletor nega a captura. Não altera permissões do macOS.
 
 Minimizar uma chamada ativa transforma a mesma janela em uma janela pequena flutuante; não reinicia o Jitsi. O Dock e Voltar à sala restauram suas dimensões. Uma barra nativa arrastável reúne seleção, caneta, laser contínuo com cauda de 850 ms, texto, borracha, desfazer, limpeza e dez cores. Esc ou × devolve os cliques ao aplicativo abaixo, mantendo a barra disponível para selecionar outra ferramenta. Dois cliques editam texto e a seleção permite movê-lo. Interromper a captura fecha a barra e limpa os desenhos. Compartilhar uma janela não captura a sobreposição e deixa esses controles externos desabilitados. O quadro interno usa seu próprio transporte.
+
+A versão 0.3.1 oferece instalador Windows x64 e corrige o foco da caixa de texto externa. A proteção de conteúdo é aplicada somente à barra no Windows; o canvas continua capturável. No Mac, a barra pode aparecer ao aluno por limitações do ScreenCaptureKit. Os testes de instalação e inicialização no Windows não substituem uma chamada real de câmera/áudio/compartilhamento.
