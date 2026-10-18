@@ -28,13 +28,13 @@ Sem as três variáveis válidas, o portal conserva seu link Google Meet existen
 
 Usa external_api.js do Jitsi próprio, com pré-entrada para dispositivos, microfone e câmera inicialmente desligados, compartilhamento de tela e anotações de tela instaladas na PoC. Não há gravação nem transcrição. O quadro nativo do Jitsi fica desativado no Lessonara.
 
-## PDF e quadro do Lessonara
+## Quadro do Lessonara
 
-O professor apresenta um PDF privado da biblioteca ou envia um arquivo de até 20 MB. O upload usa o fluxo e a cota da biblioteca; o arquivo permanece nela. PDF.js renderiza o documento na própria sala. Professor controla página, rolagem, laser, caneta, texto e limpeza. O × ou Esc desativa a ferramenta sem apagar as marcas. O aluno acompanha em modo de leitura. A troca de sala continua manual.
+O professor abre um quadro temporário com caneta, laser, texto, borracha, seleção para mover texto, desfazer e dez cores. Texto é colocado na posição clicada; a ferramenta de seleção permite arrastar e dois cliques reabrem a edição. Esc desativa a ferramenta sem apagar o quadro. O aluno acompanha em modo de leitura. PDF deixou de ser uma opção da sala: no app, o professor pode abrir seus arquivos no computador e compartilhar a janela ou monitor. Os documentos do portal permanecem disponíveis.
 
-O backend autentica cada operação. Somente o professor proprietário pode publicar o estado ou listar a biblioteca. Um estado criptografado e autenticado vincula documento e anotações à ocorrência e ao proprietário, com validade de 12 horas. A URL assinada do arquivo dura 60 segundos. Mensagens de participantes transportam apenas esse estado criptografado pelo Supabase Realtime em partes limitadas, em um canal opaco derivado da identidade da sala, sem depender do canal de mídia do Jitsi; o backend verifica a autorização antes da leitura, sem confiar no papel informado pelo cliente.
+O backend autentica cada operação. Somente o professor proprietário publica o estado. Um estado criptografado e autenticado vincula as anotações à ocorrência e ao proprietário, com validade de 12 horas. Mensagens transportam apenas esse estado criptografado pelo Supabase Realtime em partes limitadas, em um canal opaco derivado da identidade da sala; o backend verifica a autorização antes da leitura, sem confiar no papel informado pelo cliente. As validações restringem as cores à paleta e limitam os traços, pontos e textos.
 
-As anotações não são gravadas no PDF nem no banco. Um participante que permanece na sala pode retransmitir o último estado válido a quem entrar ou recarregar. Quando todos saem, o estado temporário se perde; o arquivo continua na biblioteca. Pedidos de permissão para o aluno escrever ficam para uma versão futura. As ferramentas do navegador não desenham sobre janelas de outros aplicativos.
+As anotações do quadro não são gravadas no banco. Um participante que permanece na sala pode retransmitir o último estado válido a quem entrar ou recarregar. Quando todos saem, o estado temporário se perde. O transporte do quadro continua autenticando snapshots; sua latência é distinta da sobreposição nativa, transmitida dentro da captura de tela. Os endpoints e o visualizador legado de PDF permanecem disponíveis para compatibilidade técnica, sem entrada de PDF na nova interface.
 
 A mídia depende da rede: o túnel Cloudflare transporta o acesso web, não a mídia UDP. O 1:1 pode usar P2P; o fallback por JVB/TURN precisa de conectividade apropriada. A verificação de protocolo confirma autenticação e papéis, mas não substitui teste de câmera e áudio reais entre duas redes.
 
@@ -47,10 +47,10 @@ Testes de unidade cobrem janela, ocorrência, identidade da sala, papéis, aula 
 A página, o endpoint de entrada e o endpoint de material verificam o plano da empresa proprietária da turma. Emails e sala integrada são recursos Pro. O professor pode escolher navegador ou app; o aluno continua no navegador. O link nativo transporta somente a identidade da ocorrência, e o app autentica seu próprio usuário. Ver `desktop/README.md` para empacotamento e limites desta versão.
 
 
-## Desktop 0.2.0 focado em chamadas
+## Desktop 0.3.0 focado em chamadas
 
 `/calls` exibe login e lista de aulas sem a navegação do portal. O app abre somente essa rota e ocorrências validadas; os links do portal abrem no navegador. O destino de login é limitado a `/calls` ou `/`, sem redirecionamento externo.
 
 O seletor nativo do aplicativo lista monitores inteiros e janelas, com miniaturas, e só concede a fonte explicitamente selecionada. Cancelar, mudar de sala ou fechar o seletor nega a captura. Não altera permissões do macOS.
 
-Minimizar uma chamada ativa transforma a mesma janela em uma janela pequena flutuante; não reinicia o Jitsi. O Dock e Voltar à sala restauram suas dimensões. Caneta, laser e texto desenham na sobreposição do monitor compartilhado. Esc ou × devolve os cliques ao aplicativo abaixo; interromper a captura limpa os desenhos. Compartilhar uma janela não captura a sobreposição e deixa esses controles desabilitados. O PDF/quadro interno mantém o transporte anterior; não houve rollback.
+Minimizar uma chamada ativa transforma a mesma janela em uma janela pequena flutuante; não reinicia o Jitsi. O Dock e Voltar à sala restauram suas dimensões. Uma barra nativa arrastável reúne seleção, caneta, laser contínuo com cauda de 850 ms, texto, borracha, desfazer, limpeza e dez cores. Esc ou × devolve os cliques ao aplicativo abaixo, mantendo a barra disponível para selecionar outra ferramenta. Dois cliques editam texto e a seleção permite movê-lo. Interromper a captura fecha a barra e limpa os desenhos. Compartilhar uma janela não captura a sobreposição e deixa esses controles externos desabilitados. O quadro interno usa seu próprio transporte.

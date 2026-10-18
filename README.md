@@ -208,6 +208,6 @@ Este teste usa as ferramentas atuais da sala. Não implementa overlay de anotaç
 
 ### Chamadas desktop e campanhas de email
 
-O desktop 0.2.0 reúne apenas login, lista e sala de chamadas; o portal fica na web. Há escolha explícita de monitor inteiro ou janela, modo flutuante preservando a chamada e anotação nativa sobre a tela inteira. Ver `desktop/README.md` e `CLASSROOM.md`.
+O desktop 0.3.0 reúne apenas login, lista e sala de chamadas; o portal fica na web. Há escolha explícita de monitor inteiro ou janela, modo flutuante preservando a chamada e anotação nativa sobre a tela inteira. Ver `desktop/README.md` e `CLASSROOM.md`.
 
 Emails do Pro agora permite preparar uma campanha, selecionar até 100 alunos e revisar antes de confirmar. A função `queue_email_campaign` valida escopo, Pro, estado dos alunos, opt-out, deduplicação por email, idempotência e limites por professor. A confirmação agenda um `after()` que processa somente os trabalhos da campanha, espaçando envios; pendências continuam visíveis e podem ser retomadas pelo worker existente. Mensagens são texto escapado e os corpos em fila seguem criptografados. O cancelamento de campanhas promocionais tem confirmação e não impede emails de acesso ou avisos das aulas. Migração: `0017_campaign_emails.sql`. Nenhuma campanha real foi enviada durante a validação de desenvolvimento.

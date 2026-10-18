@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {DesktopCallControls} from "./desktop-call-controls";
-import {ClassroomPdf} from "./classroom-pdf";
+import {ClassroomBoard} from "./classroom-board";
 import {createBrowserSupabase} from "@/lib/supabase/browser";
 import type {RealtimeChannel} from "@supabase/supabase-js";
 
@@ -15,7 +15,7 @@ export function Classroom({ joinUrl, backHref }: { joinUrl: string; backHref: st
   const apiRef=useRef<JitsiApi|null>(null);const materialMessage=useRef<((text:string)=>void)|null>(null);
   const materialChannel=useRef<RealtimeChannel|null>(null);const [channelName,setChannelName]=useState("");const [materialConnected,setMaterialConnected]=useState(false);
   const [compact,setCompact]=useState(false);const [joined,setJoined]=useState(false);
-  const [role,setRole]=useState<"teacher"|"student">("student");const [pdfOpen,setPdfOpen]=useState(false);
+  const [role,setRole]=useState<"teacher"|"student">("student");const [boardOpen,setBoardOpen]=useState(false);
   const broadcast=useCallback((text:string)=>{void materialChannel.current?.send({type:"broadcast",event:"material",payload:{text}}).catch(()=>setMaterialConnected(false));},[]);
   const [attempt, setAttempt] = useState(0);
   const [state, setState] = useState<{ message: string; window?: string; active?: boolean; left?: boolean; loading?: boolean }>({ message: "Preparando sua aula…", loading:true });
@@ -75,5 +75,5 @@ export function Classroom({ joinUrl, backHref }: { joinUrl: string; backHref: st
     return () => { controller.abort(); clearTimeout(timer); api?.dispose();apiRef.current=null; script?.remove(); };
   }, [joinUrl, attempt,broadcast]);
   useEffect(()=>{if(!joined)return;apiRef.current?.executeCommand("setTileView",compact);},[compact,joined]);
-  return <main className={`classroom-screen ${pdfOpen&&state.active?"pdf-presenting":""} ${compact?"desktop-compact":""}`}><DesktopCallControls joined={joined} teacher={role==="teacher"} onCompact={setCompact}/>{state.active&&<ClassroomPdf endpoint={joinUrl.replace(/\/join$/,"/material")} teacher={role==="teacher"} connected={materialConnected} messageRef={materialMessage} broadcast={broadcast} onOpen={setPdfOpen}/>}<div ref={container} className="classroom-video" hidden={!state.active} />{!state.active && <section className="classroom-state" role="status">{state.loading ? <p className="flex items-center justify-center gap-3"><span className="action-spinner" aria-hidden="true"/>{state.message}</p> : <h1>{state.message}</h1>}{state.window && <p>{state.window}</p>}{!state.loading && <div className="flex flex-wrap justify-center gap-3"><button className="btn" onClick={() => { setState({ message: "Preparando sua aula…", loading:true }); setAttempt(a => a + 1); }}>{state.left ? "Entrar novamente" : "Tentar novamente"}</button><Link className="btn-ghost" href={backHref}>Voltar ao meu espaço</Link></div>}</section>}</main>;
+  return <main className={`classroom-screen ${boardOpen&&state.active?"board-presenting":""} ${compact?"desktop-compact":""}`}><DesktopCallControls joined={joined} teacher={role==="teacher"} onCompact={setCompact}/>{state.active&&<ClassroomBoard endpoint={joinUrl.replace(/\/join$/,"/material")} teacher={role==="teacher"} connected={materialConnected} messageRef={materialMessage} broadcast={broadcast} onOpen={setBoardOpen}/>}<div ref={container} className="classroom-video" hidden={!state.active} />{!state.active && <section className="classroom-state" role="status">{state.loading ? <p className="flex items-center justify-center gap-3"><span className="action-spinner" aria-hidden="true"/>{state.message}</p> : <h1>{state.message}</h1>}{state.window && <p>{state.window}</p>}{!state.loading && <div className="flex flex-wrap justify-center gap-3"><button className="btn" onClick={() => { setState({ message: "Preparando sua aula…", loading:true }); setAttempt(a => a + 1); }}>{state.left ? "Entrar novamente" : "Tentar novamente"}</button><Link className="btn-ghost" href={backHref}>Voltar ao meu espaço</Link></div>}</section>}</main>;
 }

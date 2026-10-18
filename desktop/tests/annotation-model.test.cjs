@@ -1,0 +1,4 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');
+const {hitStroke,laserSegments}=require('../annotation-model.cjs');
+test('eraser hits the segment between sparse points and handles a single dot',()=>{assert.equal(hitStroke([[0,0],[100,0]],50,4,6),true);assert.equal(hitStroke([[0,0],[100,0]],50,20,6),false);assert.equal(hitStroke([[10,10]],12,12,6),true);assert.equal(hitStroke([],0,0),false);});
+test('laser connects consecutive samples and fades each section independently',()=>{const points=[{x:0,y:0,at:0},{x:100,y:0,at:300},{x:120,y:0,at:500}];const segments=laserSegments(points,600,850);assert.equal(segments.length,2);assert.equal(segments[0].from,points[0]);assert.equal(segments[0].to,points[1]);assert.ok(segments[0].alpha<segments[1].alpha);assert.deepEqual(laserSegments(points,1500,850),[]);});
