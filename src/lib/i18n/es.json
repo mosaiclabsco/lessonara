@@ -981,5 +981,7 @@
   "Documentos do aluno": "Documentos del alumno",
   "Adicione um documento para compartilhar com este aluno.": "Añade un documento para compartir con este alumno.",
   "A área de Documentos ainda não está disponível. Conclua a configuração do armazenamento para ativar os envios.": "El área de Documentos aún no está disponible. Completa la configuración del almacenamiento para habilitar las subidas.",
-  "A área de Documentos está em preparação. Os materiais poderão ser compartilhados assim que ela estiver disponível.": "El área de Documentos está en preparación. Los materiales se podrán compartir cuando esté disponible."
+  "A área de Documentos está em preparação. Os materiais poderão ser compartilhados assim que ela estiver disponível.": "El área de Documentos está en preparación. Los materiales se podrán compartir cuando esté disponible.",
+  "Disponível às {time}": "Disponible a las {time}",
+  "Acesso encerrado": "Acceso cerrado"
 }

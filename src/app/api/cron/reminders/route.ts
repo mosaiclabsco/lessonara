@@ -1,3 +1,4 @@
+import {validCronAuthorization} from "@/lib/cron-auth";
 import {hasPlatformFeature} from "@/lib/platform-plans";
 import {processCalendarJobs} from "@/lib/google/worker";
 import { loadLedgers, type Student } from "@/lib/data";
@@ -7,7 +8,7 @@ import { createAdminClient } from "@/lib/supabase/server";
 // Roda 1x por dia (vercel.json). Também mantém o projeto do Supabase ativo no plano free.
 export async function GET(request: Request) {
     const secret = process.env.CRON_SECRET;
-    if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) {
+    if (!validCronAuthorization(request.headers.get("authorization"),secret)) {
         return new Response("Unauthorized", { status: 401 });
     }
     const supabase = createAdminClient();

@@ -73,12 +73,24 @@ export async function verifyStudentCode(_previous: StudentLoginState, form: Form
   if (!challenge?.auth_user_id||!challenge.student_id) return fail;
   // Auth valida o OTP e seu uso único. Tokens Supabase nunca vão para o navegador do aluno.
   const client = createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
-  const verified = await client.auth.verifyOtp({ email: challenge.email, token: code, type: "email" });
-  if (verified.error || verified.data.user?.id !== challenge.auth_user_id || !verified.data.user.email_confirmed_at || verified.data.user.email?.toLowerCase() !== challenge.email) return fail;
-  const confirmation = await db.from("student_auth_challenges").update({verified_at:new Date().toISOString()}).eq("id",id).eq("auth_user_id",verified.data.user.id).is("consumed_at",null).gt("expires_at",new Date().toISOString()).select("id").maybeSingle();
-  if(confirmation.error||!confirmation.data){await client.auth.signOut({scope:"local"});return fail;}
-  await client.auth.signOut({scope:"local"});
-  if(!await startStudentSession(id,verified.data.user.id,challenge.student_id))return fail;
+  let verifiedUserId:string|undefined;
+  let confirmed=false;
+  let ended=false;
+  try {
+    const verified=await client.auth.verifyOtp({email:challenge.email,token:code,type:"email"});
+    const user=verified.data.user;
+    if(!verified.error&&user?.id===challenge.auth_user_id&&user.email_confirmed_at&&user.email?.toLowerCase()===challenge.email){
+      verifiedUserId=user.id;
+      const confirmation=await db.from("student_auth_challenges").update({verified_at:new Date().toISOString()}).eq("id",id).eq("auth_user_id",user.id).is("consumed_at",null).gt("expires_at",new Date().toISOString()).select("id").maybeSingle();
+      confirmed=!confirmation.error&&!!confirmation.data;
+    }
+  } catch {
+    confirmed=false;
+  } finally {
+    try {ended=!(await client.auth.signOut({scope:"local"})).error;}catch{ended=false;}
+  }
+  if(!confirmed||!ended||!verifiedUserId)return fail;
+  if(!await startStudentSession(id,verifiedUserId,challenge.student_id))return fail;
   redirect("/student");
 }
 

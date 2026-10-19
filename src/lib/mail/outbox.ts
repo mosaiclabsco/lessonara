@@ -1,3 +1,4 @@
+import {createUnsubscribeToken} from "./unsubscribe-token";
 import {loadTeacherPlan} from "../platform-plan-server";
 import {createWelcomeInvite} from "./welcome-invite";
 import { randomUUID } from "node:crypto";
@@ -12,7 +13,7 @@ type Job = { id: string; event_key: string; lease_id: string; student_id: string
 export async function enqueueOtp(email: string, code: string, challengeId: string,studentId?:string) {
   const db = createAdminClient();
   const id = randomUUID();
-  const { error } = await db.from("email_outbox").insert({ id, event_key: `otp/${challengeId}`, student_id:studentId??null,recipient: email, template: "otp", payload: { sealed: seal({ code }) }, expires_at: new Date(Date.now() + 10 * 60_000).toISOString() });
+  const { error } = await db.from("email_outbox").insert({ id, event_key: `otp/${challengeId}`, student_id:studentId??null,recipient: email, template: "otp", payload: { sealed: seal({ code },"otp") }, expires_at: new Date(Date.now() + 10 * 60_000).toISOString() });
   if (error) throw new Error("Não foi possível preparar o email de acesso.");
   return id;
 }
@@ -53,15 +54,15 @@ export async function processEmails(id?: string) {
         if (challenge.error) throw new EmailSendError("database_unavailable", true);
         if (!challenge.data) { await finish({ status: "cancelled", payload: {}, delivery: null }); result.cancelled++; continue; }
       }
-      if (job.delivery) body = unseal<EmailInput>(job.delivery.sealed);
+      if (job.delivery) body = unseal<EmailInput>(job.delivery.sealed,"mail-delivery",{allowLegacy:true});
       else {
-        const content = job.template === "otp" ? otpEmail(unseal<{ code: string }>(job.payload.sealed).code)
+        const content = job.template === "otp" ? otpEmail(unseal<{ code: string }>(job.payload.sealed,"otp",{allowLegacy:true}).code)
           : job.template === "welcome" ? welcomeEmail(student!.name, student!.teachers.name,student!.teacher_id,student!.slug,await createWelcomeInvite(student!))
-          : job.template === "campaign" ? (()=>{const content=unseal<{subject:string;message:string}>(job.payload.sealed);const origin=process.env.APP_URL||`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;const token=seal({studentId:student!.id,teacherId:student!.teacher_id,email:student!.email});return campaignEmail(student!.name,student!.teachers.name,content.subject,content.message,new URL(`/emails/unsubscribe?token=${encodeURIComponent(token)}`,origin).href);})()
+          : job.template === "campaign" ? (()=>{const content=unseal<{subject:string;message:string}>(job.payload.sealed,"campaign",{allowLegacy:true});const origin=process.env.APP_URL||`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;const token=createUnsubscribeToken({studentId:student!.id,teacherId:student!.teacher_id,email:student!.email});return campaignEmail(student!.name,student!.teachers.name,content.subject,content.message,new URL(`/emails/unsubscribe?token=${encodeURIComponent(token)}`,origin).href);})()
           : reminderEmail(student!.name, student!.teachers.name, job.payload.message,student!.teacher_id,student!.slug);
         body = { ...content, to: job.recipient, from: process.env.EMAIL_FROM || "Lessonara <onboarding@resend.dev>", ...(student?.teachers.email && !/\.(test|invalid|localhost)$/i.test(student.teachers.email) ? { replyTo: student.teachers.email } : process.env.EMAIL_REPLY_TO ? { replyTo: process.env.EMAIL_REPLY_TO } : {}) };
         // Corpo/remetente imutáveis para retries com a mesma chave do Resend.
-        await finish({ delivery: { sealed: seal(body) } });
+        await finish({ delivery: { sealed: seal(body,"mail-delivery") } });
       }
       if (Date.parse(job.expires_at) <= Date.now()) { await finish({ status: "failed", last_error: "Prazo de envio encerrado.", payload: {}, delivery: null }); result.failed++; continue; }
       const sent = await sendEmail(body, `lessonara/${job.id}`);

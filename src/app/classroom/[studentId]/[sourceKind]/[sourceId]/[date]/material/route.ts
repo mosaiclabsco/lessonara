@@ -27,7 +27,7 @@ export async function POST(request: Request, { params }: { params: Promise<Class
       grant={ref,teacherId,state:validateMaterial(input.state),issuedAt:Date.now(),expiresAt:Date.now()+12*60*60*1000};
     } else {
       if(!["read","file"].includes(input.op)||typeof input.token!=="string"||input.token.length>140000)return json({error:"Material inválido."},400);
-      grant=unseal<MaterialGrant>(input.token);
+      grant=unseal<MaterialGrant>(input.token,"classroom-material",{allowLegacy:true});
       if(!grantMatches(grant,ref)||grant.teacherId!==teacherId)return json({error:"Material expirado ou de outra aula."},403);
       grant.state=validateMaterial(grant.state);
     }
@@ -38,6 +38,6 @@ export async function POST(request: Request, { params }: { params: Promise<Class
       const file=await db.storage.from(DOCUMENT_BUCKET).createSignedUrl(document.data.storage_path,60);if(file.error||!file.data)throw new Error("file_unavailable");
       return json({url:file.data.signedUrl});
     }
-    return json({token:input.op==="publish"?seal(grant):input.token,state:grant.state,issuedAt:grant.issuedAt,title:document?.data?.title??(grant.state.board?"Quadro":"")});
+    return json({token:input.op==="publish"?seal(grant,"classroom-material"):input.token,state:grant.state,issuedAt:grant.issuedAt,title:document?.data?.title??(grant.state.board?"Quadro":"")});
   } catch {return json({error:"Não foi possível preparar o material. Tente novamente."},400);}
 }

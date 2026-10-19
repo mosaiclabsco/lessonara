@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import { classroomHref, classroomRefValid, lessonWindow, nextJoinableLesson, type ClassroomRef } from "./classroom";
+import { classroomHref, classroomRefValid, lessonAccess, lessonWindow, nextJoinableLesson, type ClassroomRef } from "./classroom";
 import { authorizeClassroom, classroomRoom, type ClassroomParticipant } from "./classroom-token";
 import { computeLedger, type Lesson } from "./ledger";
 
@@ -39,10 +39,33 @@ describe("autorização da sala", () => {
   it("aplica duração da aula, fuso e limites exatos da janela", () => {
     const shorter = {...lesson,durationMinutes:30};
     const window = lessonWindow(shorter);
-    expect(window.opensAt).toBe(Date.parse("2026-10-12T10:45:00-03:00"));
+    expect(window.opensAt).toBe(Date.parse("2026-10-12T10:55:00-03:00"));
     expect(window.closesAt).toBe(Date.parse("2026-10-12T12:00:00-03:00"));
     for(const [offset,status] of [[-1,423],[0,200]] as const) expect(authorizeClassroom({participant:teacher,lesson:shorter,ref,config,now:window.opensAt+offset}).status).toBe(status);
     expect(authorizeClassroom({participant:teacher,lesson:shorter,ref,config,now:window.closesAt}).status).toBe(423);
+  });
+  it.each(["teacher","student"] as const)("aplica os mesmos limites no servidor para %s", role => {
+    const participant={id:role,name:"Teste",role};
+    const cases = [
+      ["2026-10-12T10:54:59.999-03:00", "before", 423],
+      ["2026-10-12T10:55:00.000-03:00", "open", 200],
+      ["2026-10-12T12:29:59.999-03:00", "open", 200],
+      ["2026-10-12T12:30:00.000-03:00", "closed", 423],
+    ] as const;
+    for(const [instant,state,status] of cases) {
+      const now=Date.parse(instant);
+      expect(lessonAccess(lesson,now).state).toBe(state);
+      expect(authorizeClassroom({participant,lesson,ref,config,now}).status).toBe(status);
+    }
+  });
+  it("mantém o próximo card antes da abertura e durante a tolerância; depois mostra o seguinte",()=>{
+    const next={...lesson,date:"2026-10-19"};
+    for(const instant of ["2026-10-12T09:00:00-03:00","2026-10-12T12:29:59.999-03:00"])
+      expect(nextJoinableLesson([lesson,next],Date.parse(instant))).toBe(lesson);
+    expect(nextJoinableLesson([lesson,next],Date.parse("2026-10-12T12:30:00-03:00"))).toBe(next);
+  });
+  it("calcula a abertura no dia anterior para uma aula à meia-noite",()=>{
+    expect(new Date(lessonAccess({...lesson,time:"00:00"},0).opensAt).toISOString()).toBe("2026-10-12T02:55:00.000Z");
   });
   it.each(["desmarcada","feriado","falta"] as const)("não libera aula %s", status => {
     expect(authorizeClassroom({participant:teacher,lesson:{...lesson,status},ref,config,now}).status).toBe(404);

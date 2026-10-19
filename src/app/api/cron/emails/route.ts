@@ -1,9 +1,10 @@
+import {validCronAuthorization} from "@/lib/cron-auth";
 import {processCalendarJobs} from "@/lib/google/worker";
 import { createAdminClient } from "@/lib/supabase/server";
 import { processEmails } from "@/lib/mail/outbox";
 export async function GET(request: Request) {
  const secret=process.env.CRON_SECRET;
- if(!secret||request.headers.get("authorization")!==`Bearer ${secret}`)return new Response("Unauthorized",{status:401});
+ if(!validCronAuthorization(request.headers.get("authorization"),secret))return new Response("Unauthorized",{status:401});
  const db=createAdminClient();
  const now=new Date().toISOString();
  await db.from("student_sessions").delete().lt("expires_at",now);

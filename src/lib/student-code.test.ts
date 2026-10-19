@@ -32,3 +32,12 @@ it.each(["12345","12345678","123456789","abcdef","1234 5678"])("rejeita formato 
 it("pedidos sem link de professor e aluno não consultam o banco",async()=>{const f=new FormData();f.set("email","alice@example.com");expect((await requestStudentCode({phase:"email"},f)).phase).toBe("email");expect(mocks.attempt).not.toHaveBeenCalled();});
 
 it("um desafio sem aluno específico nunca consulta o provedor",async()=>{mocks.attempt.mockResolvedValue({data:[{email:"alice@example.com",auth_user_id:"alice-auth",student_id:null}],error:null});expect((await verifyStudentCode({phase:"code"},form())).error).toContain("inválido");expect(mocks.verify).not.toHaveBeenCalled();expect(mocks.start).not.toHaveBeenCalled();});
+
+it.each(["error","throw"])("não cria sessão do aluno se o logout temporário falhar: %s",async mode=>{
+ if(mode==="throw")mocks.signout.mockRejectedValue(new Error("offline"));else mocks.signout.mockResolvedValue({error:{message:"offline"}});
+ expect((await verifyStudentCode({phase:"code"},form())).error).toContain("inválido");expect(mocks.start).not.toHaveBeenCalled();
+});
+it("encerra a sessão temporária mesmo quando a identidade do OTP não corresponde",async()=>{
+ mocks.verify.mockResolvedValue({data:{user:{id:"other",email:"other@example.com",email_confirmed_at:"2026-10-08"}},error:null});
+ await verifyStudentCode({phase:"code"},form());expect(mocks.signout).toHaveBeenCalledWith({scope:"local"});expect(mocks.start).not.toHaveBeenCalled();
+});

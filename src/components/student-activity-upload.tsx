@@ -12,8 +12,8 @@ import { createBrowserSupabase } from "@/lib/supabase/browser";
 import { DOCUMENT_ACCEPT, validateDocumentFile } from "@/lib/document-rules";
 import { ACTIVITY_BUCKET } from "@/lib/activities";
 import { beginActivitySubmission, cancelActivitySubmission, finishActivitySubmission } from "@/app/student/actions";
-export function StudentActivityUpload({ slug, activityId, incomplete }: {
-    slug: string;
+export function StudentActivityUpload({ studentId, activityId, incomplete }: {
+    studentId: string;
     activityId: string;
     incomplete: boolean;
 }) {
@@ -38,7 +38,7 @@ export function StudentActivityUpload({ slug, activityId, incomplete }: {
         startTransition(async () => {
             let prepared = false;
             try {
-                const result = await beginActivitySubmission(slug, activityId, { fileName: file.name, byteSize: file.size });
+                const result = await beginActivitySubmission(studentId, activityId, { fileName: file.name, byteSize: file.size });
                 if (!result.ok)
                     throw new Error(result.message);
                 prepared = true;
@@ -46,7 +46,7 @@ export function StudentActivityUpload({ slug, activityId, incomplete }: {
                 const uploaded = await client.storage.from(ACTIVITY_BUCKET).uploadToSignedUrl(result.data.path, result.data.token, file, { contentType: result.data.mimeType });
                 if (uploaded.error)
                     throw new Error("O envio falhou. Confira sua conexão e tente novamente.");
-                const finished = await finishActivitySubmission(slug, activityId, result.data.id, String(data.get("note") ?? ""));
+                const finished = await finishActivitySubmission(studentId, activityId, result.data.id, String(data.get("note") ?? ""));
                 if (!finished.ok)
                     throw new Error(finished.message);
                 setMessage("Atividade entregue. Sua professora já pode conferir o arquivo.");
@@ -54,7 +54,7 @@ export function StudentActivityUpload({ slug, activityId, incomplete }: {
             catch (error) {
                 if (prepared) {
                     try {
-                        await cancelActivitySubmission(slug, activityId);
+                        await cancelActivitySubmission(studentId, activityId);
                     }
                     catch { }
                 }
@@ -64,7 +64,7 @@ export function StudentActivityUpload({ slug, activityId, incomplete }: {
     }
     return <div className="activity-upload"><h4>{t("Devolver minha atividade")}</h4>{incomplete ? <><p className="text-xs text-muted">{t("H\u00E1 um envio incompleto. Descarte-o antes de tentar novamente.")}</p><button className="btn-xs" disabled={pending} onClick={() => startTransition(async () => {
                 try {
-                    const result = await cancelActivitySubmission(slug, activityId);
+                    const result = await cancelActivitySubmission(studentId, activityId);
                     setMessage(result.ok ? "Envio incompleto descartado. Você pode tentar novamente." : result.message);
                 }
                 catch {

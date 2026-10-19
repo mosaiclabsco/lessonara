@@ -7,7 +7,7 @@ A sala usa o Jitsi já instalado em meet.mosaic-labs.co. A autenticação de tes
 - Aluno entra pelo código enviado ao email no portal. Não há nova senha de sala.
 - Professor usa o login do Lessonara e entra como moderador; o aluno entra como membro.
 - O backend verifica aluno ativo, professor proprietário ou vínculo válido da sessão do aluno e a ocorrência real da agenda, incluindo cancelamentos, faltas e feriados.
-- Janela de entrada: 15 minutos antes do início até 30 minutos depois do fim, considerando a duração persistida da aula e São Paulo.
+- Janela de entrada: 5 minutos antes do início até 30 minutos depois do fim, considerando a duração persistida da aula e São Paulo. O card continua visível antes da abertura com “Disponível às HH:mm”; após fechar, o resumo passa para a próxima aula. A mesma regra bloqueia a emissão do JWT no servidor.
 - A sala aberta nunca troca automaticamente para outra aula. Professor e aluno saem e entram em outro encontro manualmente.
 
 ## Identidade e tokens

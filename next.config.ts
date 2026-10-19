@@ -1,8 +1,9 @@
+import {securityHeaders} from "./src/lib/security-headers";
 import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
  cacheComponents:true,
  partialPrefetching:true,
- async headers(){return [{source:"/classroom/:path*",headers:[{key:"Referrer-Policy",value:"no-referrer"},{key:"Cache-Control",value:"no-store, private"}]},{source:"/student/:path*",headers:[{key:"Referrer-Policy",value:"no-referrer"}]},{source:"/p/:path*",headers:[{key:"Referrer-Policy",value:"no-referrer"}]},{source:"/:path*",headers:[{key:"X-Robots-Tag",value:"noindex, nofollow, noarchive"}]}];},
+ async headers(){return [{source:"/classroom/:path*",headers:[{key:"Referrer-Policy",value:"no-referrer"},{key:"Cache-Control",value:"no-store, private"}]},{source:"/student/:path*",headers:[{key:"Referrer-Policy",value:"no-referrer"}]},{source:"/p/:path*",headers:[{key:"Referrer-Policy",value:"no-referrer"}]},{source:"/:path*",headers:[...securityHeaders(process.env.JITSI_URL,process.env.NEXT_PUBLIC_SUPABASE_URL,process.env.NODE_ENV==="development"),{key:"X-Robots-Tag",value:"noindex, nofollow, noarchive"}]}];},
  async redirects(){return [
       { source: "/alunos/novo", destination: "/students/new", permanent: true },
       { source: "/alunos/:path*", destination: "/students/:path*", permanent: true },

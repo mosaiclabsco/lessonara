@@ -3,7 +3,7 @@ import type { Lesson } from "./ledger";
 export type ClassroomSource = "schedule" | "appointment" | "makeup";
 export type ClassroomParams = { studentId: string; sourceKind: string; sourceId: string; date: string };
 export type ClassroomRef = { studentId: string; sourceKind: ClassroomSource; sourceId: string; date: string };
-export const EARLY_MINUTES = 15;
+export const EARLY_MINUTES = 5;
 export const LATE_MINUTES = 30;
 
 export function classroomRefValid(ref: ClassroomParams): ref is ClassroomRef {
@@ -17,6 +17,12 @@ export function lessonWindow(lesson: Pick<Lesson, "date" | "time" | "durationMin
   const startsAt = Date.parse(`${lesson.date}T${lesson.time}:00-03:00`);
   const endsAt = startsAt + (lesson.durationMinutes ?? 60) * 60_000;
   return { startsAt, endsAt, opensAt: startsAt - EARLY_MINUTES * 60_000, closesAt: endsAt + LATE_MINUTES * 60_000 };
+}
+
+export function lessonAccess(lesson: Pick<Lesson, "date" | "time" | "durationMinutes">, now: number) {
+  const window = lessonWindow(lesson);
+  const state = now < window.opensAt ? "before" : now >= window.closesAt ? "closed" : "open";
+  return {...window, state};
 }
 
 export function lessonCanJoin(lesson: Lesson) {

@@ -5,5 +5,5 @@ export async function studentActivity(supabase:SupabaseClient,identifier:string,
  if(!access)return null;
  const student={data:access};
  const activity=await supabase.from("activities").select("id,teacher_id,student_id,document_id,due_on,archived_at").eq("id",activityId).eq("student_id",student.data.id).eq("teacher_id",student.data.teacher_id).maybeSingle();
- return activity.error?null:activity.data;
+ return activity.error||!activity.data?null:{...activity.data,studentSlug:access.slug};
 }

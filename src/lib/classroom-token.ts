@@ -1,5 +1,5 @@
 import { createHmac } from "node:crypto";
-import { classroomRefValid, lessonCanJoin, lessonWindow, type ClassroomRef } from "./classroom";
+import { classroomRefValid, lessonCanJoin, lessonAccess, type ClassroomRef } from "./classroom";
 import type { Lesson } from "./ledger";
 
 export type ClassroomParticipant = { id: string; name: string; role: "teacher" | "student" };
@@ -18,8 +18,8 @@ export function authorizeClassroom({ participant, lesson, ref, config, now = Dat
   if (!classroomRefValid(ref) || ref.date !== lesson.date || ref.sourceKind !== lesson.sourceKind || ref.sourceId !== lesson.sourceId || !lessonCanJoin(lesson)) {
     return { status: 404, body: { error: "Aula não disponível." } };
   }
-  const window = lessonWindow(lesson);
-  if (now < window.opensAt || now >= window.closesAt) {
+  const window = lessonAccess(lesson, now);
+  if (window.state !== "open") {
     return { status: 423, body: { error: "A sala está fora do horário de acesso.", opensAt: new Date(window.opensAt).toISOString(), closesAt: new Date(window.closesAt).toISOString() } };
   }
   const roomName = classroomRoom(ref, config.appSecret);

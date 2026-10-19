@@ -981,5 +981,7 @@
   "Documentos do aluno": "Student documents",
   "Adicione um documento para compartilhar com este aluno.": "Add a document to share with this student.",
   "A área de Documentos ainda não está disponível. Conclua a configuração do armazenamento para ativar os envios.": "Documents is not available yet. Complete storage setup to enable uploads.",
-  "A área de Documentos está em preparação. Os materiais poderão ser compartilhados assim que ela estiver disponível.": "Documents is being prepared. Materials can be shared once it is available."
+  "A área de Documentos está em preparação. Os materiais poderão ser compartilhados assim que ela estiver disponível.": "Documents is being prepared. Materials can be shared once it is available.",
+  "Disponível às {time}": "Available at {time}",
+  "Acesso encerrado": "Access closed"
 }

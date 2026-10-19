@@ -84,7 +84,7 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
               </details><LessonList lessons={ledger.lessons.filter(l=>l.status==="reposicao")} actions={Object.fromEntries(lessons.map(l=>[`${l.date}-${l.time}-${l.status}`,lessonActions(l)]))}/></section>} aulas={<div className="detail-grid profile-lessons-grid">
             <section className="card">
               <h2 className="h2">{t("Pr\u00F3ximas aulas")}</h2>
-              {classroomLink && <ClassroomEntry href={classroomLink}/>}<LessonList lessons={upcoming} actions={Object.fromEntries(lessons.map(l=>[`${l.date}-${l.time}-${l.status}`,lessonActions(l)]))}/>
+              {classroomLink && classroomNext && <ClassroomEntry href={classroomLink} lesson={classroomNext} now={Date.parse(`${today}T${nowInTZ().time}:00-03:00`)}/>}<LessonList lessons={upcoming} actions={Object.fromEntries(lessons.map(l=>[`${l.date}-${l.time}-${l.status}`,lessonActions(l)]))}/>
 
             </section>
 

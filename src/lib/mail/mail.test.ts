@@ -3,7 +3,7 @@ import { seal, unseal, fingerprint } from "./crypto";
 import { otpEmail, welcomeEmail, reminderEmail } from "./templates";
 beforeEach(()=>{vi.stubEnv("EMAIL_ENCRYPTION_KEY","01".repeat(32));vi.stubEnv("APP_URL","https://lessonara.example");});
 afterEach(()=>vi.unstubAllEnvs());
-it("códigos ficam criptografados e adulteração é rejeitada",()=>{const encoded=seal({code:"123456"});expect(encoded).not.toContain("123456");expect(unseal(encoded)).toEqual({code:"123456"});const corrupt=Buffer.from(encoded,"base64url");corrupt[30]^=1;expect(()=>unseal(corrupt.toString("base64url"))).toThrow();});
+it("códigos ficam criptografados e adulteração é rejeitada",()=>{const encoded=seal({code:"123456"},"otp");expect(encoded).not.toContain("123456");expect(unseal(encoded,"otp")).toEqual({code:"123456"});const corrupt=Buffer.from(encoded.split(".")[2],"base64url");corrupt[30]^=1;expect(()=>unseal(`v2.otp.${corrupt.toString("base64url")}`,"otp")).toThrow();});
 it("não expõe IP/email nos contadores",()=>{expect(fingerprint("alice@example.com")).toHaveLength(64);expect(fingerprint("alice@example.com")).not.toContain("alice");});
 it("templates escapam nomes e nenhum convite contém segredo do aluno",()=>{const welcome=welcomeEmail('<img src=x onerror="alert(1)">',"Prof <script>");expect(welcome.html).not.toContain("<img");expect(welcome.html).toContain("&lt;img");expect(welcome.html).toContain("https://lessonara.example/student");expect(welcome.html).not.toContain("/a/");expect(reminderEmail("Aluno","Prof","Fim").html).not.toContain("/a/");});
 it("OTP tem código, prazo e aviso contra compartilhamento",()=>{const otp=otpEmail("123456");expect(otp.text).toContain("123456");expect(otp.html).toContain("10 minutos");});

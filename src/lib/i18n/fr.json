@@ -981,5 +981,7 @@
   "Documentos do aluno": "Documents de l’élève",
   "Adicione um documento para compartilhar com este aluno.": "Ajoutez un document à partager avec cet élève.",
   "A área de Documentos ainda não está disponível. Conclua a configuração do armazenamento para ativar os envios.": "L’espace Documents n’est pas encore disponible. Terminez la configuration du stockage pour activer les envois.",
-  "A área de Documentos está em preparação. Os materiais poderão ser compartilhados assim que ela estiver disponível.": "L’espace Documents est en préparation. Les documents pourront être partagés dès qu’il sera disponible."
+  "A área de Documentos está em preparação. Os materiais poderão ser compartilhados assim que ela estiver disponível.": "L’espace Documents est en préparation. Les documents pourront être partagés dès qu’il sera disponible.",
+  "Disponível às {time}": "Disponible à {time}",
+  "Acesso encerrado": "Accès fermé"
 }

@@ -1,5 +1,7 @@
 "use client";
 import {useEffect, useRef, useState, useTransition} from "react";
+import {useLessonClock} from "./use-lesson-clock";
+import {LessonUnavailable} from "./lesson-unavailable";
 import {useRouter} from "next/navigation";
 import "@/lib/desktop-client";
 import {signOut} from "@/app/login/actions";
@@ -9,11 +11,11 @@ import {Button} from "./button";
 import {Icon} from "./icon";
 import {LogoMark} from "./logo";
 
-type Call = {id:string; date:string; time:string; name:string; href:string; startsAt:number; endsAt:number; closesAt:number};
+type Call = {id:string; date:string; time:string; name:string; href:string; startsAt:number; opensAt:number; endsAt:number; closesAt:number};
 export function CallsHome({name,enabled,today,now,lessons}:{name:string;enabled:boolean;today:string;now:number;lessons:Call[]}) {
   const router=useRouter();
   const [pending,startTransition]=useTransition();
-  const [clock,setClock]=useState(now);
+  const clock=useLessonClock(now,lessons.flatMap(lesson=>[lesson.opensAt,lesson.startsAt,lesson.endsAt,lesson.closesAt]));
   const [chosenDate,setChosenDate]=useState<string|null>(null);
   const loadedDay=useRef(today);
   useEffect(()=>{loadedDay.current=today;},[today]);
@@ -21,7 +23,6 @@ export function CallsHome({name,enabled,today,now,lessons}:{name:string;enabled:
     window.lessonaraDesktop?.hubReady?.();
     const tick=()=>{
       const current=Date.now();
-      setClock(current);
       const day=nowInTZ(new Date(current)).today;
       if(day!==loadedDay.current){
         loadedDay.current=day;
@@ -40,7 +41,7 @@ export function CallsHome({name,enabled,today,now,lessons}:{name:string;enabled:
   const daily=lessons.filter(l=>l.date===selectedDate);
   const upcoming=daily.filter(l=>l.endsAt>clock);
   const ended=daily.filter(l=>l.endsAt<=clock);
-  const refresh=()=>{setClock(Date.now());startTransition(()=>router.refresh());};
+  const refresh=()=>startTransition(()=>router.refresh());
   const renderCall=(lesson:Call)=>{
     const finished=lesson.endsAt<=clock;
     const live=lesson.startsAt<=clock&&!finished;
@@ -49,7 +50,7 @@ export function CallsHome({name,enabled,today,now,lessons}:{name:string;enabled:
       <div className="call-time"><strong>{lesson.time}</strong><span>{Math.round((lesson.endsAt-lesson.startsAt)/60_000)} min</span></div>
       <span className="call-avatar" aria-hidden="true">{initials}</span>
       <div className="call-person"><h3>{lesson.name}</h3><span className={`call-status ${live?'call-status-live':''}`}><Icon name={finished?'check':live?'video':'clock'} className="h-3 w-3"/>{finished?'Encerrada':live?'Em andamento':'Agendada'}</span></div>
-      {lesson.closesAt>clock?<a className={finished?'btn-ghost':'btn'} href={lesson.href}><Icon name="video" className="h-4 w-4"/>{finished?'Voltar à chamada':'Entrar na chamada'}</a>:<span className="text-muted text-sm">Horário encerrado</span>}
+      {clock<lesson.opensAt?<LessonUnavailable opensAt={lesson.opensAt}/>:lesson.closesAt>clock?<a className={finished?'btn-ghost':'btn'} href={lesson.href}><Icon name="video" className="h-4 w-4"/>{finished?'Voltar à chamada':'Entrar na chamada'}</a>:<span className="text-muted text-sm">Horário encerrado</span>}
     </li>;
   };
   return <main className="calls-home">
