@@ -1,4 +1,4 @@
-import { beforeEach, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   connection: vi.fn(),
@@ -10,9 +10,10 @@ vi.mock("next/server", () => ({ connection: mocks.connection }));
 vi.mock("next/headers", () => ({ cookies: mocks.cookies }));
 vi.mock("@supabase/ssr", () => ({ createServerClient: mocks.createServerClient }));
 
-import { createClient, requireUser } from "./server";
+import { createAdminClient, createClient, requireUser } from "./server";
 
 beforeEach(() => vi.resetAllMocks());
+afterEach(() => vi.unstubAllEnvs());
 
 it("aguarda uma requisição antes de inicializar o auth do Supabase", async () => {
   let acceptRequest!: () => void;
@@ -98,4 +99,12 @@ it("redirects an expired teacher before membership or privileged queries", async
   });
   await expect(requireUser()).rejects.toThrow("NEXT_REDIRECT");
   expect(from).not.toHaveBeenCalled();
+});
+
+it("refuses production data access from preview deployments", async () => {
+  vi.stubEnv("VERCEL_ENV", "preview");
+  await expect(createClient()).rejects.toThrow("isolated data");
+  expect(mocks.cookies).not.toHaveBeenCalled();
+  expect(mocks.createServerClient).not.toHaveBeenCalled();
+  expect(() => createAdminClient()).toThrow("isolated data");
 });

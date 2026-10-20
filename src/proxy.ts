@@ -5,6 +5,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import { isPublicPath } from "@/lib/public-routes";
 
 export async function proxy(request: NextRequest) {
+  // Preview deployments have no isolated database yet and must not serve production data.
+  if (process.env.VERCEL_ENV === "preview")
+    return new NextResponse("Ambiente de teste indisponível até configurar dados isolados.", {
+      status: 503,
+      headers: { "Cache-Control": "no-store" },
+    });
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(

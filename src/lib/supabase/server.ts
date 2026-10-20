@@ -10,10 +10,16 @@ import { connection } from "next/server";
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
 
+function assertDataEnvironment() {
+  if (process.env.VERCEL_ENV === "preview")
+    throw new Error("Preview requires an isolated data environment.");
+}
+
 /** Cliente com a sessão do professor logado (RLS ativo). */
 export const createClient = cache(async function createClient() {
   // A inicialização do auth consulta o relógio; deve ocorrer só na requisição.
   await connection();
+  assertDataEnvironment();
   const cookieStore = await cookies();
   return createServerClient(url, publishableKey, {
     global: { fetch: measuredFetch },
@@ -32,6 +38,7 @@ export const createClient = cache(async function createClient() {
 
 /** Cliente com a secret key: ignora RLS. Usar somente após autorização explícita no servidor e no cron. */
 export function createAdminClient() {
+  assertDataEnvironment();
   return createSupabaseClient(url, process.env.SUPABASE_SECRET_KEY!, {
     auth: { persistSession: false, autoRefreshToken: false },
   });

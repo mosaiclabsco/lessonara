@@ -37,7 +37,7 @@ Lógica do saldo em `src/lib/ledger.ts` (testes: `pnpm test`).
 
 1. Suba o repositório no GitHub e importe na Vercel.
 2. Configure as variáveis de `.env.example`.
-3. O cron em `vercel.json` chama `/api/cron/reminders` todo dia às 9h (12h UTC). A Vercel envia `CRON_SECRET` automaticamente no header.
+3. Configure os workers pelo Supabase Cron conforme `supabase/operations/schedule-workers.sql`. O segredo existente deve estar no Vault como `lessonara_cron_secret`; as rotas exigem Authorization Bearer.
 
 ### Local
 
@@ -234,3 +234,5 @@ Para rotacionar a criptografia: publique leitores v3 com `EMAIL_ENCRYPTION_KEY_N
 A migração `0020_reminder_batches.sql` adiciona cursor persistente e lease por execução diária. Cada chamada de lembretes lê até 100 alunos; a fila e o cursor são confirmados na mesma transação. O worker de emails processa seus próprios lotes. Agende ambos a cada cinco minutos pelo Supabase Cron, usando o segredo existente no Vault; não inclua valores de segredos nas consultas salvas.
 
 Validação local e CI: `pnpm format:check`, `pnpm lint`, `pnpm exec vitest run --maxWorkers=2` e `pnpm build`.
+
+Os previews têm proteção de acesso da Vercel e não recebem as chaves administrativas de produção. Enquanto não houver um projeto de dados isolado, o proxy responde 503 no Preview e os clientes de banco recusam inicialização. Não habilite um preview contra a base de produção para contornar essa restrição.
