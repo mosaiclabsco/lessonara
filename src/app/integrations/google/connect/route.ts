@@ -1,2 +1,41 @@
-import {randomBytes,createHash} from "node:crypto";import {cookies} from "next/headers";import {NextResponse} from "next/server";import {requireUser} from "@/lib/supabase/server";import {seal} from "@/lib/mail/crypto";import {googleConfigured,googleRedirectUri} from "@/lib/google/calendar";
-export async function GET(){const {userId}=await requireUser();if(!googleConfigured())return NextResponse.redirect(new URL('/settings?google=setup',process.env.APP_URL||'http://localhost:3001'));const state=randomBytes(32).toString('base64url');const verifier=randomBytes(32).toString('base64url');const jar=await cookies();jar.set('lessonara_google_state',seal({state,verifier,userId,createdAt:Date.now()},"google-state"),{httpOnly:true,secure:process.env.NODE_ENV==='production',sameSite:'lax',path:'/',maxAge:600});const url=new URL('https://accounts.google.com/o/oauth2/v2/auth');url.search=new URLSearchParams({client_id:process.env.GOOGLE_CLIENT_ID!,redirect_uri:googleRedirectUri(),response_type:'code',scope:'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.freebusy',access_type:'offline',prompt:'consent',state,code_challenge:createHash('sha256').update(verifier).digest('base64url'),code_challenge_method:'S256'}).toString();return NextResponse.redirect(url);}
+import { randomBytes, createHash } from "node:crypto";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import { requireUser } from "@/lib/supabase/server";
+import { seal } from "@/lib/mail/crypto";
+import { googleConfigured, googleRedirectUri } from "@/lib/google/calendar";
+export async function GET() {
+  const { userId } = await requireUser();
+  if (!googleConfigured())
+    return NextResponse.redirect(
+      new URL("/settings?google=setup", process.env.APP_URL || "http://localhost:3001"),
+    );
+  const state = randomBytes(32).toString("base64url");
+  const verifier = randomBytes(32).toString("base64url");
+  const jar = await cookies();
+  jar.set(
+    "lessonara_google_state",
+    seal({ state, verifier, userId, createdAt: Date.now() }, "google-state"),
+    {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 600,
+    },
+  );
+  const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+  url.search = new URLSearchParams({
+    client_id: process.env.GOOGLE_CLIENT_ID!,
+    redirect_uri: googleRedirectUri(),
+    response_type: "code",
+    scope:
+      "https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.freebusy",
+    access_type: "offline",
+    prompt: "consent",
+    state,
+    code_challenge: createHash("sha256").update(verifier).digest("base64url"),
+    code_challenge_method: "S256",
+  }).toString();
+  return NextResponse.redirect(url);
+}

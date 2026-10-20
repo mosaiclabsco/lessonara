@@ -1,5 +1,70 @@
-import {measure} from "@/lib/performance";
+import { measure } from "@/lib/performance";
 import Link from "next/link";
-import {GoogleSyncButton} from "./google-sync-button";
-import {getTranslator} from "@/lib/i18n/server";import {ActionForm,SubmitButton} from "./action-form";import {disconnectGoogle,previewGoogleSync} from "@/app/(panel)/settings/google-actions";import {Icon} from "./icon";
-export async function GoogleIntegration({configured,connected,error}:{configured:boolean;connected:boolean;error?:string|null}){const {t}=await getTranslator();const counts=connected?await measure("google.preview",()=>previewGoogleSync()):{missing:0,pending:0,failed:0};return <section className="card space-y-4"><h2 className="h2">{t("Integrações")}</h2><div className="section-heading"><div><h3>{t("Google Calendar e Meet")}</h3><p>{t("Consulte horários ocupados e crie eventos com Meet ao agendar aulas.")}</p></div><Icon name="calendar" className="h-5 w-5 text-accent"/></div>{!configured?<p className="text-sm text-muted">{t("A conexão estará disponível quando o administrador configurar a integração Google.")}</p>:connected?<><p className="text-sm text-ok">{t("Conta Google conectada")}</p>{error&&<p className="text-sm text-bad">{t(error)}</p>}<div className="flex gap-3 flex-wrap"><GoogleSyncButton counts={counts}/><ActionForm action={disconnectGoogle}><SubmitButton className="btn-ghost btn-warning" icon="logout">{t("Desconectar Google")}</SubmitButton></ActionForm></div></>:<a className="btn" href="/integrations/google/connect"><Icon name="calendar" className="h-4 w-4"/>{t("Conectar Google")}</a>}<p className="text-xs text-muted">{t("A integração usa a agenda principal, a duração configurada por aula e o fuso de São Paulo.")}</p><p className="text-xs text-muted"><Link href="/privacy" className="text-accent underline">{t("Privacidade")}</Link> · <Link href="/terms" className="text-accent underline">{t("Termos de uso")}</Link></p></section>;}
+import { GoogleSyncButton } from "./google-sync-button";
+import { getTranslator } from "@/lib/i18n/server";
+import { ActionForm, SubmitButton } from "./action-form";
+import { disconnectGoogle, previewGoogleSync } from "@/app/(panel)/settings/google-actions";
+import { Icon } from "./icon";
+export async function GoogleIntegration({
+  configured,
+  connected,
+  error,
+}: {
+  configured: boolean;
+  connected: boolean;
+  error?: string | null;
+}) {
+  const { t } = await getTranslator();
+  const counts = connected
+    ? await measure("google.preview", () => previewGoogleSync())
+    : { missing: 0, pending: 0, failed: 0 };
+  return (
+    <section className="card space-y-4">
+      <h2 className="h2">{t("Integrações")}</h2>
+      <div className="section-heading">
+        <div>
+          <h3>{t("Google Calendar e Meet")}</h3>
+          <p>{t("Consulte horários ocupados e crie eventos com Meet ao agendar aulas.")}</p>
+        </div>
+        <Icon name="calendar" className="h-5 w-5 text-accent" />
+      </div>
+      {!configured ? (
+        <p className="text-sm text-muted">
+          {t("A conexão estará disponível quando o administrador configurar a integração Google.")}
+        </p>
+      ) : connected ? (
+        <>
+          <p className="text-sm text-ok">{t("Conta Google conectada")}</p>
+          {error && <p className="text-sm text-bad">{t(error)}</p>}
+          <div className="flex gap-3 flex-wrap">
+            <GoogleSyncButton counts={counts} />
+            <ActionForm action={disconnectGoogle}>
+              <SubmitButton className="btn-ghost btn-warning" icon="logout">
+                {t("Desconectar Google")}
+              </SubmitButton>
+            </ActionForm>
+          </div>
+        </>
+      ) : (
+        <a className="btn" href="/integrations/google/connect">
+          <Icon name="calendar" className="h-4 w-4" />
+          {t("Conectar Google")}
+        </a>
+      )}
+      <p className="text-xs text-muted">
+        {t(
+          "A integração usa a agenda principal, a duração configurada por aula e o fuso de São Paulo.",
+        )}
+      </p>
+      <p className="text-xs text-muted">
+        <Link href="/privacy" className="text-accent underline">
+          {t("Privacidade")}
+        </Link>{" "}
+        ·{" "}
+        <Link href="/terms" className="text-accent underline">
+          {t("Termos de uso")}
+        </Link>
+      </p>
+    </section>
+  );
+}

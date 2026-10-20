@@ -1,5 +1,7 @@
-import {measure,measuredFetch} from "../performance";
-import {cache} from "react";
+import { redirect } from "next/navigation";
+import { teacherSessionValid } from "../teacher-session";
+import { measure, measuredFetch } from "../performance";
+import { cache } from "react";
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
@@ -9,7 +11,7 @@ const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
 
 /** Cliente com a sessão do professor logado (RLS ativo). */
-export const createClient=cache(async function createClient() {
+export const createClient = cache(async function createClient() {
   // A inicialização do auth consulta o relógio; deve ocorrer só na requisição.
   await connection();
   const cookieStore = await cookies();
@@ -35,11 +37,18 @@ export function createAdminClient() {
   });
 }
 
-export const requireUser=cache(async function requireUser() {
+export const requireUser = cache(async function requireUser() {
   const supabase = await createClient();
-  const { data } = await measure("auth.session",()=>supabase.auth.getClaims());
-  if (!data?.claims) throw new Error("Não autenticado");
-  const teacher = await measure("auth.teacher", () => supabase.from("teachers").select("id,name,email,lesson_minutes,profile_completed_at,platform_plan").eq("id", data.claims.sub).maybeSingle());
+  const { data } = await measure("auth.session", () => supabase.auth.getClaims());
+  if (!data?.claims || !(await teacherSessionValid(supabase, data.claims)))
+    redirect("/login?expired=1");
+  const teacher = await measure("auth.teacher", () =>
+    supabase
+      .from("teachers")
+      .select("id,name,email,lesson_minutes,profile_completed_at,platform_plan")
+      .eq("id", data.claims.sub)
+      .maybeSingle(),
+  );
   if (teacher.error || !teacher.data) throw new Error("Acesso de professor(a) necessário.");
   return { supabase, userId: data.claims.sub as string, teacher: teacher.data };
 });

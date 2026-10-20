@@ -3,9 +3,13 @@
 import { randomBytes } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SECRET_KEY!, {
-  auth: { persistSession: false },
-});
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SECRET_KEY!,
+  {
+    auth: { persistSession: false },
+  },
+);
 
 const SEED = "[seed]";
 
@@ -28,7 +32,7 @@ function addDays(date: string, days: number): string {
 function weekdayWeeksAgo(weekday: number, weeksAgo: number): string {
   const t = today();
   const current = new Date(`${t}T00:00:00Z`).getUTCDay();
-  return addDays(t, (weekday - current) - weeksAgo * 7);
+  return addDays(t, weekday - current - weeksAgo * 7);
 }
 
 type SeedStudent = {
@@ -40,7 +44,12 @@ type SeedStudent = {
   active?: boolean;
   schedules: { weekday: number; time: string; weeksAgo: number; endsWeeksAgo?: number }[];
   packages: { weeksAgo: number; lessons: number; amount?: number }[];
-  events: { kind: "falta" | "desmarcada" | "reposicao"; weekday: number; time: string; weeksAgo: number }[];
+  events: {
+    kind: "falta" | "desmarcada" | "reposicao";
+    weekday: number;
+    time: string;
+    weeksAgo: number;
+  }[];
 };
 
 // ---------- Carga em massa (determinística) ----------
@@ -55,15 +64,90 @@ function prng(seed: number) {
   };
 }
 
-const FIRST = ["Alice", "Beatriz", "Caio", "Daniela", "Eduardo", "Fernanda", "Gabriel", "Helena", "Igor", "Júlia", "Kaique", "Larissa", "Marcelo", "Natália", "Otávio", "Paula", "Rafael", "Sofia", "Tiago", "Valentina", "Vitor", "Yasmin", "André", "Bianca", "Lucas", "Camila", "Felipe", "Isabela", "Matheus", "Luana", "Pedro", "Mariana", "Gustavo", "Letícia", "Renan", "Clara"];
-const LAST = ["Almeida", "Barbosa", "Cardoso", "Costa", "Dias", "Ferreira", "Gomes", "Moreira", "Nascimento", "Oliveira", "Pereira", "Ribeiro", "Santos", "Silva", "Teixeira", "Vieira", "Araújo", "Carvalho", "Freitas", "Monteiro"];
+const FIRST = [
+  "Alice",
+  "Beatriz",
+  "Caio",
+  "Daniela",
+  "Eduardo",
+  "Fernanda",
+  "Gabriel",
+  "Helena",
+  "Igor",
+  "Júlia",
+  "Kaique",
+  "Larissa",
+  "Marcelo",
+  "Natália",
+  "Otávio",
+  "Paula",
+  "Rafael",
+  "Sofia",
+  "Tiago",
+  "Valentina",
+  "Vitor",
+  "Yasmin",
+  "André",
+  "Bianca",
+  "Lucas",
+  "Camila",
+  "Felipe",
+  "Isabela",
+  "Matheus",
+  "Luana",
+  "Pedro",
+  "Mariana",
+  "Gustavo",
+  "Letícia",
+  "Renan",
+  "Clara",
+];
+const LAST = [
+  "Almeida",
+  "Barbosa",
+  "Cardoso",
+  "Costa",
+  "Dias",
+  "Ferreira",
+  "Gomes",
+  "Moreira",
+  "Nascimento",
+  "Oliveira",
+  "Pereira",
+  "Ribeiro",
+  "Santos",
+  "Silva",
+  "Teixeira",
+  "Vieira",
+  "Araújo",
+  "Carvalho",
+  "Freitas",
+  "Monteiro",
+];
 
 // Peso de cada horário: pouco de manhã, mais à tarde, maioria à noite.
-const HOUR_WEIGHTS: Record<number, number> = { 8: 0.3, 9: 0.4, 10: 0.4, 11: 0.4, 13: 1.5, 14: 2, 15: 2.5, 16: 3, 17: 5, 18: 8, 19: 8, 20: 7, 21: 4 };
+const HOUR_WEIGHTS: Record<number, number> = {
+  8: 0.3,
+  9: 0.4,
+  10: 0.4,
+  11: 0.4,
+  13: 1.5,
+  14: 2,
+  15: 2.5,
+  16: 3,
+  17: 5,
+  18: 8,
+  19: 8,
+  20: 7,
+  21: 4,
+};
 const SATURDAY_HOURS: Record<number, number> = { 9: 2, 10: 3, 11: 3, 12: 1 };
 // Média ~7 aulas por dia útil, sábado mais leve.
 const SLOTS_PER_DAY: Record<number, number> = { 1: 7, 2: 7, 3: 7, 4: 8, 5: 6, 6: 3 };
-const PAIRS: [number, number][] = [[1, 3], [2, 4]];
+const PAIRS: [number, number][] = [
+  [1, 3],
+  [2, 4],
+];
 
 const hhmm = (h: number) => `${String(h).padStart(2, "0")}:00`;
 
@@ -80,7 +164,9 @@ function generateBulk(
   const taken = new Map<number, Set<number>>();
   for (const [wd, target] of Object.entries(SLOTS_PER_DAY)) {
     const weekday = Number(wd);
-    const hours = new Set(reserved.filter((r) => r.weekday === weekday).map((r) => Number(r.time.slice(0, 2))));
+    const hours = new Set(
+      reserved.filter((r) => r.weekday === weekday).map((r) => Number(r.time.slice(0, 2))),
+    );
     const pool = { ...(weekday === 6 ? SATURDAY_HOURS : HOUR_WEIGHTS) };
     for (const h of hours) delete pool[h];
     const free = new Set<number>();
@@ -103,7 +189,10 @@ function generateBulk(
   for (const [a, b] of PAIRS) {
     const common = [...taken.get(a)!].filter((h) => taken.get(b)!.has(h));
     for (const h of common.slice(0, 2 + Math.floor(rand() * 2))) {
-      slotsOf.push([{ weekday: a, hour: h }, { weekday: b, hour: h }]);
+      slotsOf.push([
+        { weekday: a, hour: h },
+        { weekday: b, hour: h },
+      ]);
       taken.get(a)!.delete(h);
       taken.get(b)!.delete(h);
     }
@@ -119,7 +208,8 @@ function generateBulk(
     names.add(name);
 
     const plan = slots.length === 2 ? plan2x : plan1x;
-    const override = rand() < 0.15 ? (slots.length === 2 ? pick([450, 470]) : pick([250, 280])) : undefined;
+    const override =
+      rand() < 0.15 ? (slots.length === 2 ? pick([450, 470]) : pick([250, 280])) : undefined;
     const startsWeeksAgo = between(1, 16);
     const roll = rand();
     const kind = roll < 0.07 ? "inativo" : roll < 0.2 ? "devendo" : roll < 0.32 ? "acabando" : "ok";
@@ -137,7 +227,12 @@ function generateBulk(
         } else if (k >= 1 && r < 0.12) {
           events.push({ kind: "desmarcada", weekday: s.weekday, time: hhmm(s.hour), weeksAgo: k });
           if (rand() < 0.4) {
-            events.push({ kind: "reposicao", weekday: 6, time: hhmm(pick([13, 14, 15])), weeksAgo: k });
+            events.push({
+              kind: "reposicao",
+              weekday: 6,
+              time: hhmm(pick([13, 14, 15])),
+              weeksAgo: k,
+            });
             used++;
           }
         } else used++;
@@ -146,10 +241,13 @@ function generateBulk(
 
     const size = plan.lessons;
     let count =
-      kind === "devendo" ? Math.floor((used - 1) / size)
-      : kind === "inativo" ? Math.ceil(used / size)
-      : kind === "acabando" ? Math.ceil(used / size)
-      : Math.floor(used / size) + 1 + (rand() < 0.3 ? 1 : 0);
+      kind === "devendo"
+        ? Math.floor((used - 1) / size)
+        : kind === "inativo"
+          ? Math.ceil(used / size)
+          : kind === "acabando"
+            ? Math.ceil(used / size)
+            : Math.floor(used / size) + 1 + (rand() < 0.3 ? 1 : 0);
     count = Math.max(kind === "devendo" ? 0 : 1, count);
 
     const weeksPerPackage = size / slots.length;
@@ -165,7 +263,12 @@ function generateBulk(
       plan,
       price_override: override,
       active: kind !== "inativo",
-      schedules: slots.map((s) => ({ weekday: s.weekday, time: hhmm(s.hour), weeksAgo: startsWeeksAgo, endsWeeksAgo })),
+      schedules: slots.map((s) => ({
+        weekday: s.weekday,
+        time: hhmm(s.hour),
+        weeksAgo: startsWeeksAgo,
+        endsWeeksAgo,
+      })),
       packages,
       events,
     };
@@ -180,14 +283,22 @@ async function getTeacher(emailArg?: string) {
   } else if (teachers.length === 1) {
     return { teacher: teachers[0], password: null };
   } else if (teachers.length > 1) {
-    throw new Error(`Mais de um professor; informe o email: ${teachers.map((t) => t.email).join(", ")}`);
+    throw new Error(
+      `Mais de um professor; informe o email: ${teachers.map((t) => t.email).join(", ")}`,
+    );
   }
 
   const email = emailArg ?? "prof@lessonara.test";
   const password = randomBytes(9).toString("base64url");
-  const { data, error } = await supabase.auth.admin.createUser({ email, password, email_confirm: true });
+  const { data, error } = await supabase.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+  });
   if (error) throw error;
-  const teacher = check(await supabase.from("teachers").select("id, email, name").eq("id", data.user.id).single());
+  const teacher = check(
+    await supabase.from("teachers").select("id, email, name").eq("id", data.user.id).single(),
+  );
   return { teacher, password };
 }
 
@@ -197,12 +308,16 @@ async function main() {
     check(await supabase.from("teachers").update({ name: "Prof. Teste" }).eq("id", teacher.id));
   }
 
-  const plans = check(await supabase.from("plans").select("id, lessons, price").eq("teacher_id", teacher.id));
+  const plans = check(
+    await supabase.from("plans").select("id, lessons, price").eq("teacher_id", teacher.id),
+  );
   const plan1x = plans.find((p) => p.lessons === 4);
   const plan2x = plans.find((p) => p.lessons === 8);
   if (!plan1x || !plan2x) throw new Error("Planos padrão (4 e 8 aulas) não encontrados.");
 
-  check(await supabase.from("students").delete().eq("teacher_id", teacher.id).like("notes", `${SEED}%`));
+  check(
+    await supabase.from("students").delete().eq("teacher_id", teacher.id).like("notes", `${SEED}%`),
+  );
 
   const students: SeedStudent[] = [
     {
@@ -213,7 +328,10 @@ async function main() {
         { weekday: 1, time: "18:00", weeksAgo: 3 },
         { weekday: 3, time: "18:00", weeksAgo: 3 },
       ],
-      packages: [{ weeksAgo: 3, lessons: 8 }, { weeksAgo: 0, lessons: 8 }],
+      packages: [
+        { weeksAgo: 3, lessons: 8 },
+        { weeksAgo: 0, lessons: 8 },
+      ],
       events: [
         { kind: "falta", weekday: 1, time: "18:00", weeksAgo: 2 },
         { kind: "desmarcada", weekday: 3, time: "18:00", weeksAgo: 1 },
@@ -242,7 +360,10 @@ async function main() {
       plan: plan1x,
       price_override: 250,
       schedules: [{ weekday: 2, time: "20:00", weeksAgo: 4 }],
-      packages: [{ weeksAgo: 4, lessons: 4, amount: 250 }, { weeksAgo: 0, lessons: 4, amount: 250 }],
+      packages: [
+        { weeksAgo: 4, lessons: 4, amount: 250 },
+        { weeksAgo: 0, lessons: 4, amount: 250 },
+      ],
       events: [
         { kind: "desmarcada", weekday: 2, time: "20:00", weeksAgo: 2 },
         { kind: "reposicao", weekday: 6, time: "11:00", weeksAgo: 2 },

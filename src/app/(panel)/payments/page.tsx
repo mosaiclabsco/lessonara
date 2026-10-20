@@ -4,7 +4,11 @@ import { PaymentCenter } from "@/components/payment-center";
 import { loadTeacherOverview } from "@/lib/teacher-overview";
 
 export default function PaymentsPage() {
-  return <Suspense fallback={<PanelLoading />}><PaymentData /></Suspense>;
+  return (
+    <Suspense fallback={<PanelLoading />}>
+      <PaymentData />
+    </Suspense>
+  );
 }
 
 async function PaymentData() {

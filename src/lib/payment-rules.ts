@@ -5,10 +5,18 @@ export function paymentStatus(remaining: number): PaymentStatus {
 }
 
 export function paymentMessage(name: string, remaining: number, link: string) {
-  const balance = remaining < 0 ? `há ${-remaining} aula(s) utilizada(s) além do pacote pago` : remaining === 0 ? "seu pacote de aulas acabou" : `restam ${remaining} aula(s) no seu pacote`;
+  const balance =
+    remaining < 0
+      ? `há ${-remaining} aula(s) utilizada(s) além do pacote pago`
+      : remaining === 0
+        ? "seu pacote de aulas acabou"
+        : `restam ${remaining} aula(s) no seu pacote`;
   return `Olá, ${name}! Passando para lembrar que ${balance}. Vamos combinar a renovação? Você pode acompanhar suas aulas aqui: ${link}`;
 }
 
 export function escapeEmailHtml(value: string) {
-  return value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]!);
+  return value.replace(
+    /[&<>"']/g,
+    (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]!,
+  );
 }

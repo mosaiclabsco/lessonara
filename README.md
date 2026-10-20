@@ -222,3 +222,15 @@ Os envelopes novos usam `v2.<finalidade>.<dados>`, AES-256-GCM com tag de 16 byt
 A publicação dessa mudança exige transição coordenada dos leitores: instâncias antigas não entendem envelopes v2. Publicar primeiro com `SEAL_WRITE_VERSION=v1` para atualizar os leitores sem produzir dados que instâncias antigas não entendem. Depois de drenar as instâncias antigas, configurar `SEAL_WRITE_VERSION=v2` e publicar os produtores v2. O padrão do código é v2; a primeira etapa exige explicitamente v1 na configuração do deploy. A alteração de derivação do fingerprint reinicia as janelas dos contadores anteriores uma vez; não altera hashes das sessões dos alunos. A publicação em produção foi concluída em duas etapas em 19/10/2026: leitores compatíveis com escrita v1, seguidos de escrita v2. Login real de teste, páginas protegidas, headers e emissão de estado OAuth v2 foram conferidos no domínio público. A migração dos registros antigos e a retirada do fallback legado continuam pendentes.
 
 O login do professor aplica limites persistidos na RPC existente `allow_student_auth`: 60 tentativas/IP, 20/conta e 10/par IP+conta em 15 minutos. Email e IP são enviados ao contador como HMAC. Falha do contador bloqueia a autenticação. A proteção do endpoint direto do Supabase Auth continua dependendo das configurações do provedor; o limite da Server Action não o substitui.
+
+## Proteções de autenticação e rotação
+
+A migração `0019_teacher_sessions.sql` limita sessões autenticadas a 24 horas desde o login. Configure o hook de access token `public.teacher_access_token_hook`; a política de banco e o pre-request da Data API também verificam a sessão original. O portal usa a claim assinada `session_expires_at` e exige novo login após o prazo.
+
+O Turnstile usa `NEXT_PUBLIC_TURNSTILE_SITE_KEY` no portal e na entrada do desktop. A chave secreta pertence somente ao Supabase Auth. Publique e valide ambos os fluxos antes de exigir CAPTCHA no provedor.
+
+Para rotacionar a criptografia: publique leitores v3 com `EMAIL_ENCRYPTION_KEY_NEXT`, altere `SEAL_WRITE_VERSION=v3`, aguarde as instâncias anteriores drenarem e execute `SEAL_WRITE_VERSION=v3 node --env-file=.env.local scripts/migrate-email-envelopes.mts`. O script preserva concorrência comparando o conteúdo criptografado original. Repita se houver conflitos. Somente após confirmar a migração, configure `EMAIL_ACCEPT_PREVIOUS_ENVELOPES=false` e retire a raiz anterior. Links de cancelamento anteriores deixam de funcionar nessa etapa.
+
+A migração `0020_reminder_batches.sql` adiciona cursor persistente e lease por execução diária. Cada chamada de lembretes lê até 100 alunos; a fila e o cursor são confirmados na mesma transação. O worker de emails processa seus próprios lotes. Agende ambos a cada cinco minutos pelo Supabase Cron, usando o segredo existente no Vault; não inclua valores de segredos nas consultas salvas.
+
+Validação local e CI: `pnpm format:check`, `pnpm lint`, `pnpm exec vitest run --maxWorkers=2` e `pnpm build`.

@@ -6,7 +6,7 @@ export type CalendarLesson = {
   date: string;
   time: string;
   status: LessonStatus;
-  durationMinutes?:number;
+  durationMinutes?: number;
   name: string;
   href?: string;
   classroomHref?: string;
@@ -14,7 +14,12 @@ export type CalendarLesson = {
 };
 
 export const LESSON_STATUS: Record<LessonStatus, string> = {
-  feriado: "Feriado", agendada: "Agendada", dada: "Realizada", falta: "Falta", desmarcada: "Desmarcada", reposicao: "Reposição",
+  feriado: "Feriado",
+  agendada: "Agendada",
+  dada: "Realizada",
+  falta: "Falta",
+  desmarcada: "Desmarcada",
+  reposicao: "Reposição",
 };
 
 export function shiftMonth(month: string, offset: number): string {
@@ -33,10 +38,18 @@ export function monthCells(month: string): string[] {
 }
 
 export function calendarRange(today: string) {
-  return { startDate: `${shiftMonth(today.slice(0, 7), -12)}-01`, endDate: addDays(`${shiftMonth(today.slice(0, 7), 13)}-01`, -1) };
+  return {
+    startDate: `${shiftMonth(today.slice(0, 7), -12)}-01`,
+    endDate: addDays(`${shiftMonth(today.slice(0, 7), 13)}-01`, -1),
+  };
 }
 
-export function lessonTiming(lesson: Pick<CalendarLesson, "date" | "time" | "status" | "durationMinutes">, today: string, time: string, durationMinutes = lesson.durationMinutes??60) {
+export function lessonTiming(
+  lesson: Pick<CalendarLesson, "date" | "time" | "status" | "durationMinutes">,
+  today: string,
+  time: string,
+  durationMinutes = lesson.durationMinutes ?? 60,
+) {
   if (lesson.status === "desmarcada" || lesson.status === "feriado") return "cancelled";
   if (lesson.status === "falta") return "absent";
   const start = Date.parse(`${lesson.date}T${lesson.time}:00Z`);
@@ -46,6 +59,7 @@ export function lessonTiming(lesson: Pick<CalendarLesson, "date" | "time" | "sta
 }
 
 export function halfHourTime(value: string | null) {
-  if (!value || !/^(?:[01]\d|2[0-3]):(?:00|30)$/.test(value)) throw new Error("Escolha uma hora com minutos 00 ou 30.");
+  if (!value || !/^(?:[01]\d|2[0-3]):(?:00|30)$/.test(value))
+    throw new Error("Escolha uma hora com minutos 00 ou 30.");
   return value;
 }

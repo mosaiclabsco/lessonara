@@ -1,19 +1,218 @@
 "use client";
-import {useState,useTransition} from "react";
-import {sendCampaign} from "@/app/(panel)/emails/actions";
-import {notify} from "./toast";
-import {Button,FormActions} from "./button";
-import {Dialog} from "./dialog";
-import {selectFilteredRecipients} from "@/lib/mail/recipients";
-type Recipient={id:string;name:string;email:string};
-type Preview={id:string;subject:string;message:string;students:string[]};
-export function EmailCampaign({recipients}:{recipients:Recipient[]}) {
- const [subject,setSubject]=useState(""),[message,setMessage]=useState(""),[query,setQuery]=useState(""),[selected,setSelected]=useState<string[]>([]),[preview,setPreview]=useState<Preview|null>(null);
- const [pending,start]=useTransition();
- const chosen=recipients.filter(s=>selected.includes(s.id));
- const unique=[...new Map(chosen.map(s=>[s.email.trim().toLowerCase(),s])).values()];
- const matches=recipients.filter(s=>(s.name+" "+s.email).toLowerCase().includes(query.toLowerCase()));
- function review(){if(!subject.trim()||!message.trim()||!selected.length){notify("Preencha a mensagem e selecione pelo menos um aluno.");return;}setPreview({id:crypto.randomUUID(),subject:subject.trim(),message:message.trim(),students:selected});}
- function send(){if(!preview)return;start(async()=>{try{const result=await sendCampaign(preview);if(!result.ok){notify(result.message);return;}setPreview(null);setSubject("");setMessage("");setSelected([]);notify(`Campanha registrada para ${result.count} destinatário(s).`);}catch{notify("Não foi possível registrar a campanha. Tente novamente.");}});}
- return <section className="card email-campaign"><h2 className="h2">Nova campanha</h2><p className="text-muted text-sm mt-2">Prepare uma comunicação ou promoção para os alunos selecionados. Revise tudo antes de enviar.</p><div className="campaign-grid mt-6"><div><label className="label" htmlFor="campaign-subject">Assunto</label><input id="campaign-subject" className="input" required maxLength={120} value={subject} onChange={e=>setSubject(e.target.value)} disabled={pending}/><label className="label mt-5" htmlFor="campaign-message">Mensagem</label><textarea id="campaign-message" className="input min-h-48" required maxLength={10000} value={message} onChange={e=>setMessage(e.target.value)} disabled={pending}/><p className="text-xs text-muted mt-2">A mensagem será enviada individualmente. Os alunos não veem os emails dos demais.</p></div><fieldset className="campaign-audience"><legend className="label">Destinatários <span className="text-accent" aria-hidden="true">*</span></legend><p className="campaign-count" aria-live="polite">{selected.length} alunos · {unique.length} {unique.length===1?"email":"emails"}</p><input aria-label="Buscar destinatários" className="input" placeholder="Buscar nome ou email" value={query} onChange={e=>setQuery(e.target.value)} disabled={pending}/><div className="campaign-selection-actions"><Button icon="check" className="btn-xs" disabled={pending||!matches.length} onClick={()=>setSelected(old=>selectFilteredRecipients(old,matches))}>Selecionar até 100 deste filtro</Button><Button icon="close" className="btn-xs" disabled={pending||!selected.length} onClick={()=>setSelected([])}>Limpar seleção</Button></div><div className="campaign-recipients">{matches.map(s=><label key={s.id}><input type="checkbox" checked={selected.includes(s.id)} disabled={pending||(!selected.includes(s.id)&&selected.length>=100)} onChange={e=>setSelected(old=>e.target.checked?[...old,s.id]:old.filter(id=>id!==s.id))}/><span><strong>{s.name}</strong><small>{s.email}</small></span></label>)}{!matches.length&&<p className="text-muted text-sm p-4">Nenhum aluno ativo disponível neste filtro.</p>}</div><p className="text-xs text-muted mt-2">Alunos que cancelaram comunicações promocionais não aparecem aqui. Emails repetidos recebem uma única mensagem.</p></fieldset></div><FormActions><Button icon="arrow" variant="primary" disabled={pending} onClick={review}>Revisar envio</Button></FormActions><Dialog open={Boolean(preview)} onClose={()=>setPreview(null)} title="Revisar campanha" description="Confira os destinatários e a mensagem antes de confirmar o envio." busy={pending} className="campaign-preview" actions={<><Button icon="edit" disabled={pending} onClick={()=>setPreview(null)}>Voltar e editar</Button><Button icon="mail" variant="primary" pending={pending} disabled={!preview} onClick={send}>Confirmar envio</Button></>}>{preview&&<><div className="campaign-review-summary"><strong>{unique.length} {unique.length===1?"destinatário":"destinatários"}</strong><span>Envio individual · {selected.length} alunos selecionados</span></div><section className="campaign-message-preview"><p className="label">Assunto</p><h3>{preview.subject}</h3><p className="label">Mensagem</p><div className="whitespace-pre-wrap">{preview.message}</div></section><details className="campaign-review-recipients"><summary>Ver destinatários</summary><ul>{unique.map(s=><li key={s.id}><strong>{s.name}</strong><span>{s.email}</span></li>)}</ul></details><p className="text-xs text-muted leading-relaxed">Ao confirmar, as mensagens entram na fila de envio. A confirmação do provedor aparecerá no histórico.</p></>}</Dialog></section>;
+import { useState, useTransition } from "react";
+import { sendCampaign } from "@/app/(panel)/emails/actions";
+import { notify } from "./toast";
+import { Button, FormActions } from "./button";
+import { Dialog } from "./dialog";
+import { selectFilteredRecipients } from "@/lib/mail/recipients";
+type Recipient = { id: string; name: string; email: string };
+type Preview = { id: string; subject: string; message: string; students: string[] };
+export function EmailCampaign({ recipients }: { recipients: Recipient[] }) {
+  const [subject, setSubject] = useState(""),
+    [message, setMessage] = useState(""),
+    [query, setQuery] = useState(""),
+    [selected, setSelected] = useState<string[]>([]),
+    [preview, setPreview] = useState<Preview | null>(null);
+  const [pending, start] = useTransition();
+  const chosen = recipients.filter((s) => selected.includes(s.id));
+  const unique = [...new Map(chosen.map((s) => [s.email.trim().toLowerCase(), s])).values()];
+  const matches = recipients.filter((s) =>
+    (s.name + " " + s.email).toLowerCase().includes(query.toLowerCase()),
+  );
+  function review() {
+    if (!subject.trim() || !message.trim() || !selected.length) {
+      notify("Preencha a mensagem e selecione pelo menos um aluno.");
+      return;
+    }
+    setPreview({
+      id: crypto.randomUUID(),
+      subject: subject.trim(),
+      message: message.trim(),
+      students: selected,
+    });
+  }
+  function send() {
+    if (!preview) return;
+    start(async () => {
+      try {
+        const result = await sendCampaign(preview);
+        if (!result.ok) {
+          notify(result.message);
+          return;
+        }
+        setPreview(null);
+        setSubject("");
+        setMessage("");
+        setSelected([]);
+        notify(`Campanha registrada para ${result.count} destinatário(s).`);
+      } catch {
+        notify("Não foi possível registrar a campanha. Tente novamente.");
+      }
+    });
+  }
+  return (
+    <section className="card email-campaign">
+      <h2 className="h2">Nova campanha</h2>
+      <p className="text-muted text-sm mt-2">
+        Prepare uma comunicação ou promoção para os alunos selecionados. Revise tudo antes de
+        enviar.
+      </p>
+      <div className="campaign-grid mt-6">
+        <div>
+          <label className="label" htmlFor="campaign-subject">
+            Assunto
+          </label>
+          <input
+            id="campaign-subject"
+            className="input"
+            required
+            maxLength={120}
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            disabled={pending}
+          />
+          <label className="label mt-5" htmlFor="campaign-message">
+            Mensagem
+          </label>
+          <textarea
+            id="campaign-message"
+            className="input min-h-48"
+            required
+            maxLength={10000}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            disabled={pending}
+          />
+          <p className="text-xs text-muted mt-2">
+            A mensagem será enviada individualmente. Os alunos não veem os emails dos demais.
+          </p>
+        </div>
+        <fieldset className="campaign-audience">
+          <legend className="label">
+            Destinatários{" "}
+            <span className="text-accent" aria-hidden="true">
+              *
+            </span>
+          </legend>
+          <p className="campaign-count" aria-live="polite">
+            {selected.length} alunos · {unique.length} {unique.length === 1 ? "email" : "emails"}
+          </p>
+          <input
+            aria-label="Buscar destinatários"
+            className="input"
+            placeholder="Buscar nome ou email"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            disabled={pending}
+          />
+          <div className="campaign-selection-actions">
+            <Button
+              icon="check"
+              className="btn-xs"
+              disabled={pending || !matches.length}
+              onClick={() => setSelected((old) => selectFilteredRecipients(old, matches))}
+            >
+              Selecionar até 100 deste filtro
+            </Button>
+            <Button
+              icon="close"
+              className="btn-xs"
+              disabled={pending || !selected.length}
+              onClick={() => setSelected([])}
+            >
+              Limpar seleção
+            </Button>
+          </div>
+          <div className="campaign-recipients">
+            {matches.map((s) => (
+              <label key={s.id}>
+                <input
+                  type="checkbox"
+                  checked={selected.includes(s.id)}
+                  disabled={pending || (!selected.includes(s.id) && selected.length >= 100)}
+                  onChange={(e) =>
+                    setSelected((old) =>
+                      e.target.checked ? [...old, s.id] : old.filter((id) => id !== s.id),
+                    )
+                  }
+                />
+                <span>
+                  <strong>{s.name}</strong>
+                  <small>{s.email}</small>
+                </span>
+              </label>
+            ))}
+            {!matches.length && (
+              <p className="text-muted text-sm p-4">Nenhum aluno ativo disponível neste filtro.</p>
+            )}
+          </div>
+          <p className="text-xs text-muted mt-2">
+            Alunos que cancelaram comunicações promocionais não aparecem aqui. Emails repetidos
+            recebem uma única mensagem.
+          </p>
+        </fieldset>
+      </div>
+      <FormActions>
+        <Button icon="arrow" variant="primary" disabled={pending} onClick={review}>
+          Revisar envio
+        </Button>
+      </FormActions>
+      <Dialog
+        open={Boolean(preview)}
+        onClose={() => setPreview(null)}
+        title="Revisar campanha"
+        description="Confira os destinatários e a mensagem antes de confirmar o envio."
+        busy={pending}
+        className="campaign-preview"
+        actions={
+          <>
+            <Button icon="edit" disabled={pending} onClick={() => setPreview(null)}>
+              Voltar e editar
+            </Button>
+            <Button
+              icon="mail"
+              variant="primary"
+              pending={pending}
+              disabled={!preview}
+              onClick={send}
+            >
+              Confirmar envio
+            </Button>
+          </>
+        }
+      >
+        {preview && (
+          <>
+            <div className="campaign-review-summary">
+              <strong>
+                {unique.length} {unique.length === 1 ? "destinatário" : "destinatários"}
+              </strong>
+              <span>Envio individual · {selected.length} alunos selecionados</span>
+            </div>
+            <section className="campaign-message-preview">
+              <p className="label">Assunto</p>
+              <h3>{preview.subject}</h3>
+              <p className="label">Mensagem</p>
+              <div className="whitespace-pre-wrap">{preview.message}</div>
+            </section>
+            <details className="campaign-review-recipients">
+              <summary>Ver destinatários</summary>
+              <ul>
+                {unique.map((s) => (
+                  <li key={s.id}>
+                    <strong>{s.name}</strong>
+                    <span>{s.email}</span>
+                  </li>
+                ))}
+              </ul>
+            </details>
+            <p className="text-xs text-muted leading-relaxed">
+              Ao confirmar, as mensagens entram na fila de envio. A confirmação do provedor
+              aparecerá no histórico.
+            </p>
+          </>
+        )}
+      </Dialog>
+    </section>
+  );
 }

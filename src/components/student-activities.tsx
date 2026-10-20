@@ -1,18 +1,162 @@
 "use client";
-import {useI18n} from "./browser-preferences-provider";import {FileDownload} from "./file-download";import {Icon} from "./icon";
-import {activityStatus,type Activity} from "@/lib/activities";import {activityDateTime} from "@/lib/activity-dates";import {formatDate} from "@/lib/dates";import {formatFileSize} from "@/lib/document-rules";import {StudentActivityUpload} from "./student-activity-upload";
-export type StudentActivity=Omit<Activity,"studentId"|"studentName"|"documentId">;
-export function StudentActivities({activities,studentId,today}:{activities:StudentActivity[];studentId:string;today:string}){
- const {t,locale}=useI18n();
- return <div className="space-y-5"><section className="card"><div className="section-heading"><div><h2>{t("Minhas atividades")}<span className="count-badge">{activities.length}</span></h2><p>{t("Receba o exercício, envie sua entrega e acompanhe a conferência.")}</p></div></div>{!activities.length&&<p className="mt-5 text-sm text-muted">{t("As atividades que seu professor(a) enviar aparecem aqui.")}</p>}</section>{activities.map(activity=>{
- const completed=Boolean(activity.submission?.submitted_at);const overdue=Boolean(activity.due_on&&activity.due_on<today&&!completed&&!activity.archived_at);
- const heading=<><h3>{activity.title}</h3><span className={`balance-pill ${overdue?"balance-warning":""}`}>{t(activityStatus(activity,today))}</span>{completed&&<Icon name="arrow" className="h-4 w-4 activity-collapse-icon"/>}</>;
- const body=<div className="activity-body"><p className="activity-dates">{t("Enviada em ")}{activityDateTime(activity.assigned_at,locale)} · {activity.due_on?t("Entregar até {value0}",{value0:formatDate(activity.due_on,locale)}):t("Sem prazo de entrega")}</p>
- {activity.instructions&&<div className="activity-feedback"><h4>{t("Orientações do professor(a)")}</h4><p className="activity-instructions">{activity.instructions}</p></div>}
- {activity.documentName&&<div className="mt-4"><FileDownload label={t("Baixar exercício")} name={activity.documentName} href={`/student/portal/${studentId}/activities/${activity.id}/file`}/></div>}
- {completed&&activity.submission?<div className="activity-delivery"><h4>{t("Sua entrega")}</h4><p className="text-xs text-muted">{activityDateTime(activity.submission.submitted_at!,locale)}{activity.submission.submitted_late?t(" · entregue após o prazo"):""}</p><p className="mt-2 text-sm text-muted">{formatFileSize(activity.submission.byte_size)}</p>{activity.submission.note&&<p className="activity-instructions">{activity.submission.note}</p>}{activity.submission.status==="ready"?<div className="mt-3"><FileDownload label={t("Baixar minha entrega")} name={activity.submission.file_name} href={`/student/portal/${studentId}/activities/${activity.id}/submission`}/></div>:<p className="mt-3 text-xs text-muted">{t("O arquivo da entrega foi removido. O registro de entrega está preservado.")}</p>}</div>:!activity.archived_at?<StudentActivityUpload studentId={studentId} activityId={activity.id} incomplete={Boolean(activity.submission)}/>:<p className="mt-5 text-sm text-muted">{t("Esta atividade foi arquivada e não recebe novas entregas.")}</p>}
- {activity.reviewed_at&&<div className="activity-feedback"><h4>{t("Conferência do professor(a)")}</h4><p className="text-xs text-muted">{t("Conferida em ")}{activityDateTime(activity.reviewed_at,locale)}</p><p className="activity-instructions">{activity.feedback||t("Seu professor(a) conferiu a atividade.")}</p>{activity.feedbackDocumentName&&<div className="mt-4"><FileDownload href={`/student/portal/${studentId}/activities/${activity.id}/feedback`} label={t("Baixar correção")} name={activity.feedbackDocumentName}/></div>}</div>}
- {overdue&&<p className="mt-4 text-xs text-bad">{t("O prazo passou. Você ainda pode enviar; a entrega será marcada como atrasada.")}</p>}</div>;
- return completed?<details key={activity.id} className="card activity-card activity-completed"><summary className="section-heading">{heading}</summary>{activity.reviewed_at&&<p className="activity-review-hint text-xs text-accent">{t("Conferência disponível. Abra para ver o comentário.")}</p>}{body}</details>:<section key={activity.id} className="card activity-card"><div className="section-heading">{heading}</div>{body}</section>;
- })}</div>;
+import { useI18n } from "./browser-preferences-provider";
+import { FileDownload } from "./file-download";
+import { Icon } from "./icon";
+import { activityStatus, type Activity } from "@/lib/activities";
+import { activityDateTime } from "@/lib/activity-dates";
+import { formatDate } from "@/lib/dates";
+import { formatFileSize } from "@/lib/document-rules";
+import { StudentActivityUpload } from "./student-activity-upload";
+export type StudentActivity = Omit<Activity, "studentId" | "studentName" | "documentId">;
+export function StudentActivities({
+  activities,
+  studentId,
+  today,
+}: {
+  activities: StudentActivity[];
+  studentId: string;
+  today: string;
+}) {
+  const { t, locale } = useI18n();
+  return (
+    <div className="space-y-5">
+      <section className="card">
+        <div className="section-heading">
+          <div>
+            <h2>
+              {t("Minhas atividades")}
+              <span className="count-badge">{activities.length}</span>
+            </h2>
+            <p>{t("Receba o exercício, envie sua entrega e acompanhe a conferência.")}</p>
+          </div>
+        </div>
+        {!activities.length && (
+          <p className="mt-5 text-sm text-muted">
+            {t("As atividades que seu professor(a) enviar aparecem aqui.")}
+          </p>
+        )}
+      </section>
+      {activities.map((activity) => {
+        const completed = Boolean(activity.submission?.submitted_at);
+        const overdue = Boolean(
+          activity.due_on && activity.due_on < today && !completed && !activity.archived_at,
+        );
+        const heading = (
+          <>
+            <h3>{activity.title}</h3>
+            <span className={`balance-pill ${overdue ? "balance-warning" : ""}`}>
+              {t(activityStatus(activity, today))}
+            </span>
+            {completed && <Icon name="arrow" className="h-4 w-4 activity-collapse-icon" />}
+          </>
+        );
+        const body = (
+          <div className="activity-body">
+            <p className="activity-dates">
+              {t("Enviada em ")}
+              {activityDateTime(activity.assigned_at, locale)} ·{" "}
+              {activity.due_on
+                ? t("Entregar até {value0}", { value0: formatDate(activity.due_on, locale) })
+                : t("Sem prazo de entrega")}
+            </p>
+            {activity.instructions && (
+              <div className="activity-feedback">
+                <h4>{t("Orientações do professor(a)")}</h4>
+                <p className="activity-instructions">{activity.instructions}</p>
+              </div>
+            )}
+            {activity.documentName && (
+              <div className="mt-4">
+                <FileDownload
+                  label={t("Baixar exercício")}
+                  name={activity.documentName}
+                  href={`/student/portal/${studentId}/activities/${activity.id}/file`}
+                />
+              </div>
+            )}
+            {completed && activity.submission ? (
+              <div className="activity-delivery">
+                <h4>{t("Sua entrega")}</h4>
+                <p className="text-xs text-muted">
+                  {activityDateTime(activity.submission.submitted_at!, locale)}
+                  {activity.submission.submitted_late ? t(" · entregue após o prazo") : ""}
+                </p>
+                <p className="mt-2 text-sm text-muted">
+                  {formatFileSize(activity.submission.byte_size)}
+                </p>
+                {activity.submission.note && (
+                  <p className="activity-instructions">{activity.submission.note}</p>
+                )}
+                {activity.submission.status === "ready" ? (
+                  <div className="mt-3">
+                    <FileDownload
+                      label={t("Baixar minha entrega")}
+                      name={activity.submission.file_name}
+                      href={`/student/portal/${studentId}/activities/${activity.id}/submission`}
+                    />
+                  </div>
+                ) : (
+                  <p className="mt-3 text-xs text-muted">
+                    {t("O arquivo da entrega foi removido. O registro de entrega está preservado.")}
+                  </p>
+                )}
+              </div>
+            ) : !activity.archived_at ? (
+              <StudentActivityUpload
+                studentId={studentId}
+                activityId={activity.id}
+                incomplete={Boolean(activity.submission)}
+              />
+            ) : (
+              <p className="mt-5 text-sm text-muted">
+                {t("Esta atividade foi arquivada e não recebe novas entregas.")}
+              </p>
+            )}
+            {activity.reviewed_at && (
+              <div className="activity-feedback">
+                <h4>{t("Conferência do professor(a)")}</h4>
+                <p className="text-xs text-muted">
+                  {t("Conferida em ")}
+                  {activityDateTime(activity.reviewed_at, locale)}
+                </p>
+                <p className="activity-instructions">
+                  {activity.feedback || t("Seu professor(a) conferiu a atividade.")}
+                </p>
+                {activity.feedbackDocumentName && (
+                  <div className="mt-4">
+                    <FileDownload
+                      href={`/student/portal/${studentId}/activities/${activity.id}/feedback`}
+                      label={t("Baixar correção")}
+                      name={activity.feedbackDocumentName}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+            {overdue && (
+              <p className="mt-4 text-xs text-bad">
+                {t("O prazo passou. Você ainda pode enviar; a entrega será marcada como atrasada.")}
+              </p>
+            )}
+          </div>
+        );
+        return completed ? (
+          <details key={activity.id} className="card activity-card activity-completed">
+            <summary className="section-heading">{heading}</summary>
+            {activity.reviewed_at && (
+              <p className="activity-review-hint text-xs text-accent">
+                {t("Conferência disponível. Abra para ver o comentário.")}
+              </p>
+            )}
+            {body}
+          </details>
+        ) : (
+          <section key={activity.id} className="card activity-card">
+            <div className="section-heading">{heading}</div>
+            {body}
+          </section>
+        );
+      })}
+    </div>
+  );
 }

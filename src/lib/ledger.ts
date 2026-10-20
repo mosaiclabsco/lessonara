@@ -1,9 +1,11 @@
-import {safeMeetUrl} from "./meeting-url";
+import { safeMeetUrl } from "./meeting-url";
 import { addDays, weekday } from "./dates";
 
 export type Schedule = {
   id?: string;
-  meet_url?:string|null;duration_minutes?:number;monthly_day?:number|null;
+  meet_url?: string | null;
+  duration_minutes?: number;
+  monthly_day?: number | null;
   weekday: number; // 0 = domingo
   time: string; // "HH:MM"
   starts_on: string;
@@ -18,7 +20,9 @@ export type LessonEvent = {
   kind: EventKind;
   time: string | null;
   note: string | null;
-  meet_url?:string|null;duration_minutes?:number;source_event_id?:string|null;
+  meet_url?: string | null;
+  duration_minutes?: number;
+  source_event_id?: string | null;
 };
 
 export type Package = {
@@ -47,7 +51,9 @@ export type Lesson = {
   /** ID do pacote calculado; não é um vínculo persistido no banco. */
   packageId: string | null;
   event: LessonEvent | null;
-  durationMinutes?:number;meetUrl?:string|null;holidayName?: string | null;
+  durationMinutes?: number;
+  meetUrl?: string | null;
+  holidayName?: string | null;
 };
 
 export type Ledger = {
@@ -61,14 +67,25 @@ export type Ledger = {
 };
 
 export function sortPackages(packages: Package[]) {
-  return [...packages].sort((a, b) => a.paid_on.localeCompare(b.paid_on) || (a.created_at ?? "").localeCompare(b.created_at ?? "") || a.id.localeCompare(b.id));
+  return [...packages].sort(
+    (a, b) =>
+      a.paid_on.localeCompare(b.paid_on) ||
+      (a.created_at ?? "").localeCompare(b.created_at ?? "") ||
+      a.id.localeCompare(b.id),
+  );
 }
 
 const MAX_WEEKS = 104;
 
 export function computeLedger(input: {
   schedules: Schedule[];
-  appointments?:{id:string;date:string;time:string;meet_url?:string|null;duration_minutes?:number}[];
+  appointments?: {
+    id: string;
+    date: string;
+    time: string;
+    meet_url?: string | null;
+    duration_minutes?: number;
+  }[];
   holidays?: Holiday[];
   holidayPolicy?: HolidayPolicy;
   events: LessonEvent[];
@@ -93,23 +110,102 @@ export function computeLedger(input: {
   const lessons: Lesson[] = [];
   for (const s of schedules) {
     const end = s.ends_on && s.ends_on < limit ? s.ends_on : limit;
-    const dates:string[]=[];
-    if(s.monthly_day){let month=s.starts_on.slice(0,7);while(`${month}-01`<=end){const day=String(s.monthly_day).padStart(2,"0");const candidate=`${month}-${day}`;const valid=new Date(`${candidate}T12:00:00Z`).toISOString().slice(0,10)===candidate;if(valid&&candidate>=s.starts_on&&candidate<=end)dates.push(candidate);const d=new Date(`${month}-01T12:00:00Z`);d.setUTCMonth(d.getUTCMonth()+1);month=d.toISOString().slice(0,7);}}
-    else{for(let date=addDays(s.starts_on,(s.weekday-weekday(s.starts_on)+7)%7);date<=end;date=addDays(date,7))dates.push(date);}
+    const dates: string[] = [];
+    if (s.monthly_day) {
+      let month = s.starts_on.slice(0, 7);
+      while (`${month}-01` <= end) {
+        const day = String(s.monthly_day).padStart(2, "0");
+        const candidate = `${month}-${day}`;
+        const valid = new Date(`${candidate}T12:00:00Z`).toISOString().slice(0, 10) === candidate;
+        if (valid && candidate >= s.starts_on && candidate <= end) dates.push(candidate);
+        const d = new Date(`${month}-01T12:00:00Z`);
+        d.setUTCMonth(d.getUTCMonth() + 1);
+        month = d.toISOString().slice(0, 7);
+      }
+    } else {
+      for (
+        let date = addDays(s.starts_on, (s.weekday - weekday(s.starts_on) + 7) % 7);
+        date <= end;
+        date = addDays(date, 7)
+      )
+        dates.push(date);
+    }
     for (const date of dates) {
       const event = (byDate.get(date) ?? []).find((e) => !e.time || e.time === s.time) ?? null;
       const past = isPast(date, s.time);
       const holidayName = holidays.get(date) ?? null;
-      const status: LessonStatus = event ? event.kind : holidayName ? "feriado" : past ? "dada" : "agendada";
-      const counts = status !== "desmarcada" && (status !== "feriado" || input.holidayPolicy === "consume");
-      lessons.push({ sourceKind: "schedule", sourceId: s.id, date, time: s.time, status, counts, past, packageIndex: null, packageId: null, event, holidayName,durationMinutes:s.duration_minutes??60,meetUrl:safeMeetUrl(s.meet_url) });
+      const status: LessonStatus = event
+        ? event.kind
+        : holidayName
+          ? "feriado"
+          : past
+            ? "dada"
+            : "agendada";
+      const counts =
+        status !== "desmarcada" && (status !== "feriado" || input.holidayPolicy === "consume");
+      lessons.push({
+        sourceKind: "schedule",
+        sourceId: s.id,
+        date,
+        time: s.time,
+        status,
+        counts,
+        past,
+        packageIndex: null,
+        packageId: null,
+        event,
+        holidayName,
+        durationMinutes: s.duration_minutes ?? 60,
+        meetUrl: safeMeetUrl(s.meet_url),
+      });
     }
   }
-  for(const a of input.appointments??[]){if(a.date>limit)continue;const event=(byDate.get(a.date)??[]).find(e=>!e.time||e.time===a.time)??null;const past=isPast(a.date,a.time);const holidayName=holidays.get(a.date)??null;const status:LessonStatus=event?event.kind:holidayName?"feriado":past?"dada":"agendada";lessons.push({sourceKind:"appointment",sourceId:a.id,date:a.date,time:a.time,status,counts:status!=="desmarcada"&&(status!=="feriado"||input.holidayPolicy==="consume"),past,packageIndex:null,packageId:null,event,holidayName,durationMinutes:a.duration_minutes??60,meetUrl:safeMeetUrl(a.meet_url)});}
+  for (const a of input.appointments ?? []) {
+    if (a.date > limit) continue;
+    const event = (byDate.get(a.date) ?? []).find((e) => !e.time || e.time === a.time) ?? null;
+    const past = isPast(a.date, a.time);
+    const holidayName = holidays.get(a.date) ?? null;
+    const status: LessonStatus = event
+      ? event.kind
+      : holidayName
+        ? "feriado"
+        : past
+          ? "dada"
+          : "agendada";
+    lessons.push({
+      sourceKind: "appointment",
+      sourceId: a.id,
+      date: a.date,
+      time: a.time,
+      status,
+      counts:
+        status !== "desmarcada" && (status !== "feriado" || input.holidayPolicy === "consume"),
+      past,
+      packageIndex: null,
+      packageId: null,
+      event,
+      holidayName,
+      durationMinutes: a.duration_minutes ?? 60,
+      meetUrl: safeMeetUrl(a.meet_url),
+    });
+  }
   for (const e of events) {
     if (e.kind !== "reposicao") continue;
     const t = e.time ?? "00:00";
-    lessons.push({ sourceKind:"makeup", sourceId:e.id, date: e.date, time: t, status: "reposicao", counts: true, past: isPast(e.date, t), packageIndex: null, packageId: null, event: e,durationMinutes:e.duration_minutes??60,meetUrl:safeMeetUrl(e.meet_url) });
+    lessons.push({
+      sourceKind: "makeup",
+      sourceId: e.id,
+      date: e.date,
+      time: t,
+      status: "reposicao",
+      counts: true,
+      past: isPast(e.date, t),
+      packageIndex: null,
+      packageId: null,
+      event: e,
+      durationMinutes: e.duration_minutes ?? 60,
+      meetUrl: safeMeetUrl(e.meet_url),
+    });
   }
 
   lessons.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));

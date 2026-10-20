@@ -3,7 +3,12 @@ import { computeLedger, type LessonEvent, type Package, type Schedule } from "./
 
 // 2026-10-06 é terça-feira.
 const tuesday: Schedule = { weekday: 2, time: "19:00", starts_on: "2026-09-01", ends_on: null };
-const pkg = (paid_on: string, lessons = 4): Package => ({ id: paid_on, paid_on, lessons, amount: 300 });
+const pkg = (paid_on: string, lessons = 4): Package => ({
+  id: paid_on,
+  paid_on,
+  lessons,
+  amount: 300,
+});
 const ev = (date: string, kind: LessonEvent["kind"], time: string | null = null): LessonEvent => ({
   id: date + kind,
   date,
@@ -25,14 +30,20 @@ describe("computeLedger", () => {
   });
 
   it("falta conta, desmarcada não", () => {
-    const l = run([ev("2026-09-08", "falta"), ev("2026-09-15", "desmarcada")], [pkg("2026-09-01", 8)]);
+    const l = run(
+      [ev("2026-09-08", "falta"), ev("2026-09-15", "desmarcada")],
+      [pkg("2026-09-01", 8)],
+    );
     expect(l.used).toBe(5);
     expect(l.lessons.find((x) => x.date === "2026-09-08")!.status).toBe("falta");
     expect(l.lessons.find((x) => x.date === "2026-09-15")!.counts).toBe(false);
   });
 
   it("reposição consome aula", () => {
-    const l = run([ev("2026-09-15", "desmarcada"), ev("2026-09-18", "reposicao", "18:00")], [pkg("2026-09-01", 8)]);
+    const l = run(
+      [ev("2026-09-15", "desmarcada"), ev("2026-09-18", "reposicao", "18:00")],
+      [pkg("2026-09-01", 8)],
+    );
     expect(l.used).toBe(6);
   });
 

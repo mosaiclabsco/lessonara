@@ -1,14 +1,36 @@
 import { expect, it } from "vitest";
-import { downloadLifetime, MAX_DOCUMENT_BYTES, shareAvailable, validDocumentText, validExpiry, validateDocumentFile } from "./document-rules";
+import {
+  downloadLifetime,
+  MAX_DOCUMENT_BYTES,
+  shareAvailable,
+  validDocumentText,
+  validExpiry,
+  validateDocumentFile,
+} from "./document-rules";
 
 it("valida tamanho e extensão sem aceitar caminhos ou formatos executáveis", () => {
-  expect(validateDocumentFile("Exercício.PDF", 1_300_000)).toEqual({ extension: "pdf", mimeType: "application/pdf" });
-  expect(validateDocumentFile("aula.docx", MAX_DOCUMENT_BYTES).mimeType).toContain("wordprocessingml");
-  for (const [name, size] of [["../arquivo.pdf", 1], ["aula.html", 10], ["arquivo.pdf", 0], ["arquivo.pdf", MAX_DOCUMENT_BYTES + 1], ["arquivo.pdf", 1.5]] as const) expect(() => validateDocumentFile(name, size)).toThrow();
+  expect(validateDocumentFile("Exercício.PDF", 1_300_000)).toEqual({
+    extension: "pdf",
+    mimeType: "application/pdf",
+  });
+  expect(validateDocumentFile("aula.docx", MAX_DOCUMENT_BYTES).mimeType).toContain(
+    "wordprocessingml",
+  );
+  for (const [name, size] of [
+    ["../arquivo.pdf", 1],
+    ["aula.html", 10],
+    ["arquivo.pdf", 0],
+    ["arquivo.pdf", MAX_DOCUMENT_BYTES + 1],
+    ["arquivo.pdf", 1.5],
+  ] as const)
+    expect(() => validateDocumentFile(name, size)).toThrow();
 });
 
 it("preserva títulos Unicode e controla os tamanhos dos metadados", () => {
-  expect(validDocumentText("  Revisão de inglês  ", "  Gramática  ")).toEqual({ title: "Revisão de inglês", subject: "Gramática" });
+  expect(validDocumentText("  Revisão de inglês  ", "  Gramática  ")).toEqual({
+    title: "Revisão de inglês",
+    subject: "Gramática",
+  });
   expect(() => validDocumentText("", "")).toThrow();
   expect(() => validDocumentText("x".repeat(121), "")).toThrow();
 });

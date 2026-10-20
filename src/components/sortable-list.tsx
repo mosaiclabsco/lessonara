@@ -1,15 +1,154 @@
 "use client";
-import {useEffect,useEffectEvent,useRef,useState,type ReactNode} from "react";
-import {Icon} from "./icon";
-import {placePlan} from "@/lib/plan-order";
-export function SortableList<T extends {id:string}>({items,disabled=false,onBusyChange,onReorder,renderItem}:{items:T[];disabled?:boolean;onBusyChange?:(busy:boolean)=>void;onReorder:(ids:string[])=>Promise<void>;renderItem:(item:T,handle:ReactNode,index:number)=>ReactNode}) {
- const [ordered,setOrdered]=useState(items),[active,setActive]=useState<string|null>(null),[saving,setSaving]=useState(false),[announcement,setAnnouncement]=useState("");const list=useRef<HTMLDivElement>(null),current=useRef(items),pointer=useRef<number|null>(null);
- function change(next:T[]){current.current=next;setOrdered(next);}
- function cancel(){pointer.current=null;setActive(null);change(items);setAnnouncement("Ordenação cancelada.");}
- async function commit(){pointer.current=null;setActive(null);const ids=current.current.map(item=>item.id);if(ids.join()===items.map(item=>item.id).join())return;setSaving(true);onBusyChange?.(true);try{await onReorder(ids);setAnnouncement("Ordem salva.");}catch{change(items);setAnnouncement("Não foi possível salvar. A ordem anterior foi restaurada.");}finally{setSaving(false);onBusyChange?.(false);}}
- const movePointer=useEffectEvent((e:PointerEvent)=>{if(pointer.current!==e.pointerId||!active)return;const target=document.elementFromPoint(e.clientX,e.clientY)?.closest<HTMLElement>('[data-sort-id]');if(!target||!list.current?.contains(target)||target.dataset.sortId===active)return;const from=current.current.findIndex(p=>p.id===active),to=current.current.findIndex(p=>p.id===target.dataset.sortId);const bounds=target.getBoundingClientRect(),middle=bounds.top+bounds.height/2;if((from<to&&e.clientY<middle)||(from>to&&e.clientY>middle))return;change(placePlan(current.current,active,target.dataset.sortId!));});
- const finishPointer=useEffectEvent((e:PointerEvent)=>{if(pointer.current===e.pointerId)void commit();});
- const cancelPointer=useEffectEvent(()=>cancel());
- useEffect(()=>{if(!active||pointer.current===null)return;window.addEventListener("pointermove",movePointer,true);window.addEventListener("pointerup",finishPointer,true);window.addEventListener("pointercancel",cancelPointer,true);return()=>{window.removeEventListener("pointermove",movePointer,true);window.removeEventListener("pointerup",finishPointer,true);window.removeEventListener("pointercancel",cancelPointer,true);};},[active]);
- return <><p className="sort-instructions">Arraste pela alça para mudar a ordem. No teclado: Espaço, setas e Enter para salvar; Esc para cancelar.</p><div className="saved-plans sortable-list" ref={list} role="list" aria-label="Ordem dos planos">{ordered.map((item,index)=><div key={item.id} role="listitem" data-sort-id={item.id} className={active===item.id?"sort-active":""}>{renderItem(item,<button type="button" className="sort-handle" disabled={disabled||saving} aria-label={`Reordenar plano ${index+1}`} aria-pressed={active===item.id} onPointerDown={e=>{if(e.button!==0||disabled||saving)return;e.preventDefault();e.currentTarget.focus();pointer.current=e.pointerId;setActive(item.id);}} onKeyDown={e=>{if(e.key==="Escape"&&active===item.id){e.preventDefault();cancel();return;}if(e.key===" "||e.key==="Enter"){e.preventDefault();if(active===item.id)void commit();else{setActive(item.id);setAnnouncement(`Plano ${index+1} selecionado. Use as setas para mover.`);}return;}if(active===item.id&&["ArrowUp","ArrowDown"].includes(e.key)){e.preventDefault();const from=current.current.findIndex(p=>p.id===item.id),to=from+(e.key==="ArrowUp"?-1:1);if(to>=0&&to<current.current.length){change(placePlan(current.current,item.id,current.current[to].id));setAnnouncement(`Posição ${to+1} de ${items.length}.`);}}if(e.key==="Tab"&&active===item.id)void commit();}}><Icon name="grip" className="h-5 w-5"/></button>,index)}</div>)}</div><p className="sr-only" aria-live="polite">{announcement}</p></>;
+import { useEffect, useEffectEvent, useRef, useState, type ReactNode } from "react";
+import { Icon } from "./icon";
+import { placePlan } from "@/lib/plan-order";
+export function SortableList<T extends { id: string }>({
+  items,
+  disabled = false,
+  onBusyChange,
+  onReorder,
+  renderItem,
+}: {
+  items: T[];
+  disabled?: boolean;
+  onBusyChange?: (busy: boolean) => void;
+  onReorder: (ids: string[]) => Promise<void>;
+  renderItem: (item: T, handle: ReactNode, index: number) => ReactNode;
+}) {
+  const [ordered, setOrdered] = useState(items),
+    [active, setActive] = useState<string | null>(null),
+    [saving, setSaving] = useState(false),
+    [announcement, setAnnouncement] = useState("");
+  const list = useRef<HTMLDivElement>(null),
+    current = useRef(items),
+    pointer = useRef<number | null>(null);
+  function change(next: T[]) {
+    current.current = next;
+    setOrdered(next);
+  }
+  function cancel() {
+    pointer.current = null;
+    setActive(null);
+    change(items);
+    setAnnouncement("Ordenação cancelada.");
+  }
+  async function commit() {
+    pointer.current = null;
+    setActive(null);
+    const ids = current.current.map((item) => item.id);
+    if (ids.join() === items.map((item) => item.id).join()) return;
+    setSaving(true);
+    onBusyChange?.(true);
+    try {
+      await onReorder(ids);
+      setAnnouncement("Ordem salva.");
+    } catch {
+      change(items);
+      setAnnouncement("Não foi possível salvar. A ordem anterior foi restaurada.");
+    } finally {
+      setSaving(false);
+      onBusyChange?.(false);
+    }
+  }
+  const movePointer = useEffectEvent((e: PointerEvent) => {
+    if (pointer.current !== e.pointerId || !active) return;
+    const target = document
+      .elementFromPoint(e.clientX, e.clientY)
+      ?.closest<HTMLElement>("[data-sort-id]");
+    if (!target || !list.current?.contains(target) || target.dataset.sortId === active) return;
+    const from = current.current.findIndex((p) => p.id === active),
+      to = current.current.findIndex((p) => p.id === target.dataset.sortId);
+    const bounds = target.getBoundingClientRect(),
+      middle = bounds.top + bounds.height / 2;
+    if ((from < to && e.clientY < middle) || (from > to && e.clientY > middle)) return;
+    change(placePlan(current.current, active, target.dataset.sortId!));
+  });
+  const finishPointer = useEffectEvent((e: PointerEvent) => {
+    if (pointer.current === e.pointerId) void commit();
+  });
+  const cancelPointer = useEffectEvent(() => cancel());
+  useEffect(() => {
+    if (!active || pointer.current === null) return;
+    window.addEventListener("pointermove", movePointer, true);
+    window.addEventListener("pointerup", finishPointer, true);
+    window.addEventListener("pointercancel", cancelPointer, true);
+    return () => {
+      window.removeEventListener("pointermove", movePointer, true);
+      window.removeEventListener("pointerup", finishPointer, true);
+      window.removeEventListener("pointercancel", cancelPointer, true);
+    };
+  }, [active]);
+  return (
+    <>
+      <p className="sort-instructions">
+        Arraste pela alça para mudar a ordem. No teclado: Espaço, setas e Enter para salvar; Esc
+        para cancelar.
+      </p>
+      <div
+        className="saved-plans sortable-list"
+        ref={list}
+        role="list"
+        aria-label="Ordem dos planos"
+      >
+        {ordered.map((item, index) => (
+          <div
+            key={item.id}
+            role="listitem"
+            data-sort-id={item.id}
+            className={active === item.id ? "sort-active" : ""}
+          >
+            {renderItem(
+              item,
+              <button
+                type="button"
+                className="sort-handle"
+                disabled={disabled || saving}
+                aria-label={`Reordenar plano ${index + 1}`}
+                aria-pressed={active === item.id}
+                onPointerDown={(e) => {
+                  if (e.button !== 0 || disabled || saving) return;
+                  e.preventDefault();
+                  e.currentTarget.focus();
+                  pointer.current = e.pointerId;
+                  setActive(item.id);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape" && active === item.id) {
+                    e.preventDefault();
+                    cancel();
+                    return;
+                  }
+                  if (e.key === " " || e.key === "Enter") {
+                    e.preventDefault();
+                    if (active === item.id) void commit();
+                    else {
+                      setActive(item.id);
+                      setAnnouncement(`Plano ${index + 1} selecionado. Use as setas para mover.`);
+                    }
+                    return;
+                  }
+                  if (active === item.id && ["ArrowUp", "ArrowDown"].includes(e.key)) {
+                    e.preventDefault();
+                    const from = current.current.findIndex((p) => p.id === item.id),
+                      to = from + (e.key === "ArrowUp" ? -1 : 1);
+                    if (to >= 0 && to < current.current.length) {
+                      change(placePlan(current.current, item.id, current.current[to].id));
+                      setAnnouncement(`Posição ${to + 1} de ${items.length}.`);
+                    }
+                  }
+                  if (e.key === "Tab" && active === item.id) void commit();
+                }}
+              >
+                <Icon name="grip" className="h-5 w-5" />
+              </button>,
+              index,
+            )}
+          </div>
+        ))}
+      </div>
+      <p className="sr-only" aria-live="polite">
+        {announcement}
+      </p>
+    </>
+  );
 }

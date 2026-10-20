@@ -1,1473 +1,1473 @@
 // Nomes estáticos em português para renderização consistente no servidor e navegador.
 export const PHONE_COUNTRIES = [
   {
-    "code": "AF",
-    "name": "Afeganistão",
-    "flag": "🇦🇫",
-    "callingCode": "93"
+    code: "AF",
+    name: "Afeganistão",
+    flag: "🇦🇫",
+    callingCode: "93",
   },
   {
-    "code": "ZA",
-    "name": "África do Sul",
-    "flag": "🇿🇦",
-    "callingCode": "27"
+    code: "ZA",
+    name: "África do Sul",
+    flag: "🇿🇦",
+    callingCode: "27",
   },
   {
-    "code": "AL",
-    "name": "Albânia",
-    "flag": "🇦🇱",
-    "callingCode": "355"
+    code: "AL",
+    name: "Albânia",
+    flag: "🇦🇱",
+    callingCode: "355",
   },
   {
-    "code": "DE",
-    "name": "Alemanha",
-    "flag": "🇩🇪",
-    "callingCode": "49"
+    code: "DE",
+    name: "Alemanha",
+    flag: "🇩🇪",
+    callingCode: "49",
   },
   {
-    "code": "AD",
-    "name": "Andorra",
-    "flag": "🇦🇩",
-    "callingCode": "376"
+    code: "AD",
+    name: "Andorra",
+    flag: "🇦🇩",
+    callingCode: "376",
   },
   {
-    "code": "AO",
-    "name": "Angola",
-    "flag": "🇦🇴",
-    "callingCode": "244"
+    code: "AO",
+    name: "Angola",
+    flag: "🇦🇴",
+    callingCode: "244",
   },
   {
-    "code": "AI",
-    "name": "Anguila",
-    "flag": "🇦🇮",
-    "callingCode": "1"
+    code: "AI",
+    name: "Anguila",
+    flag: "🇦🇮",
+    callingCode: "1",
   },
   {
-    "code": "AG",
-    "name": "Antígua e Barbuda",
-    "flag": "🇦🇬",
-    "callingCode": "1"
+    code: "AG",
+    name: "Antígua e Barbuda",
+    flag: "🇦🇬",
+    callingCode: "1",
   },
   {
-    "code": "SA",
-    "name": "Arábia Saudita",
-    "flag": "🇸🇦",
-    "callingCode": "966"
+    code: "SA",
+    name: "Arábia Saudita",
+    flag: "🇸🇦",
+    callingCode: "966",
   },
   {
-    "code": "DZ",
-    "name": "Argélia",
-    "flag": "🇩🇿",
-    "callingCode": "213"
+    code: "DZ",
+    name: "Argélia",
+    flag: "🇩🇿",
+    callingCode: "213",
   },
   {
-    "code": "AR",
-    "name": "Argentina",
-    "flag": "🇦🇷",
-    "callingCode": "54"
+    code: "AR",
+    name: "Argentina",
+    flag: "🇦🇷",
+    callingCode: "54",
   },
   {
-    "code": "AM",
-    "name": "Armênia",
-    "flag": "🇦🇲",
-    "callingCode": "374"
+    code: "AM",
+    name: "Armênia",
+    flag: "🇦🇲",
+    callingCode: "374",
   },
   {
-    "code": "AW",
-    "name": "Aruba",
-    "flag": "🇦🇼",
-    "callingCode": "297"
+    code: "AW",
+    name: "Aruba",
+    flag: "🇦🇼",
+    callingCode: "297",
   },
   {
-    "code": "AU",
-    "name": "Austrália",
-    "flag": "🇦🇺",
-    "callingCode": "61"
+    code: "AU",
+    name: "Austrália",
+    flag: "🇦🇺",
+    callingCode: "61",
   },
   {
-    "code": "AT",
-    "name": "Áustria",
-    "flag": "🇦🇹",
-    "callingCode": "43"
+    code: "AT",
+    name: "Áustria",
+    flag: "🇦🇹",
+    callingCode: "43",
   },
   {
-    "code": "AZ",
-    "name": "Azerbaijão",
-    "flag": "🇦🇿",
-    "callingCode": "994"
+    code: "AZ",
+    name: "Azerbaijão",
+    flag: "🇦🇿",
+    callingCode: "994",
   },
   {
-    "code": "BS",
-    "name": "Bahamas",
-    "flag": "🇧🇸",
-    "callingCode": "1"
+    code: "BS",
+    name: "Bahamas",
+    flag: "🇧🇸",
+    callingCode: "1",
   },
   {
-    "code": "BD",
-    "name": "Bangladesh",
-    "flag": "🇧🇩",
-    "callingCode": "880"
+    code: "BD",
+    name: "Bangladesh",
+    flag: "🇧🇩",
+    callingCode: "880",
   },
   {
-    "code": "BB",
-    "name": "Barbados",
-    "flag": "🇧🇧",
-    "callingCode": "1"
+    code: "BB",
+    name: "Barbados",
+    flag: "🇧🇧",
+    callingCode: "1",
   },
   {
-    "code": "BH",
-    "name": "Barein",
-    "flag": "🇧🇭",
-    "callingCode": "973"
+    code: "BH",
+    name: "Barein",
+    flag: "🇧🇭",
+    callingCode: "973",
   },
   {
-    "code": "BE",
-    "name": "Bélgica",
-    "flag": "🇧🇪",
-    "callingCode": "32"
+    code: "BE",
+    name: "Bélgica",
+    flag: "🇧🇪",
+    callingCode: "32",
   },
   {
-    "code": "BZ",
-    "name": "Belize",
-    "flag": "🇧🇿",
-    "callingCode": "501"
+    code: "BZ",
+    name: "Belize",
+    flag: "🇧🇿",
+    callingCode: "501",
   },
   {
-    "code": "BJ",
-    "name": "Benin",
-    "flag": "🇧🇯",
-    "callingCode": "229"
+    code: "BJ",
+    name: "Benin",
+    flag: "🇧🇯",
+    callingCode: "229",
   },
   {
-    "code": "BM",
-    "name": "Bermudas",
-    "flag": "🇧🇲",
-    "callingCode": "1"
+    code: "BM",
+    name: "Bermudas",
+    flag: "🇧🇲",
+    callingCode: "1",
   },
   {
-    "code": "BY",
-    "name": "Bielorrússia",
-    "flag": "🇧🇾",
-    "callingCode": "375"
+    code: "BY",
+    name: "Bielorrússia",
+    flag: "🇧🇾",
+    callingCode: "375",
   },
   {
-    "code": "BO",
-    "name": "Bolívia",
-    "flag": "🇧🇴",
-    "callingCode": "591"
+    code: "BO",
+    name: "Bolívia",
+    flag: "🇧🇴",
+    callingCode: "591",
   },
   {
-    "code": "BA",
-    "name": "Bósnia e Herzegovina",
-    "flag": "🇧🇦",
-    "callingCode": "387"
+    code: "BA",
+    name: "Bósnia e Herzegovina",
+    flag: "🇧🇦",
+    callingCode: "387",
   },
   {
-    "code": "BW",
-    "name": "Botsuana",
-    "flag": "🇧🇼",
-    "callingCode": "267"
+    code: "BW",
+    name: "Botsuana",
+    flag: "🇧🇼",
+    callingCode: "267",
   },
   {
-    "code": "BR",
-    "name": "Brasil",
-    "flag": "🇧🇷",
-    "callingCode": "55"
+    code: "BR",
+    name: "Brasil",
+    flag: "🇧🇷",
+    callingCode: "55",
   },
   {
-    "code": "BN",
-    "name": "Brunei",
-    "flag": "🇧🇳",
-    "callingCode": "673"
+    code: "BN",
+    name: "Brunei",
+    flag: "🇧🇳",
+    callingCode: "673",
   },
   {
-    "code": "BG",
-    "name": "Bulgária",
-    "flag": "🇧🇬",
-    "callingCode": "359"
+    code: "BG",
+    name: "Bulgária",
+    flag: "🇧🇬",
+    callingCode: "359",
   },
   {
-    "code": "BF",
-    "name": "Burquina Faso",
-    "flag": "🇧🇫",
-    "callingCode": "226"
+    code: "BF",
+    name: "Burquina Faso",
+    flag: "🇧🇫",
+    callingCode: "226",
   },
   {
-    "code": "BI",
-    "name": "Burundi",
-    "flag": "🇧🇮",
-    "callingCode": "257"
+    code: "BI",
+    name: "Burundi",
+    flag: "🇧🇮",
+    callingCode: "257",
   },
   {
-    "code": "BT",
-    "name": "Butão",
-    "flag": "🇧🇹",
-    "callingCode": "975"
+    code: "BT",
+    name: "Butão",
+    flag: "🇧🇹",
+    callingCode: "975",
   },
   {
-    "code": "CV",
-    "name": "Cabo Verde",
-    "flag": "🇨🇻",
-    "callingCode": "238"
+    code: "CV",
+    name: "Cabo Verde",
+    flag: "🇨🇻",
+    callingCode: "238",
   },
   {
-    "code": "CM",
-    "name": "Camarões",
-    "flag": "🇨🇲",
-    "callingCode": "237"
+    code: "CM",
+    name: "Camarões",
+    flag: "🇨🇲",
+    callingCode: "237",
   },
   {
-    "code": "KH",
-    "name": "Camboja",
-    "flag": "🇰🇭",
-    "callingCode": "855"
+    code: "KH",
+    name: "Camboja",
+    flag: "🇰🇭",
+    callingCode: "855",
   },
   {
-    "code": "CA",
-    "name": "Canadá",
-    "flag": "🇨🇦",
-    "callingCode": "1"
+    code: "CA",
+    name: "Canadá",
+    flag: "🇨🇦",
+    callingCode: "1",
   },
   {
-    "code": "QA",
-    "name": "Catar",
-    "flag": "🇶🇦",
-    "callingCode": "974"
+    code: "QA",
+    name: "Catar",
+    flag: "🇶🇦",
+    callingCode: "974",
   },
   {
-    "code": "KZ",
-    "name": "Cazaquistão",
-    "flag": "🇰🇿",
-    "callingCode": "7"
+    code: "KZ",
+    name: "Cazaquistão",
+    flag: "🇰🇿",
+    callingCode: "7",
   },
   {
-    "code": "TD",
-    "name": "Chade",
-    "flag": "🇹🇩",
-    "callingCode": "235"
+    code: "TD",
+    name: "Chade",
+    flag: "🇹🇩",
+    callingCode: "235",
   },
   {
-    "code": "CL",
-    "name": "Chile",
-    "flag": "🇨🇱",
-    "callingCode": "56"
+    code: "CL",
+    name: "Chile",
+    flag: "🇨🇱",
+    callingCode: "56",
   },
   {
-    "code": "CN",
-    "name": "China",
-    "flag": "🇨🇳",
-    "callingCode": "86"
+    code: "CN",
+    name: "China",
+    flag: "🇨🇳",
+    callingCode: "86",
   },
   {
-    "code": "CY",
-    "name": "Chipre",
-    "flag": "🇨🇾",
-    "callingCode": "357"
+    code: "CY",
+    name: "Chipre",
+    flag: "🇨🇾",
+    callingCode: "357",
   },
   {
-    "code": "VA",
-    "name": "Cidade do Vaticano",
-    "flag": "🇻🇦",
-    "callingCode": "39"
+    code: "VA",
+    name: "Cidade do Vaticano",
+    flag: "🇻🇦",
+    callingCode: "39",
   },
   {
-    "code": "CO",
-    "name": "Colômbia",
-    "flag": "🇨🇴",
-    "callingCode": "57"
+    code: "CO",
+    name: "Colômbia",
+    flag: "🇨🇴",
+    callingCode: "57",
   },
   {
-    "code": "KM",
-    "name": "Comores",
-    "flag": "🇰🇲",
-    "callingCode": "269"
+    code: "KM",
+    name: "Comores",
+    flag: "🇰🇲",
+    callingCode: "269",
   },
   {
-    "code": "CD",
-    "name": "Congo - Kinshasa",
-    "flag": "🇨🇩",
-    "callingCode": "243"
+    code: "CD",
+    name: "Congo - Kinshasa",
+    flag: "🇨🇩",
+    callingCode: "243",
   },
   {
-    "code": "KP",
-    "name": "Coreia do Norte",
-    "flag": "🇰🇵",
-    "callingCode": "850"
+    code: "KP",
+    name: "Coreia do Norte",
+    flag: "🇰🇵",
+    callingCode: "850",
   },
   {
-    "code": "KR",
-    "name": "Coreia do Sul",
-    "flag": "🇰🇷",
-    "callingCode": "82"
+    code: "KR",
+    name: "Coreia do Sul",
+    flag: "🇰🇷",
+    callingCode: "82",
   },
   {
-    "code": "CI",
-    "name": "Costa do Marfim",
-    "flag": "🇨🇮",
-    "callingCode": "225"
+    code: "CI",
+    name: "Costa do Marfim",
+    flag: "🇨🇮",
+    callingCode: "225",
   },
   {
-    "code": "CR",
-    "name": "Costa Rica",
-    "flag": "🇨🇷",
-    "callingCode": "506"
+    code: "CR",
+    name: "Costa Rica",
+    flag: "🇨🇷",
+    callingCode: "506",
   },
   {
-    "code": "HR",
-    "name": "Croácia",
-    "flag": "🇭🇷",
-    "callingCode": "385"
+    code: "HR",
+    name: "Croácia",
+    flag: "🇭🇷",
+    callingCode: "385",
   },
   {
-    "code": "CU",
-    "name": "Cuba",
-    "flag": "🇨🇺",
-    "callingCode": "53"
+    code: "CU",
+    name: "Cuba",
+    flag: "🇨🇺",
+    callingCode: "53",
   },
   {
-    "code": "CW",
-    "name": "Curaçao",
-    "flag": "🇨🇼",
-    "callingCode": "599"
+    code: "CW",
+    name: "Curaçao",
+    flag: "🇨🇼",
+    callingCode: "599",
   },
   {
-    "code": "DK",
-    "name": "Dinamarca",
-    "flag": "🇩🇰",
-    "callingCode": "45"
+    code: "DK",
+    name: "Dinamarca",
+    flag: "🇩🇰",
+    callingCode: "45",
   },
   {
-    "code": "DJ",
-    "name": "Djibuti",
-    "flag": "🇩🇯",
-    "callingCode": "253"
+    code: "DJ",
+    name: "Djibuti",
+    flag: "🇩🇯",
+    callingCode: "253",
   },
   {
-    "code": "DM",
-    "name": "Dominica",
-    "flag": "🇩🇲",
-    "callingCode": "1"
+    code: "DM",
+    name: "Dominica",
+    flag: "🇩🇲",
+    callingCode: "1",
   },
   {
-    "code": "EG",
-    "name": "Egito",
-    "flag": "🇪🇬",
-    "callingCode": "20"
+    code: "EG",
+    name: "Egito",
+    flag: "🇪🇬",
+    callingCode: "20",
   },
   {
-    "code": "SV",
-    "name": "El Salvador",
-    "flag": "🇸🇻",
-    "callingCode": "503"
+    code: "SV",
+    name: "El Salvador",
+    flag: "🇸🇻",
+    callingCode: "503",
   },
   {
-    "code": "AE",
-    "name": "Emirados Árabes Unidos",
-    "flag": "🇦🇪",
-    "callingCode": "971"
+    code: "AE",
+    name: "Emirados Árabes Unidos",
+    flag: "🇦🇪",
+    callingCode: "971",
   },
   {
-    "code": "EC",
-    "name": "Equador",
-    "flag": "🇪🇨",
-    "callingCode": "593"
+    code: "EC",
+    name: "Equador",
+    flag: "🇪🇨",
+    callingCode: "593",
   },
   {
-    "code": "ER",
-    "name": "Eritreia",
-    "flag": "🇪🇷",
-    "callingCode": "291"
+    code: "ER",
+    name: "Eritreia",
+    flag: "🇪🇷",
+    callingCode: "291",
   },
   {
-    "code": "SK",
-    "name": "Eslováquia",
-    "flag": "🇸🇰",
-    "callingCode": "421"
+    code: "SK",
+    name: "Eslováquia",
+    flag: "🇸🇰",
+    callingCode: "421",
   },
   {
-    "code": "SI",
-    "name": "Eslovênia",
-    "flag": "🇸🇮",
-    "callingCode": "386"
+    code: "SI",
+    name: "Eslovênia",
+    flag: "🇸🇮",
+    callingCode: "386",
   },
   {
-    "code": "ES",
-    "name": "Espanha",
-    "flag": "🇪🇸",
-    "callingCode": "34"
+    code: "ES",
+    name: "Espanha",
+    flag: "🇪🇸",
+    callingCode: "34",
   },
   {
-    "code": "SZ",
-    "name": "Essuatíni",
-    "flag": "🇸🇿",
-    "callingCode": "268"
+    code: "SZ",
+    name: "Essuatíni",
+    flag: "🇸🇿",
+    callingCode: "268",
   },
   {
-    "code": "US",
-    "name": "Estados Unidos",
-    "flag": "🇺🇸",
-    "callingCode": "1"
+    code: "US",
+    name: "Estados Unidos",
+    flag: "🇺🇸",
+    callingCode: "1",
   },
   {
-    "code": "EE",
-    "name": "Estônia",
-    "flag": "🇪🇪",
-    "callingCode": "372"
+    code: "EE",
+    name: "Estônia",
+    flag: "🇪🇪",
+    callingCode: "372",
   },
   {
-    "code": "ET",
-    "name": "Etiópia",
-    "flag": "🇪🇹",
-    "callingCode": "251"
+    code: "ET",
+    name: "Etiópia",
+    flag: "🇪🇹",
+    callingCode: "251",
   },
   {
-    "code": "FJ",
-    "name": "Fiji",
-    "flag": "🇫🇯",
-    "callingCode": "679"
+    code: "FJ",
+    name: "Fiji",
+    flag: "🇫🇯",
+    callingCode: "679",
   },
   {
-    "code": "PH",
-    "name": "Filipinas",
-    "flag": "🇵🇭",
-    "callingCode": "63"
+    code: "PH",
+    name: "Filipinas",
+    flag: "🇵🇭",
+    callingCode: "63",
   },
   {
-    "code": "FI",
-    "name": "Finlândia",
-    "flag": "🇫🇮",
-    "callingCode": "358"
+    code: "FI",
+    name: "Finlândia",
+    flag: "🇫🇮",
+    callingCode: "358",
   },
   {
-    "code": "FR",
-    "name": "França",
-    "flag": "🇫🇷",
-    "callingCode": "33"
+    code: "FR",
+    name: "França",
+    flag: "🇫🇷",
+    callingCode: "33",
   },
   {
-    "code": "GA",
-    "name": "Gabão",
-    "flag": "🇬🇦",
-    "callingCode": "241"
+    code: "GA",
+    name: "Gabão",
+    flag: "🇬🇦",
+    callingCode: "241",
   },
   {
-    "code": "GM",
-    "name": "Gâmbia",
-    "flag": "🇬🇲",
-    "callingCode": "220"
+    code: "GM",
+    name: "Gâmbia",
+    flag: "🇬🇲",
+    callingCode: "220",
   },
   {
-    "code": "GH",
-    "name": "Gana",
-    "flag": "🇬🇭",
-    "callingCode": "233"
+    code: "GH",
+    name: "Gana",
+    flag: "🇬🇭",
+    callingCode: "233",
   },
   {
-    "code": "GE",
-    "name": "Geórgia",
-    "flag": "🇬🇪",
-    "callingCode": "995"
+    code: "GE",
+    name: "Geórgia",
+    flag: "🇬🇪",
+    callingCode: "995",
   },
   {
-    "code": "GI",
-    "name": "Gibraltar",
-    "flag": "🇬🇮",
-    "callingCode": "350"
+    code: "GI",
+    name: "Gibraltar",
+    flag: "🇬🇮",
+    callingCode: "350",
   },
   {
-    "code": "GD",
-    "name": "Granada",
-    "flag": "🇬🇩",
-    "callingCode": "1"
+    code: "GD",
+    name: "Granada",
+    flag: "🇬🇩",
+    callingCode: "1",
   },
   {
-    "code": "GR",
-    "name": "Grécia",
-    "flag": "🇬🇷",
-    "callingCode": "30"
+    code: "GR",
+    name: "Grécia",
+    flag: "🇬🇷",
+    callingCode: "30",
   },
   {
-    "code": "GL",
-    "name": "Groenlândia",
-    "flag": "🇬🇱",
-    "callingCode": "299"
+    code: "GL",
+    name: "Groenlândia",
+    flag: "🇬🇱",
+    callingCode: "299",
   },
   {
-    "code": "GP",
-    "name": "Guadalupe",
-    "flag": "🇬🇵",
-    "callingCode": "590"
+    code: "GP",
+    name: "Guadalupe",
+    flag: "🇬🇵",
+    callingCode: "590",
   },
   {
-    "code": "GU",
-    "name": "Guam",
-    "flag": "🇬🇺",
-    "callingCode": "1"
+    code: "GU",
+    name: "Guam",
+    flag: "🇬🇺",
+    callingCode: "1",
   },
   {
-    "code": "GT",
-    "name": "Guatemala",
-    "flag": "🇬🇹",
-    "callingCode": "502"
+    code: "GT",
+    name: "Guatemala",
+    flag: "🇬🇹",
+    callingCode: "502",
   },
   {
-    "code": "GG",
-    "name": "Guernsey",
-    "flag": "🇬🇬",
-    "callingCode": "44"
+    code: "GG",
+    name: "Guernsey",
+    flag: "🇬🇬",
+    callingCode: "44",
   },
   {
-    "code": "GY",
-    "name": "Guiana",
-    "flag": "🇬🇾",
-    "callingCode": "592"
+    code: "GY",
+    name: "Guiana",
+    flag: "🇬🇾",
+    callingCode: "592",
   },
   {
-    "code": "GF",
-    "name": "Guiana Francesa",
-    "flag": "🇬🇫",
-    "callingCode": "594"
+    code: "GF",
+    name: "Guiana Francesa",
+    flag: "🇬🇫",
+    callingCode: "594",
   },
   {
-    "code": "GN",
-    "name": "Guiné",
-    "flag": "🇬🇳",
-    "callingCode": "224"
+    code: "GN",
+    name: "Guiné",
+    flag: "🇬🇳",
+    callingCode: "224",
   },
   {
-    "code": "GQ",
-    "name": "Guiné Equatorial",
-    "flag": "🇬🇶",
-    "callingCode": "240"
+    code: "GQ",
+    name: "Guiné Equatorial",
+    flag: "🇬🇶",
+    callingCode: "240",
   },
   {
-    "code": "GW",
-    "name": "Guiné-Bissau",
-    "flag": "🇬🇼",
-    "callingCode": "245"
+    code: "GW",
+    name: "Guiné-Bissau",
+    flag: "🇬🇼",
+    callingCode: "245",
   },
   {
-    "code": "HT",
-    "name": "Haiti",
-    "flag": "🇭🇹",
-    "callingCode": "509"
+    code: "HT",
+    name: "Haiti",
+    flag: "🇭🇹",
+    callingCode: "509",
   },
   {
-    "code": "HN",
-    "name": "Honduras",
-    "flag": "🇭🇳",
-    "callingCode": "504"
+    code: "HN",
+    name: "Honduras",
+    flag: "🇭🇳",
+    callingCode: "504",
   },
   {
-    "code": "HK",
-    "name": "Hong Kong, RAE da China",
-    "flag": "🇭🇰",
-    "callingCode": "852"
+    code: "HK",
+    name: "Hong Kong, RAE da China",
+    flag: "🇭🇰",
+    callingCode: "852",
   },
   {
-    "code": "HU",
-    "name": "Hungria",
-    "flag": "🇭🇺",
-    "callingCode": "36"
+    code: "HU",
+    name: "Hungria",
+    flag: "🇭🇺",
+    callingCode: "36",
   },
   {
-    "code": "YE",
-    "name": "Iêmen",
-    "flag": "🇾🇪",
-    "callingCode": "967"
+    code: "YE",
+    name: "Iêmen",
+    flag: "🇾🇪",
+    callingCode: "967",
   },
   {
-    "code": "CX",
-    "name": "Ilha Christmas",
-    "flag": "🇨🇽",
-    "callingCode": "61"
+    code: "CX",
+    name: "Ilha Christmas",
+    flag: "🇨🇽",
+    callingCode: "61",
   },
   {
-    "code": "AC",
-    "name": "Ilha de Ascensão",
-    "flag": "🇦🇨",
-    "callingCode": "247"
+    code: "AC",
+    name: "Ilha de Ascensão",
+    flag: "🇦🇨",
+    callingCode: "247",
   },
   {
-    "code": "IM",
-    "name": "Ilha de Man",
-    "flag": "🇮🇲",
-    "callingCode": "44"
+    code: "IM",
+    name: "Ilha de Man",
+    flag: "🇮🇲",
+    callingCode: "44",
   },
   {
-    "code": "NF",
-    "name": "Ilha Norfolk",
-    "flag": "🇳🇫",
-    "callingCode": "672"
+    code: "NF",
+    name: "Ilha Norfolk",
+    flag: "🇳🇫",
+    callingCode: "672",
   },
   {
-    "code": "AX",
-    "name": "Ilhas Aland",
-    "flag": "🇦🇽",
-    "callingCode": "358"
+    code: "AX",
+    name: "Ilhas Aland",
+    flag: "🇦🇽",
+    callingCode: "358",
   },
   {
-    "code": "KY",
-    "name": "Ilhas Cayman",
-    "flag": "🇰🇾",
-    "callingCode": "1"
+    code: "KY",
+    name: "Ilhas Cayman",
+    flag: "🇰🇾",
+    callingCode: "1",
   },
   {
-    "code": "CC",
-    "name": "Ilhas Cocos (Keeling)",
-    "flag": "🇨🇨",
-    "callingCode": "61"
+    code: "CC",
+    name: "Ilhas Cocos (Keeling)",
+    flag: "🇨🇨",
+    callingCode: "61",
   },
   {
-    "code": "CK",
-    "name": "Ilhas Cook",
-    "flag": "🇨🇰",
-    "callingCode": "682"
+    code: "CK",
+    name: "Ilhas Cook",
+    flag: "🇨🇰",
+    callingCode: "682",
   },
   {
-    "code": "FO",
-    "name": "Ilhas Faroé",
-    "flag": "🇫🇴",
-    "callingCode": "298"
+    code: "FO",
+    name: "Ilhas Faroé",
+    flag: "🇫🇴",
+    callingCode: "298",
   },
   {
-    "code": "FK",
-    "name": "Ilhas Malvinas",
-    "flag": "🇫🇰",
-    "callingCode": "500"
+    code: "FK",
+    name: "Ilhas Malvinas",
+    flag: "🇫🇰",
+    callingCode: "500",
   },
   {
-    "code": "MP",
-    "name": "Ilhas Marianas do Norte",
-    "flag": "🇲🇵",
-    "callingCode": "1"
+    code: "MP",
+    name: "Ilhas Marianas do Norte",
+    flag: "🇲🇵",
+    callingCode: "1",
   },
   {
-    "code": "MH",
-    "name": "Ilhas Marshall",
-    "flag": "🇲🇭",
-    "callingCode": "692"
+    code: "MH",
+    name: "Ilhas Marshall",
+    flag: "🇲🇭",
+    callingCode: "692",
   },
   {
-    "code": "SB",
-    "name": "Ilhas Salomão",
-    "flag": "🇸🇧",
-    "callingCode": "677"
+    code: "SB",
+    name: "Ilhas Salomão",
+    flag: "🇸🇧",
+    callingCode: "677",
   },
   {
-    "code": "TC",
-    "name": "Ilhas Turcas e Caicos",
-    "flag": "🇹🇨",
-    "callingCode": "1"
+    code: "TC",
+    name: "Ilhas Turcas e Caicos",
+    flag: "🇹🇨",
+    callingCode: "1",
   },
   {
-    "code": "VI",
-    "name": "Ilhas Virgens Americanas",
-    "flag": "🇻🇮",
-    "callingCode": "1"
+    code: "VI",
+    name: "Ilhas Virgens Americanas",
+    flag: "🇻🇮",
+    callingCode: "1",
   },
   {
-    "code": "VG",
-    "name": "Ilhas Virgens Britânicas",
-    "flag": "🇻🇬",
-    "callingCode": "1"
+    code: "VG",
+    name: "Ilhas Virgens Britânicas",
+    flag: "🇻🇬",
+    callingCode: "1",
   },
   {
-    "code": "IN",
-    "name": "Índia",
-    "flag": "🇮🇳",
-    "callingCode": "91"
+    code: "IN",
+    name: "Índia",
+    flag: "🇮🇳",
+    callingCode: "91",
   },
   {
-    "code": "ID",
-    "name": "Indonésia",
-    "flag": "🇮🇩",
-    "callingCode": "62"
+    code: "ID",
+    name: "Indonésia",
+    flag: "🇮🇩",
+    callingCode: "62",
   },
   {
-    "code": "IR",
-    "name": "Irã",
-    "flag": "🇮🇷",
-    "callingCode": "98"
+    code: "IR",
+    name: "Irã",
+    flag: "🇮🇷",
+    callingCode: "98",
   },
   {
-    "code": "IQ",
-    "name": "Iraque",
-    "flag": "🇮🇶",
-    "callingCode": "964"
+    code: "IQ",
+    name: "Iraque",
+    flag: "🇮🇶",
+    callingCode: "964",
   },
   {
-    "code": "IE",
-    "name": "Irlanda",
-    "flag": "🇮🇪",
-    "callingCode": "353"
+    code: "IE",
+    name: "Irlanda",
+    flag: "🇮🇪",
+    callingCode: "353",
   },
   {
-    "code": "IS",
-    "name": "Islândia",
-    "flag": "🇮🇸",
-    "callingCode": "354"
+    code: "IS",
+    name: "Islândia",
+    flag: "🇮🇸",
+    callingCode: "354",
   },
   {
-    "code": "IL",
-    "name": "Israel",
-    "flag": "🇮🇱",
-    "callingCode": "972"
+    code: "IL",
+    name: "Israel",
+    flag: "🇮🇱",
+    callingCode: "972",
   },
   {
-    "code": "IT",
-    "name": "Itália",
-    "flag": "🇮🇹",
-    "callingCode": "39"
+    code: "IT",
+    name: "Itália",
+    flag: "🇮🇹",
+    callingCode: "39",
   },
   {
-    "code": "JM",
-    "name": "Jamaica",
-    "flag": "🇯🇲",
-    "callingCode": "1"
+    code: "JM",
+    name: "Jamaica",
+    flag: "🇯🇲",
+    callingCode: "1",
   },
   {
-    "code": "JP",
-    "name": "Japão",
-    "flag": "🇯🇵",
-    "callingCode": "81"
+    code: "JP",
+    name: "Japão",
+    flag: "🇯🇵",
+    callingCode: "81",
   },
   {
-    "code": "JE",
-    "name": "Jersey",
-    "flag": "🇯🇪",
-    "callingCode": "44"
+    code: "JE",
+    name: "Jersey",
+    flag: "🇯🇪",
+    callingCode: "44",
   },
   {
-    "code": "JO",
-    "name": "Jordânia",
-    "flag": "🇯🇴",
-    "callingCode": "962"
+    code: "JO",
+    name: "Jordânia",
+    flag: "🇯🇴",
+    callingCode: "962",
   },
   {
-    "code": "XK",
-    "name": "Kosovo",
-    "flag": "🇽🇰",
-    "callingCode": "383"
+    code: "XK",
+    name: "Kosovo",
+    flag: "🇽🇰",
+    callingCode: "383",
   },
   {
-    "code": "KW",
-    "name": "Kuwait",
-    "flag": "🇰🇼",
-    "callingCode": "965"
+    code: "KW",
+    name: "Kuwait",
+    flag: "🇰🇼",
+    callingCode: "965",
   },
   {
-    "code": "LA",
-    "name": "Laos",
-    "flag": "🇱🇦",
-    "callingCode": "856"
+    code: "LA",
+    name: "Laos",
+    flag: "🇱🇦",
+    callingCode: "856",
   },
   {
-    "code": "LS",
-    "name": "Lesoto",
-    "flag": "🇱🇸",
-    "callingCode": "266"
+    code: "LS",
+    name: "Lesoto",
+    flag: "🇱🇸",
+    callingCode: "266",
   },
   {
-    "code": "LV",
-    "name": "Letônia",
-    "flag": "🇱🇻",
-    "callingCode": "371"
+    code: "LV",
+    name: "Letônia",
+    flag: "🇱🇻",
+    callingCode: "371",
   },
   {
-    "code": "LB",
-    "name": "Líbano",
-    "flag": "🇱🇧",
-    "callingCode": "961"
+    code: "LB",
+    name: "Líbano",
+    flag: "🇱🇧",
+    callingCode: "961",
   },
   {
-    "code": "LR",
-    "name": "Libéria",
-    "flag": "🇱🇷",
-    "callingCode": "231"
+    code: "LR",
+    name: "Libéria",
+    flag: "🇱🇷",
+    callingCode: "231",
   },
   {
-    "code": "LY",
-    "name": "Líbia",
-    "flag": "🇱🇾",
-    "callingCode": "218"
+    code: "LY",
+    name: "Líbia",
+    flag: "🇱🇾",
+    callingCode: "218",
   },
   {
-    "code": "LI",
-    "name": "Liechtenstein",
-    "flag": "🇱🇮",
-    "callingCode": "423"
+    code: "LI",
+    name: "Liechtenstein",
+    flag: "🇱🇮",
+    callingCode: "423",
   },
   {
-    "code": "LT",
-    "name": "Lituânia",
-    "flag": "🇱🇹",
-    "callingCode": "370"
+    code: "LT",
+    name: "Lituânia",
+    flag: "🇱🇹",
+    callingCode: "370",
   },
   {
-    "code": "LU",
-    "name": "Luxemburgo",
-    "flag": "🇱🇺",
-    "callingCode": "352"
+    code: "LU",
+    name: "Luxemburgo",
+    flag: "🇱🇺",
+    callingCode: "352",
   },
   {
-    "code": "MO",
-    "name": "Macau, RAE da China",
-    "flag": "🇲🇴",
-    "callingCode": "853"
+    code: "MO",
+    name: "Macau, RAE da China",
+    flag: "🇲🇴",
+    callingCode: "853",
   },
   {
-    "code": "MK",
-    "name": "Macedônia do Norte",
-    "flag": "🇲🇰",
-    "callingCode": "389"
+    code: "MK",
+    name: "Macedônia do Norte",
+    flag: "🇲🇰",
+    callingCode: "389",
   },
   {
-    "code": "MG",
-    "name": "Madagascar",
-    "flag": "🇲🇬",
-    "callingCode": "261"
+    code: "MG",
+    name: "Madagascar",
+    flag: "🇲🇬",
+    callingCode: "261",
   },
   {
-    "code": "MY",
-    "name": "Malásia",
-    "flag": "🇲🇾",
-    "callingCode": "60"
+    code: "MY",
+    name: "Malásia",
+    flag: "🇲🇾",
+    callingCode: "60",
   },
   {
-    "code": "MW",
-    "name": "Malaui",
-    "flag": "🇲🇼",
-    "callingCode": "265"
+    code: "MW",
+    name: "Malaui",
+    flag: "🇲🇼",
+    callingCode: "265",
   },
   {
-    "code": "MV",
-    "name": "Maldivas",
-    "flag": "🇲🇻",
-    "callingCode": "960"
+    code: "MV",
+    name: "Maldivas",
+    flag: "🇲🇻",
+    callingCode: "960",
   },
   {
-    "code": "ML",
-    "name": "Mali",
-    "flag": "🇲🇱",
-    "callingCode": "223"
+    code: "ML",
+    name: "Mali",
+    flag: "🇲🇱",
+    callingCode: "223",
   },
   {
-    "code": "MT",
-    "name": "Malta",
-    "flag": "🇲🇹",
-    "callingCode": "356"
+    code: "MT",
+    name: "Malta",
+    flag: "🇲🇹",
+    callingCode: "356",
   },
   {
-    "code": "MA",
-    "name": "Marrocos",
-    "flag": "🇲🇦",
-    "callingCode": "212"
+    code: "MA",
+    name: "Marrocos",
+    flag: "🇲🇦",
+    callingCode: "212",
   },
   {
-    "code": "MQ",
-    "name": "Martinica",
-    "flag": "🇲🇶",
-    "callingCode": "596"
+    code: "MQ",
+    name: "Martinica",
+    flag: "🇲🇶",
+    callingCode: "596",
   },
   {
-    "code": "MU",
-    "name": "Maurício",
-    "flag": "🇲🇺",
-    "callingCode": "230"
+    code: "MU",
+    name: "Maurício",
+    flag: "🇲🇺",
+    callingCode: "230",
   },
   {
-    "code": "MR",
-    "name": "Mauritânia",
-    "flag": "🇲🇷",
-    "callingCode": "222"
+    code: "MR",
+    name: "Mauritânia",
+    flag: "🇲🇷",
+    callingCode: "222",
   },
   {
-    "code": "YT",
-    "name": "Mayotte",
-    "flag": "🇾🇹",
-    "callingCode": "262"
+    code: "YT",
+    name: "Mayotte",
+    flag: "🇾🇹",
+    callingCode: "262",
   },
   {
-    "code": "MX",
-    "name": "México",
-    "flag": "🇲🇽",
-    "callingCode": "52"
+    code: "MX",
+    name: "México",
+    flag: "🇲🇽",
+    callingCode: "52",
   },
   {
-    "code": "MM",
-    "name": "Mianmar (Birmânia)",
-    "flag": "🇲🇲",
-    "callingCode": "95"
+    code: "MM",
+    name: "Mianmar (Birmânia)",
+    flag: "🇲🇲",
+    callingCode: "95",
   },
   {
-    "code": "FM",
-    "name": "Micronésia",
-    "flag": "🇫🇲",
-    "callingCode": "691"
+    code: "FM",
+    name: "Micronésia",
+    flag: "🇫🇲",
+    callingCode: "691",
   },
   {
-    "code": "MZ",
-    "name": "Moçambique",
-    "flag": "🇲🇿",
-    "callingCode": "258"
+    code: "MZ",
+    name: "Moçambique",
+    flag: "🇲🇿",
+    callingCode: "258",
   },
   {
-    "code": "MD",
-    "name": "Moldávia",
-    "flag": "🇲🇩",
-    "callingCode": "373"
+    code: "MD",
+    name: "Moldávia",
+    flag: "🇲🇩",
+    callingCode: "373",
   },
   {
-    "code": "MC",
-    "name": "Mônaco",
-    "flag": "🇲🇨",
-    "callingCode": "377"
+    code: "MC",
+    name: "Mônaco",
+    flag: "🇲🇨",
+    callingCode: "377",
   },
   {
-    "code": "MN",
-    "name": "Mongólia",
-    "flag": "🇲🇳",
-    "callingCode": "976"
+    code: "MN",
+    name: "Mongólia",
+    flag: "🇲🇳",
+    callingCode: "976",
   },
   {
-    "code": "ME",
-    "name": "Montenegro",
-    "flag": "🇲🇪",
-    "callingCode": "382"
+    code: "ME",
+    name: "Montenegro",
+    flag: "🇲🇪",
+    callingCode: "382",
   },
   {
-    "code": "MS",
-    "name": "Montserrat",
-    "flag": "🇲🇸",
-    "callingCode": "1"
+    code: "MS",
+    name: "Montserrat",
+    flag: "🇲🇸",
+    callingCode: "1",
   },
   {
-    "code": "NA",
-    "name": "Namíbia",
-    "flag": "🇳🇦",
-    "callingCode": "264"
+    code: "NA",
+    name: "Namíbia",
+    flag: "🇳🇦",
+    callingCode: "264",
   },
   {
-    "code": "NR",
-    "name": "Nauru",
-    "flag": "🇳🇷",
-    "callingCode": "674"
+    code: "NR",
+    name: "Nauru",
+    flag: "🇳🇷",
+    callingCode: "674",
   },
   {
-    "code": "NP",
-    "name": "Nepal",
-    "flag": "🇳🇵",
-    "callingCode": "977"
+    code: "NP",
+    name: "Nepal",
+    flag: "🇳🇵",
+    callingCode: "977",
   },
   {
-    "code": "NI",
-    "name": "Nicarágua",
-    "flag": "🇳🇮",
-    "callingCode": "505"
+    code: "NI",
+    name: "Nicarágua",
+    flag: "🇳🇮",
+    callingCode: "505",
   },
   {
-    "code": "NE",
-    "name": "Níger",
-    "flag": "🇳🇪",
-    "callingCode": "227"
+    code: "NE",
+    name: "Níger",
+    flag: "🇳🇪",
+    callingCode: "227",
   },
   {
-    "code": "NG",
-    "name": "Nigéria",
-    "flag": "🇳🇬",
-    "callingCode": "234"
+    code: "NG",
+    name: "Nigéria",
+    flag: "🇳🇬",
+    callingCode: "234",
   },
   {
-    "code": "NU",
-    "name": "Niue",
-    "flag": "🇳🇺",
-    "callingCode": "683"
+    code: "NU",
+    name: "Niue",
+    flag: "🇳🇺",
+    callingCode: "683",
   },
   {
-    "code": "NO",
-    "name": "Noruega",
-    "flag": "🇳🇴",
-    "callingCode": "47"
+    code: "NO",
+    name: "Noruega",
+    flag: "🇳🇴",
+    callingCode: "47",
   },
   {
-    "code": "NC",
-    "name": "Nova Caledônia",
-    "flag": "🇳🇨",
-    "callingCode": "687"
+    code: "NC",
+    name: "Nova Caledônia",
+    flag: "🇳🇨",
+    callingCode: "687",
   },
   {
-    "code": "NZ",
-    "name": "Nova Zelândia",
-    "flag": "🇳🇿",
-    "callingCode": "64"
+    code: "NZ",
+    name: "Nova Zelândia",
+    flag: "🇳🇿",
+    callingCode: "64",
   },
   {
-    "code": "OM",
-    "name": "Omã",
-    "flag": "🇴🇲",
-    "callingCode": "968"
+    code: "OM",
+    name: "Omã",
+    flag: "🇴🇲",
+    callingCode: "968",
   },
   {
-    "code": "NL",
-    "name": "Países Baixos",
-    "flag": "🇳🇱",
-    "callingCode": "31"
+    code: "NL",
+    name: "Países Baixos",
+    flag: "🇳🇱",
+    callingCode: "31",
   },
   {
-    "code": "BQ",
-    "name": "Países Baixos Caribenhos",
-    "flag": "🇧🇶",
-    "callingCode": "599"
+    code: "BQ",
+    name: "Países Baixos Caribenhos",
+    flag: "🇧🇶",
+    callingCode: "599",
   },
   {
-    "code": "PW",
-    "name": "Palau",
-    "flag": "🇵🇼",
-    "callingCode": "680"
+    code: "PW",
+    name: "Palau",
+    flag: "🇵🇼",
+    callingCode: "680",
   },
   {
-    "code": "PA",
-    "name": "Panamá",
-    "flag": "🇵🇦",
-    "callingCode": "507"
+    code: "PA",
+    name: "Panamá",
+    flag: "🇵🇦",
+    callingCode: "507",
   },
   {
-    "code": "PG",
-    "name": "Papua-Nova Guiné",
-    "flag": "🇵🇬",
-    "callingCode": "675"
+    code: "PG",
+    name: "Papua-Nova Guiné",
+    flag: "🇵🇬",
+    callingCode: "675",
   },
   {
-    "code": "PK",
-    "name": "Paquistão",
-    "flag": "🇵🇰",
-    "callingCode": "92"
+    code: "PK",
+    name: "Paquistão",
+    flag: "🇵🇰",
+    callingCode: "92",
   },
   {
-    "code": "PY",
-    "name": "Paraguai",
-    "flag": "🇵🇾",
-    "callingCode": "595"
+    code: "PY",
+    name: "Paraguai",
+    flag: "🇵🇾",
+    callingCode: "595",
   },
   {
-    "code": "PE",
-    "name": "Peru",
-    "flag": "🇵🇪",
-    "callingCode": "51"
+    code: "PE",
+    name: "Peru",
+    flag: "🇵🇪",
+    callingCode: "51",
   },
   {
-    "code": "PF",
-    "name": "Polinésia Francesa",
-    "flag": "🇵🇫",
-    "callingCode": "689"
+    code: "PF",
+    name: "Polinésia Francesa",
+    flag: "🇵🇫",
+    callingCode: "689",
   },
   {
-    "code": "PL",
-    "name": "Polônia",
-    "flag": "🇵🇱",
-    "callingCode": "48"
+    code: "PL",
+    name: "Polônia",
+    flag: "🇵🇱",
+    callingCode: "48",
   },
   {
-    "code": "PR",
-    "name": "Porto Rico",
-    "flag": "🇵🇷",
-    "callingCode": "1"
+    code: "PR",
+    name: "Porto Rico",
+    flag: "🇵🇷",
+    callingCode: "1",
   },
   {
-    "code": "PT",
-    "name": "Portugal",
-    "flag": "🇵🇹",
-    "callingCode": "351"
+    code: "PT",
+    name: "Portugal",
+    flag: "🇵🇹",
+    callingCode: "351",
   },
   {
-    "code": "KE",
-    "name": "Quênia",
-    "flag": "🇰🇪",
-    "callingCode": "254"
+    code: "KE",
+    name: "Quênia",
+    flag: "🇰🇪",
+    callingCode: "254",
   },
   {
-    "code": "KG",
-    "name": "Quirguistão",
-    "flag": "🇰🇬",
-    "callingCode": "996"
+    code: "KG",
+    name: "Quirguistão",
+    flag: "🇰🇬",
+    callingCode: "996",
   },
   {
-    "code": "KI",
-    "name": "Quiribati",
-    "flag": "🇰🇮",
-    "callingCode": "686"
+    code: "KI",
+    name: "Quiribati",
+    flag: "🇰🇮",
+    callingCode: "686",
   },
   {
-    "code": "GB",
-    "name": "Reino Unido",
-    "flag": "🇬🇧",
-    "callingCode": "44"
+    code: "GB",
+    name: "Reino Unido",
+    flag: "🇬🇧",
+    callingCode: "44",
   },
   {
-    "code": "CF",
-    "name": "República Centro-Africana",
-    "flag": "🇨🇫",
-    "callingCode": "236"
+    code: "CF",
+    name: "República Centro-Africana",
+    flag: "🇨🇫",
+    callingCode: "236",
   },
   {
-    "code": "CG",
-    "name": "República do Congo",
-    "flag": "🇨🇬",
-    "callingCode": "242"
+    code: "CG",
+    name: "República do Congo",
+    flag: "🇨🇬",
+    callingCode: "242",
   },
   {
-    "code": "DO",
-    "name": "República Dominicana",
-    "flag": "🇩🇴",
-    "callingCode": "1"
+    code: "DO",
+    name: "República Dominicana",
+    flag: "🇩🇴",
+    callingCode: "1",
   },
   {
-    "code": "RE",
-    "name": "Reunião",
-    "flag": "🇷🇪",
-    "callingCode": "262"
+    code: "RE",
+    name: "Reunião",
+    flag: "🇷🇪",
+    callingCode: "262",
   },
   {
-    "code": "RO",
-    "name": "Romênia",
-    "flag": "🇷🇴",
-    "callingCode": "40"
+    code: "RO",
+    name: "Romênia",
+    flag: "🇷🇴",
+    callingCode: "40",
   },
   {
-    "code": "RW",
-    "name": "Ruanda",
-    "flag": "🇷🇼",
-    "callingCode": "250"
+    code: "RW",
+    name: "Ruanda",
+    flag: "🇷🇼",
+    callingCode: "250",
   },
   {
-    "code": "RU",
-    "name": "Rússia",
-    "flag": "🇷🇺",
-    "callingCode": "7"
+    code: "RU",
+    name: "Rússia",
+    flag: "🇷🇺",
+    callingCode: "7",
   },
   {
-    "code": "EH",
-    "name": "Saara Ocidental",
-    "flag": "🇪🇭",
-    "callingCode": "212"
+    code: "EH",
+    name: "Saara Ocidental",
+    flag: "🇪🇭",
+    callingCode: "212",
   },
   {
-    "code": "WS",
-    "name": "Samoa",
-    "flag": "🇼🇸",
-    "callingCode": "685"
+    code: "WS",
+    name: "Samoa",
+    flag: "🇼🇸",
+    callingCode: "685",
   },
   {
-    "code": "AS",
-    "name": "Samoa Americana",
-    "flag": "🇦🇸",
-    "callingCode": "1"
+    code: "AS",
+    name: "Samoa Americana",
+    flag: "🇦🇸",
+    callingCode: "1",
   },
   {
-    "code": "SM",
-    "name": "San Marino",
-    "flag": "🇸🇲",
-    "callingCode": "378"
+    code: "SM",
+    name: "San Marino",
+    flag: "🇸🇲",
+    callingCode: "378",
   },
   {
-    "code": "SH",
-    "name": "Santa Helena",
-    "flag": "🇸🇭",
-    "callingCode": "290"
+    code: "SH",
+    name: "Santa Helena",
+    flag: "🇸🇭",
+    callingCode: "290",
   },
   {
-    "code": "LC",
-    "name": "Santa Lúcia",
-    "flag": "🇱🇨",
-    "callingCode": "1"
+    code: "LC",
+    name: "Santa Lúcia",
+    flag: "🇱🇨",
+    callingCode: "1",
   },
   {
-    "code": "BL",
-    "name": "São Bartolomeu",
-    "flag": "🇧🇱",
-    "callingCode": "590"
+    code: "BL",
+    name: "São Bartolomeu",
+    flag: "🇧🇱",
+    callingCode: "590",
   },
   {
-    "code": "KN",
-    "name": "São Cristóvão e Névis",
-    "flag": "🇰🇳",
-    "callingCode": "1"
+    code: "KN",
+    name: "São Cristóvão e Névis",
+    flag: "🇰🇳",
+    callingCode: "1",
   },
   {
-    "code": "MF",
-    "name": "São Martinho",
-    "flag": "🇲🇫",
-    "callingCode": "590"
+    code: "MF",
+    name: "São Martinho",
+    flag: "🇲🇫",
+    callingCode: "590",
   },
   {
-    "code": "PM",
-    "name": "São Pedro e Miquelão",
-    "flag": "🇵🇲",
-    "callingCode": "508"
+    code: "PM",
+    name: "São Pedro e Miquelão",
+    flag: "🇵🇲",
+    callingCode: "508",
   },
   {
-    "code": "ST",
-    "name": "São Tomé e Príncipe",
-    "flag": "🇸🇹",
-    "callingCode": "239"
+    code: "ST",
+    name: "São Tomé e Príncipe",
+    flag: "🇸🇹",
+    callingCode: "239",
   },
   {
-    "code": "VC",
-    "name": "São Vicente e Granadinas",
-    "flag": "🇻🇨",
-    "callingCode": "1"
+    code: "VC",
+    name: "São Vicente e Granadinas",
+    flag: "🇻🇨",
+    callingCode: "1",
   },
   {
-    "code": "SC",
-    "name": "Seicheles",
-    "flag": "🇸🇨",
-    "callingCode": "248"
+    code: "SC",
+    name: "Seicheles",
+    flag: "🇸🇨",
+    callingCode: "248",
   },
   {
-    "code": "SN",
-    "name": "Senegal",
-    "flag": "🇸🇳",
-    "callingCode": "221"
+    code: "SN",
+    name: "Senegal",
+    flag: "🇸🇳",
+    callingCode: "221",
   },
   {
-    "code": "SL",
-    "name": "Serra Leoa",
-    "flag": "🇸🇱",
-    "callingCode": "232"
+    code: "SL",
+    name: "Serra Leoa",
+    flag: "🇸🇱",
+    callingCode: "232",
   },
   {
-    "code": "RS",
-    "name": "Sérvia",
-    "flag": "🇷🇸",
-    "callingCode": "381"
+    code: "RS",
+    name: "Sérvia",
+    flag: "🇷🇸",
+    callingCode: "381",
   },
   {
-    "code": "SG",
-    "name": "Singapura",
-    "flag": "🇸🇬",
-    "callingCode": "65"
+    code: "SG",
+    name: "Singapura",
+    flag: "🇸🇬",
+    callingCode: "65",
   },
   {
-    "code": "SX",
-    "name": "Sint Maarten",
-    "flag": "🇸🇽",
-    "callingCode": "1"
+    code: "SX",
+    name: "Sint Maarten",
+    flag: "🇸🇽",
+    callingCode: "1",
   },
   {
-    "code": "SY",
-    "name": "Síria",
-    "flag": "🇸🇾",
-    "callingCode": "963"
+    code: "SY",
+    name: "Síria",
+    flag: "🇸🇾",
+    callingCode: "963",
   },
   {
-    "code": "SO",
-    "name": "Somália",
-    "flag": "🇸🇴",
-    "callingCode": "252"
+    code: "SO",
+    name: "Somália",
+    flag: "🇸🇴",
+    callingCode: "252",
   },
   {
-    "code": "LK",
-    "name": "Sri Lanka",
-    "flag": "🇱🇰",
-    "callingCode": "94"
+    code: "LK",
+    name: "Sri Lanka",
+    flag: "🇱🇰",
+    callingCode: "94",
   },
   {
-    "code": "SD",
-    "name": "Sudão",
-    "flag": "🇸🇩",
-    "callingCode": "249"
+    code: "SD",
+    name: "Sudão",
+    flag: "🇸🇩",
+    callingCode: "249",
   },
   {
-    "code": "SS",
-    "name": "Sudão do Sul",
-    "flag": "🇸🇸",
-    "callingCode": "211"
+    code: "SS",
+    name: "Sudão do Sul",
+    flag: "🇸🇸",
+    callingCode: "211",
   },
   {
-    "code": "SE",
-    "name": "Suécia",
-    "flag": "🇸🇪",
-    "callingCode": "46"
+    code: "SE",
+    name: "Suécia",
+    flag: "🇸🇪",
+    callingCode: "46",
   },
   {
-    "code": "CH",
-    "name": "Suíça",
-    "flag": "🇨🇭",
-    "callingCode": "41"
+    code: "CH",
+    name: "Suíça",
+    flag: "🇨🇭",
+    callingCode: "41",
   },
   {
-    "code": "SR",
-    "name": "Suriname",
-    "flag": "🇸🇷",
-    "callingCode": "597"
+    code: "SR",
+    name: "Suriname",
+    flag: "🇸🇷",
+    callingCode: "597",
   },
   {
-    "code": "SJ",
-    "name": "Svalbard e Jan Mayen",
-    "flag": "🇸🇯",
-    "callingCode": "47"
+    code: "SJ",
+    name: "Svalbard e Jan Mayen",
+    flag: "🇸🇯",
+    callingCode: "47",
   },
   {
-    "code": "TJ",
-    "name": "Tadjiquistão",
-    "flag": "🇹🇯",
-    "callingCode": "992"
+    code: "TJ",
+    name: "Tadjiquistão",
+    flag: "🇹🇯",
+    callingCode: "992",
   },
   {
-    "code": "TH",
-    "name": "Tailândia",
-    "flag": "🇹🇭",
-    "callingCode": "66"
+    code: "TH",
+    name: "Tailândia",
+    flag: "🇹🇭",
+    callingCode: "66",
   },
   {
-    "code": "TW",
-    "name": "Taiwan",
-    "flag": "🇹🇼",
-    "callingCode": "886"
+    code: "TW",
+    name: "Taiwan",
+    flag: "🇹🇼",
+    callingCode: "886",
   },
   {
-    "code": "TZ",
-    "name": "Tanzânia",
-    "flag": "🇹🇿",
-    "callingCode": "255"
+    code: "TZ",
+    name: "Tanzânia",
+    flag: "🇹🇿",
+    callingCode: "255",
   },
   {
-    "code": "CZ",
-    "name": "Tchéquia",
-    "flag": "🇨🇿",
-    "callingCode": "420"
+    code: "CZ",
+    name: "Tchéquia",
+    flag: "🇨🇿",
+    callingCode: "420",
   },
   {
-    "code": "IO",
-    "name": "Território Britânico do Oceano Índico",
-    "flag": "🇮🇴",
-    "callingCode": "246"
+    code: "IO",
+    name: "Território Britânico do Oceano Índico",
+    flag: "🇮🇴",
+    callingCode: "246",
   },
   {
-    "code": "PS",
-    "name": "Territórios palestinos",
-    "flag": "🇵🇸",
-    "callingCode": "970"
+    code: "PS",
+    name: "Territórios palestinos",
+    flag: "🇵🇸",
+    callingCode: "970",
   },
   {
-    "code": "TL",
-    "name": "Timor-Leste",
-    "flag": "🇹🇱",
-    "callingCode": "670"
+    code: "TL",
+    name: "Timor-Leste",
+    flag: "🇹🇱",
+    callingCode: "670",
   },
   {
-    "code": "TG",
-    "name": "Togo",
-    "flag": "🇹🇬",
-    "callingCode": "228"
+    code: "TG",
+    name: "Togo",
+    flag: "🇹🇬",
+    callingCode: "228",
   },
   {
-    "code": "TK",
-    "name": "Tokelau",
-    "flag": "🇹🇰",
-    "callingCode": "690"
+    code: "TK",
+    name: "Tokelau",
+    flag: "🇹🇰",
+    callingCode: "690",
   },
   {
-    "code": "TO",
-    "name": "Tonga",
-    "flag": "🇹🇴",
-    "callingCode": "676"
+    code: "TO",
+    name: "Tonga",
+    flag: "🇹🇴",
+    callingCode: "676",
   },
   {
-    "code": "TT",
-    "name": "Trinidad e Tobago",
-    "flag": "🇹🇹",
-    "callingCode": "1"
+    code: "TT",
+    name: "Trinidad e Tobago",
+    flag: "🇹🇹",
+    callingCode: "1",
   },
   {
-    "code": "TA",
-    "name": "Tristão da Cunha",
-    "flag": "🇹🇦",
-    "callingCode": "290"
+    code: "TA",
+    name: "Tristão da Cunha",
+    flag: "🇹🇦",
+    callingCode: "290",
   },
   {
-    "code": "TN",
-    "name": "Tunísia",
-    "flag": "🇹🇳",
-    "callingCode": "216"
+    code: "TN",
+    name: "Tunísia",
+    flag: "🇹🇳",
+    callingCode: "216",
   },
   {
-    "code": "TM",
-    "name": "Turcomenistão",
-    "flag": "🇹🇲",
-    "callingCode": "993"
+    code: "TM",
+    name: "Turcomenistão",
+    flag: "🇹🇲",
+    callingCode: "993",
   },
   {
-    "code": "TR",
-    "name": "Turquia",
-    "flag": "🇹🇷",
-    "callingCode": "90"
+    code: "TR",
+    name: "Turquia",
+    flag: "🇹🇷",
+    callingCode: "90",
   },
   {
-    "code": "TV",
-    "name": "Tuvalu",
-    "flag": "🇹🇻",
-    "callingCode": "688"
+    code: "TV",
+    name: "Tuvalu",
+    flag: "🇹🇻",
+    callingCode: "688",
   },
   {
-    "code": "UA",
-    "name": "Ucrânia",
-    "flag": "🇺🇦",
-    "callingCode": "380"
+    code: "UA",
+    name: "Ucrânia",
+    flag: "🇺🇦",
+    callingCode: "380",
   },
   {
-    "code": "UG",
-    "name": "Uganda",
-    "flag": "🇺🇬",
-    "callingCode": "256"
+    code: "UG",
+    name: "Uganda",
+    flag: "🇺🇬",
+    callingCode: "256",
   },
   {
-    "code": "UY",
-    "name": "Uruguai",
-    "flag": "🇺🇾",
-    "callingCode": "598"
+    code: "UY",
+    name: "Uruguai",
+    flag: "🇺🇾",
+    callingCode: "598",
   },
   {
-    "code": "UZ",
-    "name": "Uzbequistão",
-    "flag": "🇺🇿",
-    "callingCode": "998"
+    code: "UZ",
+    name: "Uzbequistão",
+    flag: "🇺🇿",
+    callingCode: "998",
   },
   {
-    "code": "VU",
-    "name": "Vanuatu",
-    "flag": "🇻🇺",
-    "callingCode": "678"
+    code: "VU",
+    name: "Vanuatu",
+    flag: "🇻🇺",
+    callingCode: "678",
   },
   {
-    "code": "VE",
-    "name": "Venezuela",
-    "flag": "🇻🇪",
-    "callingCode": "58"
+    code: "VE",
+    name: "Venezuela",
+    flag: "🇻🇪",
+    callingCode: "58",
   },
   {
-    "code": "VN",
-    "name": "Vietnã",
-    "flag": "🇻🇳",
-    "callingCode": "84"
+    code: "VN",
+    name: "Vietnã",
+    flag: "🇻🇳",
+    callingCode: "84",
   },
   {
-    "code": "WF",
-    "name": "Wallis e Futuna",
-    "flag": "🇼🇫",
-    "callingCode": "681"
+    code: "WF",
+    name: "Wallis e Futuna",
+    flag: "🇼🇫",
+    callingCode: "681",
   },
   {
-    "code": "ZM",
-    "name": "Zâmbia",
-    "flag": "🇿🇲",
-    "callingCode": "260"
+    code: "ZM",
+    name: "Zâmbia",
+    flag: "🇿🇲",
+    callingCode: "260",
   },
   {
-    "code": "ZW",
-    "name": "Zimbábue",
-    "flag": "🇿🇼",
-    "callingCode": "263"
-  }
+    code: "ZW",
+    name: "Zimbábue",
+    flag: "🇿🇼",
+    callingCode: "263",
+  },
 ] as const;

@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "seed": "node --env-file=.env.local scripts/seed.mts"
+    "seed": "node --env-file=.env.local scripts/seed.mts",
+    "format": "prettier --write src scripts .github next.config.ts vercel.json package.json",
+    "format:check": "prettier --check src scripts .github next.config.ts vercel.json package.json"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -30,6 +32,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
     "postcss": "^8.5.29",
+    "prettier": "3.9.10",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^5.0.3"

@@ -1,5 +1,65 @@
-import Link from "next/link";import {getTranslator} from "@/lib/i18n/server";import type {OnboardingState} from "@/lib/onboarding";import {Icon} from "./icon";
-export async function OnboardingGuide({state}:{state:OnboardingState}){const {t}=await getTranslator();return <section className="card onboarding-guide"><div className="section-heading"><div><h2>{t("Prepare seu espaço de ensino")}</h2><p>{t("Dois passos rápidos para começar a cadastrar alunos.")}</p></div><span className="count-badge">{Number(state.profileDone)+Number(state.plansDone)}/2</span></div><ol className="onboarding-steps"><li><Icon name={state.profileDone?"check":"settings"} className="h-5 w-5"/><div><strong>{t("1. Configure seu perfil")}</strong><p>{t("Informe seu nome, escolha a duração da aula e salve.")}</p></div><a className="btn-ghost" href="/settings?tab=general#general">{t(state.profileDone?"Revisar":"Configurar")}</a></li><li><Icon name={state.plansDone?"check":"book"} className="h-5 w-5"/><div><strong>{t("2. Ative seu primeiro plano")}</strong><p>{t("Crie um plano ou confirme uma sugestão de frequência e créditos.")}</p></div><a className="btn-ghost" href="/settings?tab=plans#plans">{t(state.plansDone?"Revisar":"Configurar")}</a></li></ol><p className="text-xs text-muted">{t("Feriados e integração Google podem ser configurados depois.")}</p></section>;}
-export async function SetupNotice(){const {t}=await getTranslator();return <section className="card empty-state"><Icon name="settings" className="mx-auto mb-4 h-8 w-8 text-accent"/><h1 className="h2">{t("Configure seu primeiro acesso")}</h1><p>{t("Vá para Configurações, salve seu perfil e ative ao menos um plano para começar.")}</p><Link className="btn mt-6" href="/settings"><Icon name="arrow" className="h-4 w-4"/>{t("Ir para Configurações")}</Link></section>;}
+import Link from "next/link";
+import { getTranslator } from "@/lib/i18n/server";
+import type { OnboardingState } from "@/lib/onboarding";
+import { Icon } from "./icon";
+export async function OnboardingGuide({ state }: { state: OnboardingState }) {
+  const { t } = await getTranslator();
+  return (
+    <section className="card onboarding-guide">
+      <div className="section-heading">
+        <div>
+          <h2>{t("Prepare seu espaço de ensino")}</h2>
+          <p>{t("Dois passos rápidos para começar a cadastrar alunos.")}</p>
+        </div>
+        <span className="count-badge">{Number(state.profileDone) + Number(state.plansDone)}/2</span>
+      </div>
+      <ol className="onboarding-steps">
+        <li>
+          <Icon name={state.profileDone ? "check" : "settings"} className="h-5 w-5" />
+          <div>
+            <strong>{t("1. Configure seu perfil")}</strong>
+            <p>{t("Informe seu nome, escolha a duração da aula e salve.")}</p>
+          </div>
+          <a className="btn-ghost" href="/settings?tab=general#general">
+            {t(state.profileDone ? "Revisar" : "Configurar")}
+          </a>
+        </li>
+        <li>
+          <Icon name={state.plansDone ? "check" : "book"} className="h-5 w-5" />
+          <div>
+            <strong>{t("2. Ative seu primeiro plano")}</strong>
+            <p>{t("Crie um plano ou confirme uma sugestão de frequência e créditos.")}</p>
+          </div>
+          <a className="btn-ghost" href="/settings?tab=plans#plans">
+            {t(state.plansDone ? "Revisar" : "Configurar")}
+          </a>
+        </li>
+      </ol>
+      <p className="text-xs text-muted">
+        {t("Feriados e integração Google podem ser configurados depois.")}
+      </p>
+    </section>
+  );
+}
+export async function SetupNotice() {
+  const { t } = await getTranslator();
+  return (
+    <section className="card empty-state">
+      <Icon name="settings" className="mx-auto mb-4 h-8 w-8 text-accent" />
+      <h1 className="h2">{t("Configure seu primeiro acesso")}</h1>
+      <p>{t("Vá para Configurações, salve seu perfil e ative ao menos um plano para começar.")}</p>
+      <Link className="btn mt-6" href="/settings">
+        <Icon name="arrow" className="h-4 w-4" />
+        {t("Ir para Configurações")}
+      </Link>
+    </section>
+  );
+}
 
-export async function SetupRequired(){return <main className="form-page"><SetupNotice/></main>;}
+export async function SetupRequired() {
+  return (
+    <main className="form-page">
+      <SetupNotice />
+    </main>
+  );
+}
