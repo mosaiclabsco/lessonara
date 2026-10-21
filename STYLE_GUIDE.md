@@ -6,7 +6,7 @@ Aplicam-se ao portal do professor, ao portal do aluno e às telas web da sala. R
 
 - Use `Button`, `SubmitButton` ou links com as mesmas classes. Todo botão de ação deve ter ícone e texto; ações apenas com ícone exigem nome acessível.
 - Ação principal: verde Lessonara. Secundária: borda e texto verdes, fundo discreto no hover. Vermelho é reservado para ações destrutivas. Cinza indica bloqueio real.
-- Use `FormActions`: cancelar, voltar e fechar à esquerda; confirmar, salvar, criar e enviar à direita. Mantenha 24 px entre os campos e as ações, sem aproximar o rodapé da borda do card.
+- Use `FormActions`: cancelar, voltar e fechar à esquerda; confirmar, salvar, criar e enviar à direita. Para uma ação isolada de cancelar/voltar, use `FormActions align="start"`. Mantenha 24 px entre os campos e as ações, sem aproximar o rodapé da borda do card.
 - Durante uma ação, mostre o spinner somente no controle acionado e desabilite as ações concorrentes. Não altere a largura do botão quando o rótulo mudar.
 
 - Menus de contexto, perfil e ações de três pontos usam `DropdownMenu` / `menu-action`: sem borda, sem sombra individual e destaque discreto somente ao passar o mouse ou focar. Ações destrutivas usam texto vermelho.

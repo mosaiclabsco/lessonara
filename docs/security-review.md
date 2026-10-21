@@ -60,3 +60,9 @@ A revisão de formulários e o webhook Resend desta rodada têm testes próprios
 - Webhook Resend criado com seis eventos necessários e signing secret somente no Production da Vercel. A ativação e a entrega após publicação têm evidência operacional separada.
 
 A rodada posterior foi publicada no commit `dc4ac60`. CI de formatação, ESLint, tipos/testes/build passou; a suíte local final teve 51 arquivos e 321 testes aprovados, além da consulta operacional Google executada separadamente. Foram confirmados os nove limites do banco sobre o histórico e os callbacks de entrega, rejeição e spam do Resend. Nenhum SAST/DAST completo novo é alegado por essas verificações. Ver [registro operacional](operations-validation.md).
+
+## Pix e importação — 21/10/2026
+
+Novos fluxos com validação de entrada, sessão/vínculo do aluno em cada ação, RLS por professor, prazo absoluto de sessão e RPCs de confirmação transacionais. Prévias/originais não são públicos; imports só no Plus/Pro, inclusive na Data API. Confirmações repetidas não duplicam créditos/alunos; opções nulas e versões antigas da prévia são rejeitadas. Os testes SQL usaram registros fictícios nas duas contas e rollback, sem envios externos.
+
+Foram executados 353 testes, tipos e lint locais, além da conferência visual com dados fictícios. Isso não amplia retroativamente o escopo do SAST/DAST original. As limitações e os testes bancário/piloto pendentes estão em [fluxos](product-flows.md) e [validação operacional](operations-validation.md).

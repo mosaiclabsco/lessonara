@@ -8,10 +8,12 @@ import { CopyButton } from "./copy-button";
 import { DEFAULT_WHATSAPP_MESSAGE, paymentWhatsAppUrl } from "@/lib/whatsapp";
 export function WhatsAppPayment({
   studentName,
+  paymentInstructions,
   initialPhone,
   initialCountry,
 }: {
   studentName: string;
+  paymentInstructions?: string;
   initialPhone?: string | null;
   initialCountry?: string | null;
 }) {
@@ -25,7 +27,7 @@ export function WhatsAppPayment({
   const [phone, setPhone] = useState(initialPhone ?? "");
   const [country, setCountry] = useState(preparePhone(initialPhone, initialCountry).country);
   const phoneId = useId();
-  const [message, setMessage] = useState(DEFAULT_WHATSAPP_MESSAGE);
+  const [message, setMessage] = useState(paymentInstructions ?? DEFAULT_WHATSAPP_MESSAGE);
   const url = paymentWhatsAppUrl(phone, country, message);
   return (
     <>
@@ -115,7 +117,7 @@ export function WhatsAppPayment({
             <button
               className="btn-xs mt-2"
               type="button"
-              onClick={() => setMessage(DEFAULT_WHATSAPP_MESSAGE)}
+              onClick={() => setMessage(paymentInstructions ?? DEFAULT_WHATSAPP_MESSAGE)}
             >
               {t("Restaurar mensagem padrão")}
             </button>

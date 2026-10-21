@@ -1,3 +1,4 @@
+import { cleanupImportOriginals } from "@/lib/import-cleanup";
 import { validCronAuthorization } from "@/lib/cron-auth";
 import { processCalendarJobs } from "@/lib/google/worker";
 import { createAdminClient } from "@/lib/supabase/server";
@@ -16,5 +17,6 @@ export async function GET(request: Request) {
     .lt("window_start", new Date(Date.now() - 24 * 3600_000).toISOString());
   const email = await processEmails();
   const calendar = await processCalendarJobs();
-  return Response.json({ email, calendar });
+  const imports = await cleanupImportOriginals(db);
+  return Response.json({ email, calendar, imports });
 }

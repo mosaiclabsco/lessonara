@@ -11,17 +11,26 @@ function Groups({
   packages,
   actions,
   grouping,
+  openingCredits = 0,
   today,
 }: {
   lessons: Lesson[];
   packages: Package[];
   actions?: Record<string, ReactNode>;
+  openingCredits?: number;
   grouping: "month" | "package";
   today: string;
 }) {
   const { t, locale } = useI18n();
   const groups = new Map<string, Lesson[]>();
   const ordered = sortPackages(packages);
+  const settled = new Map<string, number>();
+  let debt = Math.max(0, -openingCredits);
+  for (const pack of ordered) {
+    const value = Math.min(debt, pack.lessons);
+    settled.set(pack.id, value);
+    debt -= value;
+  }
   if (grouping === "package") for (const pack of ordered) groups.set(pack.id, []);
   for (const lesson of lessons) {
     if (!lesson.past && !lesson.packageId && grouping === "package") continue;
@@ -66,7 +75,9 @@ function Groups({
                 }).format(new Date(`${key}-01T12:00:00Z`))
               : pack
                 ? `Pacote de ${pack.lessons} aulas · ${formatDate(pack.paid_on, locale)}`
-                : t("Aulas sem pacote / sem consumo");
+                : key === "opening"
+                  ? t("Saldo inicial importado — sem pagamento registrado")
+                  : t("Aulas sem pacote / sem consumo");
           const previous = items
             .filter((l) => l.past)
             .sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
@@ -83,7 +94,11 @@ function Groups({
               {pack && (
                 <p className="mb-4 text-xs text-muted">
                   {used} {t("utilizadas")} · {next.length} {t("agendadas")} ·{" "}
-                  {Math.max(0, pack.lessons - used)} {t("créditos restantes")}
+                  {settled.get(pack.id)
+                    ? `${settled.get(pack.id)} para quitar saldo inicial · `
+                    : ""}
+                  {Math.max(0, pack.lessons - used - (settled.get(pack.id) ?? 0))}{" "}
+                  {t("créditos restantes")}
                 </p>
               )}
               {next.length > 0 && (
@@ -123,17 +138,20 @@ export function LessonHistory({
   lessons,
   packages,
   actions,
+  openingCredits = 0,
   today = "",
 }: {
   lessons: Lesson[];
   packages: Package[];
   actions?: Record<string, ReactNode>;
+  openingCredits?: number;
   today?: string;
 }) {
   return (
     <HistoryTabs
       monthContent={
         <Groups
+          openingCredits={openingCredits}
           lessons={lessons}
           packages={packages}
           actions={actions}
@@ -143,6 +161,7 @@ export function LessonHistory({
       }
       packageContent={
         <Groups
+          openingCredits={openingCredits}
           lessons={lessons}
           packages={packages}
           actions={actions}

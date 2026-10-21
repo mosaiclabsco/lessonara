@@ -1,3 +1,4 @@
+import { ImportOnboarding } from "@/components/import-onboarding";
 import { loadOnboarding } from "@/lib/onboarding";
 import { OnboardingGuide } from "@/components/onboarding-guide";
 import { Suspense } from "react";
@@ -18,6 +19,8 @@ async function PageContent() {
   return (
     <>
       {!state.ready && <OnboardingGuide state={state} />}
+      <ImportOnboarding state={state} />
+
       <Dashboard setupReady={state.ready} directoryOnly {...overview} />
     </>
   );

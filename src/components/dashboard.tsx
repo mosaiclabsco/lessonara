@@ -115,10 +115,16 @@ export function Dashboard({
           </p>
         </div>
         {directoryOnly && (
-          <Link href={setupReady ? "/students/new" : "/settings"} className="btn">
-            <Icon name="plus" className="h-4 w-4" />
-            {t(setupReady ? "Novo aluno" : "Configurar espaço")}
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/students/import" className="btn-ghost">
+              <Icon name="download" className="h-4 w-4" />
+              Importar dados
+            </Link>
+            <Link href={setupReady ? "/students/new" : "/settings"} className="btn">
+              <Icon name="plus" className="h-4 w-4" />
+              {t(setupReady ? "Novo aluno" : "Configurar espaço")}
+            </Link>
+          </div>
         )}
       </div>
       {!directoryOnly && (

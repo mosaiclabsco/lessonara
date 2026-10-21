@@ -38,6 +38,10 @@ export async function SubscriptionPlan({ active }: { active: PlatformPlan }) {
                 {formatFileSize(plan.storageBytes)} {t("de armazenamento")}
               </li>
               <li>
+                <Icon name={plan.imports ? "check" : "clock"} className="h-4 w-4" />
+                {t(plan.imports ? "Importação guiada e assistida" : "Importação no Plus e Pro")}
+              </li>
+              <li>
                 <Icon name={plan.emails ? "check" : "clock"} className="h-4 w-4" />
                 {t(plan.emails ? "Gestão de emails" : "Gestão de emails no Pro")}
               </li>

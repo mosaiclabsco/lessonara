@@ -31,9 +31,15 @@ export function Button({
 export function FormActions({
   children,
   className = "",
+  align = "split",
 }: {
   children: ReactNode;
+  align?: "split" | "start";
   className?: string;
 }) {
-  return <div className={`form-actions ${className}`}>{children}</div>;
+  return (
+    <div className={`form-actions ${align === "start" ? "form-actions-start" : ""} ${className}`}>
+      {children}
+    </div>
+  );
 }

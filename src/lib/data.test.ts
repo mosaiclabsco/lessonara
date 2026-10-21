@@ -34,7 +34,7 @@ function database(students: { id: string; teacher_id: string }[]) {
   };
 }
 it("reuses server-loaded ownership and starts holidays before ledger reads finish", async () => {
-  const owned = [{ id: "student", teacher_id: "teacher" }];
+  const owned = [{ id: "student", teacher_id: "teacher", opening_credits: 0 }];
   const fixture = database(owned);
   const result = loadLedgers(fixture.db, ["student"], owned);
   await Promise.resolve();
@@ -54,9 +54,23 @@ it("still resolves ownership for public and existing callers without supplied ro
 });
 it("does not query holiday data for unrelated supplied students", async () => {
   const fixture = database([]);
-  const result = loadLedgers(fixture.db, ["student"], [{ id: "unrelated", teacher_id: "other" }]);
+  const result = loadLedgers(
+    fixture.db,
+    ["student"],
+    [{ id: "unrelated", teacher_id: "other", opening_credits: 0 }],
+  );
   await Promise.resolve();
   expect(holiday.load).toHaveBeenCalledWith(fixture.db, []);
   fixture.release();
   await result;
+});
+
+it("reuses supplied opening balance without adding a sequential student query", async () => {
+  const owned = [{ id: "student", teacher_id: "teacher", opening_credits: 6 }];
+  const fixture = database(owned);
+  const result = loadLedgers(fixture.db, ["student"], owned);
+  await Promise.resolve();
+  expect(fixture.queries).not.toContain("students");
+  fixture.release();
+  expect((await result).get("student")?.ledger.remaining).toBe(6);
 });

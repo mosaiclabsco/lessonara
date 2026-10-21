@@ -23,7 +23,7 @@ export async function loadTeacherOverview(view: OverviewView = "directory") {
         const result = await supabase
           .from("students")
           .select(
-            "id,teacher_id,slug,name,email,phone,phone_country,plan_id,price_override,active,plans(id,name,lessons,price)",
+            "id,teacher_id,slug,name,email,phone,phone_country,plan_id,price_override,active,opening_credits,plans(id,name,lessons,price)",
           )
           .eq("teacher_id", userId)
           .order("name")
@@ -39,7 +39,7 @@ export async function loadTeacherOverview(view: OverviewView = "directory") {
       loadLedgers(
         supabase,
         students.map((student) => student.id),
-        students,
+        students.map((s) => ({ ...s, opening_credits: s.opening_credits ?? 0 })),
       ),
       getOrigin(),
     ]);
@@ -134,6 +134,7 @@ export async function loadTeacherOverview(view: OverviewView = "directory") {
                     .sort()
                     .at(-1) ?? null,
                 plan: student.plans?.name ?? "Sem plano",
+                lessons: student.plans?.lessons ?? 0,
                 price: studentPrice(student, student.plans ?? undefined) ?? null,
               };
             })

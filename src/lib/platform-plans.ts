@@ -1,5 +1,5 @@
 export type PlatformPlan = "essential" | "plus" | "pro";
-export type PlatformFeature = "emails" | "classroom";
+export type PlatformFeature = "emails" | "classroom" | "imports";
 const MB = 1024 * 1024,
   GB = 1024 * MB;
 export const PLATFORM_PLANS = {
@@ -8,6 +8,7 @@ export const PLATFORM_PLANS = {
     name: "Essencial",
     maxFileBytes: 20 * MB,
     storageBytes: GB,
+    imports: false,
     emails: false,
     classroom: false,
   },
@@ -16,6 +17,7 @@ export const PLATFORM_PLANS = {
     name: "Plus",
     maxFileBytes: 100 * MB,
     storageBytes: 5 * GB,
+    imports: true,
     emails: false,
     classroom: false,
   },
@@ -24,6 +26,7 @@ export const PLATFORM_PLANS = {
     name: "Pro",
     maxFileBytes: GB,
     storageBytes: 20 * GB,
+    imports: true,
     emails: true,
     classroom: true,
   },

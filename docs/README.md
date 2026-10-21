@@ -13,7 +13,7 @@
 | [Google Calendar/Meet](google-calendar.md) | Setup OAuth, sincronização e limites de validação |
 | [Sala de aula](classroom.md) | Jitsi, acesso, quadro e desktop |
 | [Performance](performance.md) | Arquitetura de leitura e medições registradas |
-| [Pix e importação](product-flows.md) | Propostas de fluxo, ainda não implementadas |
+| [Pix e importação](product-flows.md) | Fluxos implementados, limites, suporte e validação pendente |
 | [Guia de estilo](../STYLE_GUIDE.md) | Componentes e padrões compartilhados |
 
 Código implementado, migração aplicada, deploy publicado e teste real concluído são estados distintos. Manter essa separação nos relatos e no backlog; não marcar validação por inferência.

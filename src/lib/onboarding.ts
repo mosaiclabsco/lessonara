@@ -2,6 +2,7 @@ import { resolvePlatformPlan, type PlatformPlan } from "./platform-plans";
 import { cache } from "react";
 import { requireUser } from "./supabase/server";
 export type OnboardingState = {
+  importState: string;
   profileDone: boolean;
   plansDone: boolean;
   ready: boolean;
@@ -9,6 +10,7 @@ export type OnboardingState = {
 };
 export function onboardingState(
   teacher: {
+    import_onboarding?: string;
     name?: string | null;
     lesson_minutes?: number | null;
     profile_completed_at?: string | null;
@@ -26,7 +28,13 @@ export function onboardingState(
   );
   const plansDone = planCount > 0;
   const platformPlan = resolvePlatformPlan(teacher.platform_plan);
-  return { profileDone, plansDone, ready: profileDone && plansDone, platformPlan };
+  return {
+    importState: teacher.import_onboarding ?? "pending",
+    profileDone,
+    plansDone,
+    ready: profileDone && plansDone,
+    platformPlan,
+  };
 }
 export const loadOnboarding = cache(async () => {
   const { supabase, userId, teacher } = await requireUser();

@@ -24,3 +24,9 @@ it("migra identificadores antigos e formata GB", () => {
   expect(resolvePlatformPlan("studio")).toBe("pro");
   expect(formatFileSize(1024 ** 3)).toBe("1 GB");
 });
+
+it("limits imports to Plus and Pro", () => {
+  expect(hasPlatformFeature("essential", "imports")).toBe(false);
+  expect(hasPlatformFeature("plus", "imports")).toBe(true);
+  expect(hasPlatformFeature("pro", "imports")).toBe(true);
+});

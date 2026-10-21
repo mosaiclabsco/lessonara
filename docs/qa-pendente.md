@@ -23,3 +23,10 @@ Status registrado em 20/10/2026, conforme revisão informada por Gabriel. Estes 
 ## Evidência para encerrar uma tarefa
 
 Registrar data, ambiente/versão, cenário, resultado esperado e observado e referência à evidência sem dados pessoais ou segredos. Manter a tarefa aberta se o teste não foi executado ou se a evidência não cobre o cenário.
+
+## Pix e importação (21/10/2026)
+
+- [ ] Ler o QR Code/copia-e-cola num aplicativo bancário e conferir recebedor e valor, sem exigir uma transferência real.
+- [ ] Professor/aluno reais: preparar Pix, avisar pagamento e confirmar no extrato; verificar se reduz mensagens e conferência.
+- [ ] Importar planilha real de um professor do piloto, com revisão assistida e sem disparar convites antes da autorização. Conferir saldo/agenda após a confirmação.
+- [ ] Exercitar a operação humana completa do pedido assistido e medir tempo/correções; o painel admin e seu alerta automático continuam no backlog.

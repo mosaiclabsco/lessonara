@@ -57,6 +57,7 @@ export type Lesson = {
 };
 
 export type Ledger = {
+  openingCredits?: number;
   lessons: Lesson[];
   credits: number;
   used: number;
@@ -78,6 +79,7 @@ export function sortPackages(packages: Package[]) {
 const MAX_WEEKS = 104;
 
 export function computeLedger(input: {
+  openingCredits?: number;
   schedules: Schedule[];
   appointments?: {
     id: string;
@@ -96,7 +98,8 @@ export function computeLedger(input: {
   const { schedules, events, today, time } = input;
   const holidays = new Map((input.holidays ?? []).map((holiday) => [holiday.date, holiday.name]));
   const packages = sortPackages(input.packages);
-  const credits = packages.reduce((sum, p) => sum + p.lessons, 0);
+  const opening = input.openingCredits ?? 0;
+  const credits = packages.reduce((sum, p) => sum + p.lessons, opening);
   const limit = addDays(today, MAX_WEEKS * 7);
 
   const byDate = new Map<string, LessonEvent[]>();
@@ -211,12 +214,24 @@ export function computeLedger(input: {
   lessons.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
 
   let pkg = 0;
-  let usedInPkg = 0;
+  let usedInPkg = Math.max(0, -opening);
+  let openingLeft = Math.max(0, opening);
+  while (pkg < packages.length && usedInPkg >= packages[pkg].lessons) {
+    usedInPkg -= packages[pkg].lessons;
+    pkg++;
+  }
   let used = 0;
   let coveredUntil: string | null = null;
   for (const l of lessons) {
     if (!l.counts) continue;
     if (l.past) used++;
+    if (openingLeft > 0) {
+      l.packageIndex = -1;
+      l.packageId = "opening";
+      openingLeft--;
+      coveredUntil = l.date;
+      continue;
+    }
     if (pkg < packages.length) {
       l.packageIndex = pkg;
       l.packageId = packages[pkg].id;
@@ -228,7 +243,14 @@ export function computeLedger(input: {
     }
   }
 
-  return { lessons, credits, used, remaining: credits - used, coveredUntil };
+  return {
+    lessons,
+    credits,
+    used,
+    remaining: credits - used,
+    coveredUntil,
+    ...(opening ? { openingCredits: opening } : {}),
+  };
 }
 
 /** Aulas para exibir: todas as passadas e as futuras até 8 semanas ou até a primeira sem pacote. */

@@ -77,3 +77,44 @@ describe("computeLedger", () => {
     expect(l.lessons.map((x) => x.date)).toEqual(["2026-09-01", "2026-09-08", "2026-09-15"]);
   });
 });
+
+it("keeps positive opening credits separate from paid packages", () => {
+  const result = computeLedger({
+    schedules: [{ ...tuesday, starts_on: "2026-10-06" }],
+    events: [],
+    packages: [pkg("2026-10-08", 4)],
+    openingCredits: 2,
+    today: "2026-10-07",
+    time: "10:00",
+  });
+  expect(result.credits).toBe(6);
+  expect(result.remaining).toBe(5);
+  expect(result.lessons[0].packageId).toBe("opening");
+  expect(result.lessons[2].packageId).toBe("2026-10-08");
+});
+it("uses later package credits to settle imported debt before future coverage", () => {
+  const result = computeLedger({
+    schedules: [{ ...tuesday, starts_on: "2026-10-06" }],
+    events: [],
+    packages: [pkg("2026-10-08", 4)],
+    openingCredits: -2,
+    today: "2026-10-07",
+    time: "10:00",
+  });
+  expect(result.credits).toBe(2);
+  expect(result.remaining).toBe(1);
+  expect(result.lessons[0].packageId).toBe("2026-10-08");
+  expect(result.lessons[2].packageId).toBeNull();
+});
+it("does not turn imported debt into historical income or used lessons", () => {
+  const result = computeLedger({
+    schedules: [],
+    events: [],
+    packages: [],
+    openingCredits: -3,
+    today: "2026-10-21",
+    time: "10:00",
+  });
+  expect(result.remaining).toBe(-3);
+  expect(result.used).toBe(0);
+});

@@ -2,6 +2,7 @@ export const settingsTabs = [
   { id: "general", label: "Geral", icon: "settings" },
   { id: "integrations", label: "Integrações", icon: "calendar" },
   { id: "holidays", label: "Feriados", icon: "calendar" },
+  { id: "receivables", label: "Recebimentos", icon: "check" },
   { id: "plans", label: "Planos", icon: "book" },
   { id: "subscription", label: "Plano da empresa", icon: "book" },
   { id: "support", label: "Ajuda e contato", icon: "chat" },

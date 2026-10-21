@@ -1,3 +1,6 @@
+import { ImportOnboarding } from "@/components/import-onboarding";
+import { PixSettingsForm } from "@/components/pix-settings";
+import type { PixSettings } from "@/lib/pix";
 import { measure } from "@/lib/performance";
 import { settingsTab, type SettingsTab } from "@/lib/settings-navigation";
 import type { ReactNode } from "react";
@@ -47,6 +50,7 @@ async function PageContent({ searchParams }: { searchParams: Search }) {
           </p>
         </div>
         {!onboarding.ready && <OnboardingGuide state={onboarding} />}
+        <ImportOnboarding state={onboarding} />
         <SettingsTabs active={active}>
           <SettingsContent
             active={active}
@@ -72,6 +76,15 @@ async function SettingsContent({
     const { supabase, userId, teacher } = await requireUser();
     let content: ReactNode;
     switch (active) {
+      case "receivables": {
+        const result = await supabase
+          .from("teacher_receivables")
+          .select("key_type,pix_key,receiver_name,receiver_city")
+          .eq("teacher_id", userId)
+          .maybeSingle<PixSettings>();
+        if (result.error) throw result.error;
+        return <PixSettingsForm settings={result.data} />;
+      }
       case "support":
         return <SupportContact />;
       case "subscription":

@@ -23,6 +23,7 @@ export type Student = {
   price_override: number | null;
   active: boolean;
   notes: string | null;
+  opening_credits?: number;
 };
 
 export type Teacher = {
@@ -69,7 +70,7 @@ export type StudentLedger = {
 export async function loadLedgers(
   supabase: SupabaseClient,
   studentIds: string[],
-  knownStudents?: Pick<Student, "id" | "teacher_id">[],
+  knownStudents?: (Pick<Student, "id" | "teacher_id"> & { opening_credits: number })[],
 ): Promise<Map<string, StudentLedger>> {
   const result = new Map<string, StudentLedger>();
   if (studentIds.length === 0) return result;
@@ -101,7 +102,11 @@ export async function loadLedgers(
         data: knownStudents.filter((student) => studentIds.includes(student.id)),
         error: null,
       })
-    : rows<{ id: string; teacher_id: string }>("students", "id,teacher_id", "id");
+    : rows<{ id: string; teacher_id: string; opening_credits: number }>(
+        "students",
+        "id,teacher_id,opening_credits",
+        "id",
+      );
   const rulesPromise = studentsPromise.then((students) =>
     loadHolidayRules(supabase, [...new Set(students.data.map((student) => student.teacher_id))]),
   );
@@ -151,6 +156,7 @@ export async function loadLedgers(
       (students.data ?? []).map((student) => [student.id, student.teacher_id]),
     );
 
+    const openingByStudent = new Map(students.data.map((st) => [st.id, st.opening_credits ?? 0]));
     for (const id of studentIds) {
       const s = (scheduleGroups.get(id) ?? []).map((r) => ({
         ...r,
@@ -171,6 +177,7 @@ export async function loadLedgers(
         : [];
       result.set(id, {
         ledger: computeLedger({
+          openingCredits: openingByStudent.get(id) ?? 0,
           schedules: s,
           events: e,
           appointments: (appointmentGroups.get(id) ?? []).map((a) => ({

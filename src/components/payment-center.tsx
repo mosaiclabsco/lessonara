@@ -1,6 +1,6 @@
 "use client";
 import { useI18n } from "@/components/browser-preferences-provider";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { formatBRL, formatDate } from "@/lib/dates";
 import { paymentStatus, type PaymentStatus } from "@/lib/payment-rules";
@@ -19,8 +19,9 @@ export type PaymentRow = {
   lastPaidOn: string | null;
   plan: string;
   price: number | null;
+  pixMessage?: string;
 };
-export function PaymentCenter({ rows }: { rows: PaymentRow[] }) {
+export function PaymentCenter({ rows, renewals }: { rows: PaymentRow[]; renewals?: ReactNode }) {
   const { t, locale } = useI18n();
   const [filter, setFilter] = useState<PaymentStatus | "all">("pending");
   const [query, setQuery] = useState("");
@@ -41,6 +42,7 @@ export function PaymentCenter({ rows }: { rows: PaymentRow[] }) {
           </p>
         </div>
       </div>
+      {renewals}
       <div className="overview-grid">
         <button className="stat-card stat-renew" onClick={() => setFilter("pending")}>
           <div className="stat-top">
@@ -146,6 +148,7 @@ export function PaymentCenter({ rows }: { rows: PaymentRow[] }) {
                     <>
                       <WhatsAppPayment
                         studentName={row.name}
+                        paymentInstructions={row.pixMessage}
                         initialPhone={row.phone}
                         initialCountry={row.phoneCountry}
                       />

@@ -12,15 +12,15 @@ Gestão de aulas para professor particular que trabalha sozinho e vende pacotes.
 - Sala integrada Jitsi é Pro. Entrada entre cinco minutos antes do início e trinta minutos depois do término, validada também no servidor. QA de câmera, áudio e compartilhamento com duas pessoas sob a CSP nova é obrigatório antes de liberar a sala aos alunos.
 - Desktop 0.3.1: chamadas, captura de monitor/janela e ferramentas nativas. Há instaladores Mac e Windows; o teste real de mídia depende do sistema operacional.
 
-| Plano da plataforma | Por arquivo | Armazenamento total | Emails e sala integrada |
-|---|---:|---:|---|
-| Essencial | 20 MB | 1 GB | Não |
-| Plus | 100 MB | 5 GB | Não |
-| Pro | 1 GB | 20 GB | Sim |
+| Plano da plataforma | Por arquivo | Armazenamento total | Emails e sala integrada | Importação |
+|---|---:|---:|---|---|
+| Essencial | 20 MB | 1 GB | Não | Não |
+| Plus | 100 MB | 5 GB | Não | Sim |
+| Pro | 1 GB | 20 GB | Sim | Sim |
 
 Limites de produto não ampliam a cota contratada no Supabase. Emails de acesso necessários à autenticação não são campanhas Pro.
 
-Pix, “Já paguei”, importação assistida, cadastro autônomo, trial e cobrança da assinatura são backlog/propostas, sem cobrança automática implementada. O marco de ativação definido é **primeiro aluno com agenda e pacote real registrados**; sua instrumentação continua pendente.
+Pix do professor com QR/copia-e-cola e “Já paguei” tem confirmação manual em Pagamentos. Importação guiada por CSV e assistida por CSV/XLSX estão disponíveis no Plus/Pro, com prévia e saldo de abertura separado dos recebimentos; veja [fluxos e operação](docs/product-flows.md). Cadastro autônomo, trial e cobrança da assinatura permanecem no backlog, sem cobrança automática implementada. O marco de ativação definido é **primeiro aluno com agenda e pacote real registrados**; sua instrumentação continua pendente.
 
 ## Desenvolvimento local
 

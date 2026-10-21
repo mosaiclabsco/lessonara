@@ -1,4 +1,6 @@
 "use client";
+import { StudentRenewalCard } from "./student-renewal";
+import type { StudentRenewal } from "@/lib/renewals";
 import { useI18n } from "@/components/browser-preferences-provider";
 import { useState, type KeyboardEvent } from "react";
 import { classroomHref, nextJoinableLesson, lessonAccess, lessonWindow } from "@/lib/classroom";
@@ -25,6 +27,7 @@ const tabs = [
   { id: "historico", label: "Histórico e pacotes", icon: "book" as const },
 ];
 export function StudentPortal({
+  renewal,
   classroomEnabled = false,
   meetEnabled = false,
   name,
@@ -37,6 +40,7 @@ export function StudentPortal({
   materials,
   activities,
 }: {
+  renewal: StudentRenewal;
   classroomEnabled?: boolean;
   meetEnabled?: boolean;
   name: string;
@@ -141,6 +145,7 @@ export function StudentPortal({
         </div>
         {tab === "resumo" && (
           <div id="panel-resumo" role="tabpanel" aria-labelledby="tab-resumo" className="space-y-6">
+            <StudentRenewalCard studentId={slug} data={renewal} />
             {ledger.remaining <= 1 && (
               <div className="portal-renew" role="status">
                 <Icon name="book" className="h-5 w-5 shrink-0" />
@@ -300,7 +305,12 @@ export function StudentPortal({
           >
             <section className="card">
               <h2 className="h2">{t("Aulas por mês e pacote")}</h2>
-              <LessonHistory lessons={ledger.lessons} today={today} packages={packages} />
+              <LessonHistory
+                openingCredits={ledger.openingCredits}
+                lessons={ledger.lessons}
+                today={today}
+                packages={packages}
+              />
             </section>
             <section className="card">
               <h2 className="h2">{t("Meus pacotes")}</h2>

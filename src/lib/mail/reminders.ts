@@ -3,7 +3,7 @@ import { loadLedgers } from "../data";
 import { formatDate } from "../dates";
 
 type Run = { day: string; cursor: string | null; leaseId: string; done?: boolean; busy?: boolean };
-type Recipient = { id: string; teacher_id: string; email: string };
+type Recipient = { id: string; teacher_id: string; email: string; opening_credits: number };
 export async function prepareReminderBatch(db: SupabaseClient, pageSize = 100) {
   if (!Number.isInteger(pageSize) || pageSize < 1 || pageSize > 100)
     throw new Error("Invalid reminder batch size");
@@ -14,7 +14,7 @@ export async function prepareReminderBatch(db: SupabaseClient, pageSize = 100) {
     return { checked: 0, queued: 0, done: !!run?.done, busy: !!run?.busy };
   let query = db
     .from("students")
-    .select("id,teacher_id,email,teachers!inner(platform_plan)")
+    .select("id,teacher_id,email,opening_credits,teachers!inner(platform_plan)")
     .eq("active", true)
     .not("email", "is", null)
     .eq("teachers.platform_plan", "pro")

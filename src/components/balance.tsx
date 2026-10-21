@@ -22,15 +22,23 @@ export function Balance({ ledger }: { ledger: Ledger }) {
     },
   ];
   return (
-    <div className="grid grid-cols-3 gap-2">
-      {items.map((i) => (
-        <div key={i.label} className="card p-3">
-          <div className="text-xs text-muted">{t(i.label)}</div>
-          <div className={`mt-1 text-2xl font-semibold tabular-nums ${i.tone ?? ""}`}>
-            {i.value}
+    <div>
+      <div className="grid grid-cols-3 gap-2">
+        {items.map((i) => (
+          <div key={i.label} className="card p-3">
+            <div className="text-xs text-muted">{t(i.label)}</div>
+            <div className={`mt-1 text-2xl font-semibold tabular-nums ${i.tone ?? ""}`}>
+              {i.value}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+      {Boolean(ledger.openingCredits) && (
+        <p className="mt-3 text-xs text-muted">
+          Saldo inicial importado: {ledger.openingCredits} aulas. Não representa um pagamento
+          registrado.
+        </p>
+      )}
     </div>
   );
 }

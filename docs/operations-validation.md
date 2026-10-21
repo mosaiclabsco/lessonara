@@ -44,4 +44,16 @@ Confirmado: conexão/token/API de disponibilidade e estado atual da fila. Ainda 
 
 [QA manual](qa-pendente.md): Jitsi com duas pessoas sob CSP, OTP real, Essencial × Pro e ciclo Google completo. C8 continua hardening de baixo risco pós-lançamento. O dashboard Supabase exibiu “Last backup: No backups”; backup externo e restore não foram verificados. Monitoramento contínuo de workers, filas sem progresso e tentativas esgotadas continua no backlog.
 
-Pix e importação têm [propostas documentadas](product-flows.md), sem implementação nesta rodada.
+Na rodada de 20/10, Pix e importação eram [propostas documentadas](product-flows.md). A implementação posterior está registrada abaixo.
+
+## Pix e importação — 21/10/2026
+
+Migrações **0023, 0024 e 0025** aplicadas no Supabase após validação com fixtures fictícias e rollback. Nenhum aluno real foi criado/alterado, nenhum pagamento real foi confirmado e nenhum email/convite Google real foi enviado por esses testes.
+
+O roteiro [verify-pix-import.sql](../supabase/operations/verify-pix-import.sql) foi executado também após a aplicação. Cobriu: preço zero sem cobrança, retrato de preço/chave, “Já paguei” sem créditos, confirmação idempotente, bloqueio cruzado, saldo inicial sem pacote/recebimento, convites não solicitados ausentes da fila, reversão integral em conflito de agenda, prévia desatualizada, plano de outra conta, restrição Essencial, opções nulas, sessão expirada, RLS e bucket privado. Fixtures das duas contas tinham registros próprios para tornar a leitura cruzada verificável. Tudo foi revertido.
+
+A suíte local final passou com **56 arquivos / 353 testes**. Inclui decodificação independente do QR renderizado para o payload Pix original. TypeScript, ESLint, formatação e build de produção passaram. A conferência visual local usou exclusivamente dados fictícios, em desktop e largura de 390 px, com QR, formulário de recebimentos, revisão do professor e escolha guiada/assistida. A rota de demonstração foi removida e o proxy restaurado antes da publicação.
+
+O comando operacional de suporte foi executado em leitura contra a fila privada; retornou vazia. Isso valida a inicialização/acesso do comando, sem alegar atendimento de um pedido real. O modo assistido depende de um operador consultar a fila e preparar o CSV; ainda não há painel admin web/alerta automático. Originais encerrados têm limpeza imediata com repetição pelo worker, com contadores na resposta e metadados pendentes visíveis ao operador.
+
+Leitura do QR em app bancário, pagamento/confirmação com professor/aluno real, planilha real do piloto e ganho de tempo continuam no [QA](qa-pendente.md). O ciclo completo assistido não foi executado com dados pessoais reais. Os resultados históricos do pentest não são uma reauditoria automática dessas funcionalidades novas.

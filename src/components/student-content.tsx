@@ -1,3 +1,4 @@
+import { loadStudentRenewal, type RenewalPlan } from "@/lib/renewals";
 import { PlatformPlanProvider } from "./platform-plan-provider";
 import { platformPlan } from "@/lib/platform-plans";
 import { getJitsiConfig } from "@/lib/classroom-server";
@@ -20,23 +21,25 @@ export async function StudentContent({
   const supabase = createAdminClient();
   const { data: student, error } = await supabase
     .from("students")
-    .select("*, teachers(name,platform_plan)")
+    .select("*, teachers(name,platform_plan),plans(price,lessons,name,is_active)")
     .eq("id", access.id)
     .eq("teacher_id", access.teacher_id)
     .maybeSingle<
-      Student & {
-        teachers: {
-          name: string;
-          platform_plan: string;
-        } | null;
-      }
+      Student &
+        RenewalPlan & {
+          teachers: {
+            name: string;
+            platform_plan: string;
+          } | null;
+        }
     >();
   if (error) throw error;
   if (!student) notFound();
   const { ledger, packages, today } = (await loadLedgers(supabase, [student.id])).get(student.id)!;
-  const [shared, assigned] = await Promise.all([
+  const [shared, assigned, renewal] = await Promise.all([
     loadStudentShares(supabase, student.id, student.teacher_id, today, false),
     loadActivities(supabase, student.teacher_id, student.id),
+    loadStudentRenewal(student.id, student.teacher_id, student),
   ]);
   const materials = shared.shares.map(({ id, title, subject, fileName, byteSize, expiresOn }) => ({
     id,
@@ -58,6 +61,7 @@ export async function StudentContent({
   return (
     <PlatformPlanProvider plan={plan.id}>
       <StudentPortal
+        renewal={renewal}
         classroomEnabled={plan.classroom && Boolean(getJitsiConfig())}
         meetEnabled={plan.classroom}
         activities={activities}

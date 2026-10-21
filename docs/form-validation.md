@@ -36,3 +36,9 @@ Histórico de pagamentos, agendas e reposições pode conter datas passadas: est
 `0021_form_validation.sql` adiciona limites de nomes, observações, moeda e créditos, protegendo gravações que tentem contornar a aplicação. Constraints `NOT VALID` passam a proteger novas gravações/alterações, sem apagar ou reescrever histórico. Em 20/10/2026, as nove novas constraints foram aplicadas em produção após dry-run transacional com rollback. As nove constraints também foram validadas contra os registros existentes, sem violações. Evidências em [Validação operacional](operations-validation.md).
 
 Testes de regressão: `form-validation.test.ts`, `teacher-form-actions.test.ts`, `plan-frequency.test.ts`, `document-rules.test.ts`, testes de documentos/atividades/sessões existentes. Os testes de actions exercitam a chamada direta e verificam ausência de gravação e de consulta Google com entradas inválidas.
+
+## Recebimentos e importação
+
+Pix valida a chave por tipo, dígitos de CPF/CNPJ, limites BR Code e valor positivo de até R$ 99.000. Dados do pacote são obtidos no servidor e preservados numa solicitação; a confirmação não aceita preço/créditos enviados pelo navegador. O banco exige uma escolha booleana explícita e data de recebimento válida.
+
+Importação valida plano Plus/Pro, arquivo de até 512 KB, UTF-8/CSV ou original XLSX assistido, até 200 linhas, colunas, contatos, nome de plano ativo, saldo inicial, início e horários. A confirmação exige revisão explícita, seleção válida e versão atual; RLS/RPCs repetem as regras de propriedade, plano, sessão e conflitos. [Contrato e limites](product-flows.md).

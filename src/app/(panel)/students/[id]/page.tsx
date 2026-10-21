@@ -202,6 +202,7 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
             <section className="card">
               <h2 className="h2">{t("Aulas por mês e pacote")}</h2>
               <LessonHistory
+                openingCredits={ledger.openingCredits}
                 lessons={lessons}
                 today={today}
                 packages={packages}
