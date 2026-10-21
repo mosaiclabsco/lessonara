@@ -33,6 +33,6 @@ Histórico de pagamentos, agendas e reposições pode conter datas passadas: est
 
 ## Banco e validação
 
-`0021_form_validation.sql` adiciona limites de nomes, observações, moeda e créditos, protegendo gravações que tentem contornar a aplicação. Constraints `NOT VALID` passam a proteger novas gravações/alterações, sem apagar ou reescrever histórico. Em 20/10/2026, as nove novas constraints foram aplicadas em produção após dry-run transacional com rollback. A validação sobre o histórico é uma etapa separada registrada no relatório operacional; arquivo SQL no repositório não significa migração aplicada.
+`0021_form_validation.sql` adiciona limites de nomes, observações, moeda e créditos, protegendo gravações que tentem contornar a aplicação. Constraints `NOT VALID` passam a proteger novas gravações/alterações, sem apagar ou reescrever histórico. Em 20/10/2026, as nove novas constraints foram aplicadas em produção após dry-run transacional com rollback. As nove constraints também foram validadas contra os registros existentes, sem violações. Evidências em [Validação operacional](operations-validation.md).
 
 Testes de regressão: `form-validation.test.ts`, `teacher-form-actions.test.ts`, `plan-frequency.test.ts`, `document-rules.test.ts`, testes de documentos/atividades/sessões existentes. Os testes de actions exercitam a chamada direta e verificam ausência de gravação e de consulta Google com entradas inválidas.

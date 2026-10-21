@@ -6,7 +6,7 @@ Propostas de produto discutidas em 20/10/2026. Pix e importação assistida aind
 
 Configuração em **Configurações → Recebimentos**, com chave/tipo, nome do recebedor e cidade. Esses dados pertencem ao professor; não são os dados de assinatura do Lessonara.
 
-No portal do aluno, mostrar um card **Renovar pacote** junto do saldo/renovação, com quantidade de aulas, valor, QR Code com o valor preenchido e Pix copia-e-cola. O valor deve respeitar `price_override` do aluno quando existir, inclusive zero, senão o preço atual do plano de aulas. Pagamentos anteriores preservam seus valores históricos. Ao mudar preço/chave antes da confirmação, mostrar os dados vigentes e guardar um retrato da solicitação para o professor conferir divergências.
+No portal do aluno, mostrar um card **Renovar pacote** junto do saldo/renovação, com quantidade de aulas, valor, QR Code com o valor preenchido e Pix copia-e-cola. O valor deve respeitar `price_override` do aluno quando existir, inclusive zero, senão o preço atual do plano de aulas. Pagamentos anteriores preservam seus valores históricos. Se o valor final for zero, não apresentar cobrança Pix; o professor registra a concessão/renovação sem pagamento conforme o fluxo de créditos. Ao mudar preço/chave antes da confirmação, mostrar os dados vigentes e guardar um retrato da solicitação para o professor conferir divergências.
 
 O botão **Já paguei** deve ficar nesse mesmo card, depois dos dados de pagamento, e mudar para **Aguardando confirmação do professor** após a ação. Não deixar o aluno repetir solicitações para a mesma renovação nem tratar o clique como pagamento recebido. No painel do professor, exibir a pendência em **Pagamentos**, com aluno, plano, valor e quantidade de aulas preenchidos; o professor confere o extrato e confirma. A confirmação deve ser atômica/idempotente para não duplicar pacote. Créditos entram somente nessa confirmação.
 
@@ -25,3 +25,5 @@ Começar como importação assistida: receber planilha/CSV e, quando necessário
 Antes de implementar, definir: formato inicial, tratamento de duplicatas, representação de saldo de abertura sem inventar pagamento histórico e como desfazer uma importação com segurança. Os pedidos devem aparecer na operação administrativa. Medir tempo de atendimento, correções e resultado do onboarding.
 
 Referência de fluxo existente: [ferramenta de importação do HubSpot](https://knowledge.hubspot.com/import-and-export/understand-the-import-tool), com mapeamento de colunas e criação/atualização de registros. A escolha de disponibilidade permanente e enquadramento Plus/Pro acima é uma recomendação para o Lessonara, não uma regra copiada de outro produto.
+
+Padrão técnico do QR Code: [Manual de Padrões para Iniciação do Pix, Banco Central](https://www.bcb.gov.br/content/estabilidadefinanceira/pix/Regulamento_Pix/II_ManualdePadroesparaIniciacaodoPix.pdf), incluindo o caso de QR Code estático com valor definido.

@@ -58,3 +58,5 @@ A revisão de formulários e o webhook Resend desta rodada têm testes próprios
 - Google: uma conexão sem erro, 14 jobs concluídos e nenhuma fila de calendário pendente; consulta real à API de disponibilidade passou, sem criar eventos/convites. O ciclo completo de evento/Meet continua em QA.
 - Dashboard do Supabase mostrou “Last backup: No backups”. Isso não verifica se existe backup externo nem substitui teste de restore; manter a tarefa operacional aberta.
 - Webhook Resend criado com seis eventos necessários e signing secret somente no Production da Vercel. A ativação e a entrega após publicação têm evidência operacional separada.
+
+A rodada posterior foi publicada no commit `dc4ac60`. CI de formatação, ESLint, tipos/testes/build passou; a suíte local final teve 51 arquivos e 321 testes aprovados, além da consulta operacional Google executada separadamente. Foram confirmados os nove limites do banco sobre o histórico e os callbacks de entrega, rejeição e spam do Resend. Nenhum SAST/DAST completo novo é alegado por essas verificações. Ver [registro operacional](operations-validation.md).

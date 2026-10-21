@@ -162,7 +162,8 @@ Priorização por ICE (pré-PMF, time mínimo, pouco dado). Itens com task detal
 
 - [ ] **Automatizar a assinatura da plataforma com gateway** — começar com cobrança manual e automatizar quando o volume justificar; preservar a reativação sem perda de dados.
 - [ ] **Recibo e exportação para carnê-leão** — recibo por pagamento (PDF/link para o aluno) e exportação mensal dos recebimentos (CSV no formato que facilite o lançamento no carnê-leão: data, pagador, CPF opcional, valor).
-- [ ] **Webhooks do Resend** — implementação/testes locais e migração 0022 aplicada; endpoint criado e segredo Production configurado. Falta conferir o evento real após o deploy. Antes desta rodada, "enviado" significa só "o Resend aceitou". Webhook = o Resend chama uma rota nossa quando o email é entregue, rejeitado (bounce), marcado como spam ou aberto. Fazer: rota assinada (verificação de assinatura), atualizar o status na fila de emails, interromper os envios ao endereço após rejeição permanente/supressão ou reclamação de spam. Sem notificação extra ao professor, conforme decisão de 20/10; os estados aparecem em Emails. A interface deve distinguir "aceito pelo provedor", "entregue" e "falhou"; entrega desconhecida não deve ser apresentada como entrega confirmada. Mostrar o andamento do convite do aluno: aceite do envio, entrega conhecida e primeiro acesso ao portal.
+- [x] **Webhooks do Resend** — publicado em 20/10/2026 com assinatura, deduplicação e status separado de entrega. Simulações oficiais de entrega, rejeição e spam confirmadas no provedor (HTTP 200) e no banco; bloqueio de novos envios conferido. A tela de Emails distingue aceite, entrega, atraso e falha, sem notificação extra ao professor. Evidências em [docs/operations-validation.md](docs/operations-validation.md). O primeiro acesso do aluno continua pendente no item de instrumentação do funil; entrega não comprova acesso ao portal.
+
 - [ ] **Avaliar responsáveis, múltiplos vínculos e escolas** — responsáveis com acesso a vários alunos por convites e permissões próprios; uma pessoa acompanhando aulas com vários professores, preservando a separação dos vínculos; escolas com vários professores, papéis (dono/admin/professor) e financeiro por professor e consolidado. Ver `FUTURE_FEATURES.md`.
 
 ### Congelado até haver demanda
@@ -201,6 +202,8 @@ Cenários e critérios de encerramento: [QA e hardening pendentes](docs/qa-pende
 Consolidação da lista enviada em 20/10/2026. Os itens já descritos no roadmap acima foram complementados no próprio lugar. Nenhuma tarefa foi marcada como concluída apenas por ter sido incluída nesta lista.
 
 ### Confiabilidade dos workers e das filas
+
+- [ ] **Confirmar backup e restauração** — dashboard consultado em 20/10 exibiu “Last backup: No backups”; verificar eventual backup externo e executar restore de teste antes de clientes reais.
 
 O histórico da sessão registra correção do `CRON_SECRET` em produção, respostas HTTP 200 dos dois workers e execução automática pelo Supabase Cron. Também registra uma pendência técnica de calendário processada. Isso não comprova, por si só, um novo lembrete preparado e enviado de ponta a ponta. Referências e evidências devem entrar na documentação operacional.
 

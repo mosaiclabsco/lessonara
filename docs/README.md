@@ -8,6 +8,7 @@
 | [Validação de formulários](form-validation.md) | Inventário de campos e regras de servidor/banco |
 | [Revisão de segurança](security-review.md) | Parecer recebido, correções, limitações e pendências |
 | [QA pendente](qa-pendente.md) | Cenários manuais e critérios de encerramento |
+| [Validação operacional](operations-validation.md) | Publicação, migrações e testes reais desta rodada |
 | [Entrega de emails](email-delivery.md) | Estados, assinatura, supressões e setup do webhook |
 | [Google Calendar/Meet](google-calendar.md) | Setup OAuth, sincronização e limites de validação |
 | [Sala de aula](classroom.md) | Jitsi, acesso, quadro e desktop |

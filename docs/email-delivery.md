@@ -36,3 +36,9 @@ Bounce permanente, reclamação de spam e supressão interrompem novos envios ao
 Os testes locais assinam o contrato de evento com chave exclusivamente de teste e cobrem autenticação, adulteração, replay expirado, falha do banco, corpo grande, eventos ignorados e bloqueio de destinatário. Migração, configuração do endpoint e entrega real precisam de evidência própria antes de declarar a integração ativa em produção.
 
 Referências: [verificação de assinatura](https://resend.com/docs/webhooks/verify-webhooks-requests) e [tipos de evento](https://resend.com/docs/webhooks/event-types).
+
+## Estado confirmado em 20/10/2026
+
+Migração aplicada e endpoint ativo em Production. Três envios aos endereços oficiais de simulação, com rótulos exclusivos, produziram `delivered`, `bounced` e `complained` no banco. O Resend registrou quatro callbacks com sucesso/HTTP 200 (spam também emitiu entrega). A supressão foi conferida: endereço entregue liberado, rejeitado e reclamante bloqueados. Nenhum aluno real foi destinatário. Esses testes validam o caminho API → webhook assinado → banco, sem comprovar chegada a uma caixa real nem substituir o QA de OTP.
+
+[Registro operacional](operations-validation.md).
