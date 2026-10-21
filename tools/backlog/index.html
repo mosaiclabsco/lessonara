@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Lessonara · Backlog local</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="/"
+        ><span class="mark">L<span>•</span></span> lessonara<span class="brand-dot">.</span></a
+      ><span class="local"><span></span> Espaço local · fora de produção</span>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">UM PASSO DE CADA VEZ</p>
+          <h1>O que vem <em>agora?</em></h1>
+          <p class="intro">
+            Tudo que queremos construir, com espaço para escolher o que importa primeiro.
+          </p>
+        </div>
+        <div class="summary">
+          <strong id="pending-count">—</strong><span>tarefas em aberto</span>
+        </div>
+      </section>
+      <section class="workspace" aria-label="Leitor do backlog">
+        <div class="toolbar">
+          <label class="search"
+            ><span aria-hidden="true">⌕</span
+            ><input
+              id="search"
+              type="search"
+              placeholder="Buscar no backlog…"
+              aria-label="Buscar no backlog" /></label
+          ><button id="refresh" class="secondary">
+            <span aria-hidden="true">↻</span> Atualizar</button
+          ><button id="copy" class="primary"><span aria-hidden="true">⧉</span> Copiar ordem</button>
+        </div>
+        <div class="filters">
+          <label
+            >Etapa<select id="section">
+              <option value="">Todas as etapas</option>
+            </select></label
+          ><label
+            >Prioridade<select id="priority">
+              <option value="">Todas</option>
+              <option value="high">Alta</option>
+              <option value="medium">Média</option>
+              <option value="low">Baixa</option>
+              <option value="none">Sem prioridade</option>
+            </select></label
+          ><label
+            >Exibir<select id="status">
+              <option value="open">Em aberto</option>
+              <option value="done">Concluídas</option>
+              <option value="all">Todas</option>
+            </select></label
+          ><label
+            >Ordenar por<select id="sort">
+              <option value="manual">Minha ordem</option>
+              <option value="priority">Prioridade</option>
+            </select></label
+          >
+        </div>
+        <div class="list-heading">
+          <span id="result-count">Carregando tarefas…</span
+          ><span id="save-status" role="status" aria-live="polite">Lendo TASKS.md</span>
+        </div>
+        <p id="error" role="alert" hidden></p>
+        <div id="tasks" class="tasks"></div>
+        <div id="empty" class="empty" hidden>
+          <span>⌕</span>
+          <h2>Nada por aqui.</h2>
+          <p>Tente outra busca ou altere os filtros.</p>
+        </div>
+      </section>
+      <footer>
+        <span>Arraste pela alça ou use as setas para ordenar em “Minha ordem”.</span
+        ><span
+          >Salvo em <code>.local/backlog-priorities.json</code> · O Markdown original é
+          preservado.</span
+        >
+      </footer>
+    </main>
+  </body>
+</html>

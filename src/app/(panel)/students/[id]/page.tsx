@@ -163,7 +163,12 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
                 </select>
                 <input className="input" name="date" type="date" required defaultValue={today} />
                 <TimeField id="reposicao-time" />
-                <input className="input" name="note" placeholder={t("observa\u00E7\u00E3o")} />
+                <input
+                  className="input"
+                  name="note"
+                  maxLength={4000}
+                  placeholder={t("observa\u00E7\u00E3o")}
+                />
                 <SubmitButton className="btn">{t("Adicionar")}</SubmitButton>
               </ActionForm>
             </details>
@@ -245,6 +250,7 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
                 <input
                   className="input"
                   name="lessons"
+                  max={1000}
                   type="number"
                   min={1}
                   required

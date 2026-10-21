@@ -1,5 +1,6 @@
 "use client";
-import { useState, useTransition } from "react";
+import { isFormFailure } from "@/lib/form-validation";
+import { useEffect, useState, useTransition } from "react";
 import { createPlan, updatePlan, deletePlan, reorderPlans } from "@/app/(panel)/actions";
 import { PlanFields } from "./plan-fields";
 import { Button } from "./button";
@@ -17,10 +18,26 @@ export function PlanManager({ plans }: { plans: Plan[] }) {
     [removal, setRemoval] = useState<Plan | null>(null),
     [ordering, setOrdering] = useState(false),
     [pending, start] = useTransition();
-  function run(action: () => Promise<void>, success: string) {
+  const [errorField, setErrorField] = useState("");
+  useEffect(() => {
+    if (pending || !errorField) return;
+    const form = document.getElementById("plan-editor-form") as HTMLFormElement | null;
+    const element = form?.elements.namedItem(errorField);
+    if (element instanceof HTMLElement) {
+      element.focus();
+      element.setAttribute("aria-invalid", "true");
+    }
+  }, [pending, errorField]);
+  function run(action: () => Promise<unknown>, success: string) {
+    setErrorField("");
     start(async () => {
       try {
-        await action();
+        const result = await action();
+        if (isFormFailure(result)) {
+          setErrorField(result.validation.field);
+          notify(t(result.validation.message));
+          return;
+        }
         setEditor(null);
         setRemoval(null);
         notify(t(success));

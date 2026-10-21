@@ -94,6 +94,18 @@ export async function processEmails(id?: string) {
       if (error) throw new Error("Não foi possível atualizar o estado do email.");
     }
     try {
+      const blocked = await db.rpc("email_recipient_blocked", { p_recipient: job.recipient });
+      if (blocked.error) throw new EmailSendError("database_unavailable", true);
+      if (blocked.data === true) {
+        await finish({
+          status: "failed",
+          last_error: "recipient_suppressed",
+          payload: {},
+          delivery: null,
+        });
+        result.failed++;
+        continue;
+      }
       if (job.template === "reminder" || job.template === "campaign") {
         const owner = await db
           .from("students")

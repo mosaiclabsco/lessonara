@@ -1,4 +1,5 @@
 "use client";
+import { isFormFailure } from "@/lib/form-validation";
 import { Toast } from "./toast";
 import { useEffect, useState, useTransition } from "react";
 import { useI18n } from "./browser-preferences-provider";
@@ -97,7 +98,11 @@ export function ReplacementPrompt({ studentId, today }: { studentId: string; tod
             const data = new FormData(e.currentTarget);
             start(async () => {
               try {
-                await addReposicao(studentId, data);
+                const result = await addReposicao(studentId, data);
+                if (isFormFailure(result)) {
+                  setError(result.validation.message);
+                  return;
+                }
                 setSource(null);
                 setError("");
               } catch (cause) {
@@ -118,7 +123,12 @@ export function ReplacementPrompt({ studentId, today }: { studentId: string; tod
           />
           <label className="label">{t("Hora")}</label>
           <TimeField id={`replacement-${source}`} />
-          <input className="input" name="note" placeholder={t("Observação (opcional)")} />
+          <input
+            className="input"
+            name="note"
+            maxLength={4000}
+            placeholder={t("Observação (opcional)")}
+          />
           <button className="btn" disabled={pending}>
             <BusyContent pending={pending}>
               <Icon name="calendar" className="h-4 w-4" />

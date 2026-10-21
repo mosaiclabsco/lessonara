@@ -1,4 +1,5 @@
 "use server";
+import { textValue } from "@/lib/form-validation";
 import { requireConfiguredTeacher } from "@/lib/onboarding";
 import { revalidatePath } from "next/cache";
 import { requireUser, createAdminClient } from "@/lib/supabase/server";
@@ -26,8 +27,7 @@ export async function assignActivity(input: {
   try {
     validDocumentText(input.title, "");
     dueOn = validExpiry(input.dueOn, nowInTZ().today);
-    if (input.instructions.length > 4000)
-      throw new Error("Use instruções de até 4.000 caracteres.");
+    input.instructions = textValue(input.instructions, "instructions", 4000, false, true);
   } catch (error) {
     return fail((error as Error).message);
   }
@@ -67,7 +67,11 @@ export async function reviewActivity(
   documentId = "",
 ): Promise<Result> {
   const { supabase, userId } = await requireUser();
-  if (feedback.length > 4000) return fail("Use um comentário de até 4.000 caracteres.");
+  try {
+    feedback = textValue(feedback, "feedback", 4000, false, true);
+  } catch {
+    return fail("Use um comentário válido de até 4.000 caracteres.");
+  }
   const activity = await supabase
     .from("activities")
     .select("student_id,students(slug),activity_submissions(submitted_at)")
@@ -93,6 +97,7 @@ export async function reviewActivity(
   return { ok: true, data: undefined };
 }
 export async function archiveActivity(id: string, archive: boolean): Promise<Result> {
+  if (typeof archive !== "boolean") return fail("Escolha uma ação válida.");
   const { supabase, userId } = await requireUser();
   const { data, error } = await supabase
     .from("activities")

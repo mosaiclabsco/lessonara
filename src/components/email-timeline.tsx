@@ -1,4 +1,5 @@
 "use client";
+import { emailDisplayStatus, type DeliveryStatus } from "@/lib/mail/delivery-status";
 import { useState } from "react";
 import { useI18n } from "./browser-preferences-provider";
 import { Pagination } from "./pagination";
@@ -9,6 +10,8 @@ export type EmailStatus = {
   recipient: string;
   template: string;
   status: string;
+  delivery_status?: DeliveryStatus | null;
+  delivery_updated_at?: string | null;
   attempts: number;
   created_at: string;
   last_error: string | null;
@@ -16,7 +19,9 @@ export type EmailStatus = {
 const labels: Record<string, string> = {
   pending: "Aguardando envio",
   sending: "Enviando",
-  sent: "Enviado ao provedor",
+  sent: "Aceito pelo provedor",
+  delivered: "Entregue ao servidor de email",
+  delayed: "Entrega atrasada",
   failed: "Falha no envio",
   cancelled: "Cancelado",
 };
@@ -24,7 +29,13 @@ export function EmailTimeline({ jobs }: { jobs: EmailStatus[] }) {
   const { t, locale } = useI18n();
   const [filter, setFilter] = useState("all");
   const [pages, setPages] = useState<Record<string, number>>({});
-  const visible = jobs.filter((job) => filter === "all" || job.status === filter);
+  const visible = jobs.filter(
+    (job) =>
+      filter === "all" ||
+      (filter === "pending"
+        ? ["pending", "sending", "delayed"].includes(emailDisplayStatus(job))
+        : emailDisplayStatus(job) === filter),
+  );
   const page = Math.min(pages[filter] ?? 0, Math.max(0, Math.ceil(visible.length / 20) - 1));
   return (
     <section className="card">
@@ -39,12 +50,17 @@ export function EmailTimeline({ jobs }: { jobs: EmailStatus[] }) {
       </div>
       <div className="grid grid-cols-3 gap-3 my-5">
         {[
-          { label: "Enviados", value: jobs.filter((j) => j.status === "sent").length },
+          {
+            label: "Entregues",
+            value: jobs.filter((j) => emailDisplayStatus(j) === "delivered").length,
+          },
           {
             label: "Pendentes",
-            value: jobs.filter((j) => j.status === "pending" || j.status === "sending").length,
+            value: jobs.filter((j) =>
+              ["pending", "sending", "delayed"].includes(emailDisplayStatus(j)),
+            ).length,
           },
-          { label: "Falhas", value: jobs.filter((j) => j.status === "failed").length },
+          { label: "Falhas", value: jobs.filter((j) => emailDisplayStatus(j) === "failed").length },
         ].map((item) => (
           <div key={item.label}>
             <p className="text-xs text-muted">{t(item.label)}</p>
@@ -55,7 +71,8 @@ export function EmailTimeline({ jobs }: { jobs: EmailStatus[] }) {
       <div className="filter-tabs mt-5">
         {[
           { id: "all", label: "Todos" },
-          { id: "sent", label: "Enviados" },
+          { id: "sent", label: "Aceitos pelo provedor" },
+          { id: "delivered", label: "Entregues" },
           { id: "pending", label: "Pendentes" },
           { id: "failed", label: "Falhas" },
         ].map((item) => (
@@ -72,7 +89,7 @@ export function EmailTimeline({ jobs }: { jobs: EmailStatus[] }) {
       </div>
       <p className="mt-4 text-xs text-muted">
         {t(
-          "Enviado ao provedor significa aceito para envio; não confirma chegada à caixa de entrada.",
+          "Aceito pelo provedor ainda não confirma entrega. Entregue indica aceite pelo servidor de email do destinatário, sem garantir leitura ou chegada à caixa principal.",
         )}
       </p>
       <ul className="mt-4 divide-y divide-line">
@@ -89,8 +106,10 @@ export function EmailTimeline({ jobs }: { jobs: EmailStatus[] }) {
                 )}{" "}
                 · {job.recipient}
               </p>
-              <span className={`text-xs ${job.status === "failed" ? "text-bad" : "text-muted"}`}>
-                {t(labels[job.status] ?? job.status)}
+              <span
+                className={`text-xs ${emailDisplayStatus(job) === "failed" ? "text-bad" : emailDisplayStatus(job) === "delivered" ? "text-accent" : "text-muted"}`}
+              >
+                {t(labels[emailDisplayStatus(job)] ?? job.status)}
               </span>
             </div>
             <p className="mt-2 text-xs text-muted">
@@ -99,7 +118,37 @@ export function EmailTimeline({ jobs }: { jobs: EmailStatus[] }) {
               })}{" "}
               · {job.attempts} {t("tentativa(s)")}
             </p>
-            {job.last_error && (
+            {job.delivery_status === "bounced" && (
+              <p className="mt-2 text-xs text-bad">
+                {t(
+                  "O endereço recusou o email. Novos envios para esse endereço foram interrompidos.",
+                )}
+              </p>
+            )}
+            {job.delivery_status === "complained" && (
+              <p className="mt-2 text-xs text-bad">
+                {t(
+                  "Mensagem marcada como spam. Novos envios para esse endereço foram interrompidos.",
+                )}
+              </p>
+            )}
+            {(job.delivery_status === "suppressed" ||
+              job.last_error === "recipient_suppressed") && (
+              <p className="mt-2 text-xs text-bad">
+                {t("Envio bloqueado após falha permanente ou reclamação de spam.")}
+              </p>
+            )}
+            {job.delivery_status === "failed" && (
+              <p className="mt-2 text-xs text-bad">
+                {t("O provedor informou uma falha após aceitar o envio.")}
+              </p>
+            )}
+            {job.delivery_status === "delivery_delayed" && (
+              <p className="mt-2 text-xs text-muted">
+                {t("O provedor ainda está tentando entregar esta mensagem.")}
+              </p>
+            )}
+            {job.last_error && job.last_error !== "recipient_suppressed" && (
               <p className="mt-2 text-xs text-bad">
                 {t("Confira a configuração do envio ou tente novamente após corrigir a falha.")}
               </p>

@@ -8,9 +8,9 @@ Alternativas: Impedir valores incoerentes nos cadastros e agendamentos do Lesson
 Durante os testes de ponta a ponta, **Gabriel pediu uma revisão completa da validação** dos formulários do Lessonara. A tarefa abrange os portais de professor e aluno, incluindo cadastros, planos, horários, pagamentos, materiais, atividades e configurações.
 
 ## Problema
-É necessário confirmar que todos os campos recusam dados incoerentes e apresentam mensagens claras. Existem validações específicas, como moeda com teto de `R$ 99.000,00`, quantidade positiva de créditos e limite de upload de `20 MB`, mas ainda falta uma revisão uniforme de todos os formulários.
+É necessário confirmar que todos os campos recusam dados incoerentes e apresentam mensagens claras. Existem validações específicas, como moeda com teto de `R$ 99.000,00`, quantidade positiva de créditos e limites de upload por plano (Essencial: `20 MB`; Plus: `100 MB`; Pro: `1 GB` por arquivo), mas ainda falta uma revisão uniforme de todos os formulários.
 
-> **A confirmar:** quais campos ainda aceitam valores indevidos e quais limites de negócio precisam ser definidos.
+> **Revisão implementada em 20/10/2026:** inventário, limites e correções em [docs/form-validation.md](docs/form-validation.md). Testes diretos das actions e restrições do banco complementam a validação do navegador.
 
 ## Impacto
 - Dados inconsistentes podem prejudicar agenda, créditos e comunicação com alunos.
@@ -29,3 +29,207 @@ Os formulários recusam dados fora das regras definidas e mostram uma mensagem q
 ~~~
 
 Em editores WYSIWYG, use modo texto ou Markdown para colar a descrição mantendo a formatação.
+
+---
+
+**Título:** Auditoria de segurança pré-lançamento (SAST, DAST e pentest) do Lessonara
+Alternativas: Validar a segurança do Lessonara antes da publicação · Rodar SAST/DAST/pentest no Lessonara (Vercel + Supabase)
+
+~~~markdown
+## Contexto
+O Lessonara (Next.js 16 na Vercel + Supabase) vai ser publicado. Antes disso, Gabriel pediu uma auditoria de AppSec do código e da API publicada, dentro dos ambientes e domínios que ele autorizar. O Codex está alterando o código em paralelo.
+
+## Escopo
+- OWASP Top 10 e OWASP API Security Top 10.
+- Autenticação, sessões, JWT e cookies (professor: Supabase Auth; aluno: sessão própria em `student_sessions`).
+- IDOR/BOLA, BFLA e isolamento entre professores (RLS + rotas com `createAdminClient`).
+- Manipulação de parâmetros, mass assignment, validação só no frontend.
+- SQLi, XSS, SSRF, secrets expostos.
+- Rate limiting, CORS, endpoints indevidamente públicos (`src/lib/public-routes`, `/api/cron/*`).
+- Dependências vulneráveis e configurações inseguras (headers, `vercel.json`, Supabase Auth).
+
+## Ferramentas
+- SAST + análise arquitetural primeiro.
+- `docker run --rm -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t <domínio autorizado>`.
+- Skill https://github.com/sam-cre/Security_Audit_Skill.
+- Skill https://github.com/secureIO-GmbH/security-skills (modo full).
+- SonarQube local, se agregar (code smells, qualidade).
+
+## Regras
+- Sem testes destrutivos, brute force ou exploração ativa em produção.
+- Pedir autorização explícita antes de testes ativos.
+- Não modificar código sem autorização.
+
+## Entregáveis
+- Matriz de testes dinâmicos com usuários de permissões diferentes (professor A, professor B, aluno, anônimo).
+- Relatório: confirmadas / suspeitas / não testadas; cada achado com evidência reproduzível, impacto, severidade, arquivo ou endpoint e correção recomendada.
+
+## Critério de aceite
+Relatório entregue e priorizado, permitindo mitigar os achados antes da publicação.
+~~~
+
+---
+
+**Título:** Pix da professora: configuração, QR Code e "já paguei" no portal do aluno
+Alternativas: Exibir o Pix do professor para o aluno pagar o pacote · Facilitar o pagamento de pacotes via Pix sem gateway
+
+~~~markdown
+## Contexto
+Na análise de produto (out/2026), a cobrança aparece como o ponto mais manual da jornada: a mensagem de WhatsApp não leva forma de pagamento e o professor registra o pagamento à mão. Gateway para os alunos foi descartado: o professor tem poucos alunos e teria que repassar a taxa.
+
+## Problema
+O aluno precisa pedir a chave Pix, e o professor precisa conferir o extrato e lançar o pagamento. Sem webhook não há confirmação automática; o ganho está em reduzir o atrito e em gerar um sinal para o professor conferir.
+
+## O que fazer
+1. Configurações → nova opção **Pix**: tipo e chave, nome do recebedor e cidade (campos exigidos pelo BR Code). Validar a chave por tipo.
+2. Gerar o BR Code estático (EMV + CRC16) com o valor do pacote/renovação e um identificador curto do aluno, mais o QR Code correspondente.
+3. Portal do aluno: quando houver renovação pendente, mostrar o QR Code, o copia-e-cola e o valor.
+4. Mensagem de cobrança por WhatsApp: incluir o copia-e-cola.
+5. Botão **"Já paguei"** no portal: cria um pagamento *aguardando confirmação* e avisa o professor; o professor confirma com um clique em Pagamentos (pré-preenchido), e só então os créditos entram no saldo.
+6. Sem Pix configurado, nada aparece (mantém o fluxo atual).
+
+## Fora de escopo
+Gateway, webhook bancário, conciliação automática.
+
+## Critério de aceite
+Um professor com Pix configurado vê o aluno pagar pelo QR/copia-e-cola, recebe o aviso de "já paguei" e confirma o pagamento em um clique; o saldo só muda após a confirmação.
+~~~
+
+---
+
+**Título:** Trial da plataforma e assinatura do professor
+Alternativas: Permitir que professores testem o Lessonara antes de assinar · Cadastro self-serve com período de teste e cobrança da assinatura
+
+~~~markdown
+## Contexto
+Hoje não há cadastro self-serve de professor nem cobrança da assinatura (README: "Nenhuma cobrança automática foi implementada"). Sem isso não dá para adquirir nem monetizar.
+
+## O que fazer
+1. Cadastro self-serve do professor com período de teste de **7 dias** (ciclo do professor é semanal: uma semana de aulas + uma cobrança).
+2. Trial com acesso a um plano definido (ex.: Plus ou Pro), com contagem regressiva no painel e aviso por email antes do fim.
+3. Fim do trial sem assinatura: conta em modo leitura (não perde dados), sem criação de alunos, aulas ou envios.
+4. Assinatura: começar manual (Mosaic Labs Admin) enquanto houver poucos professores; migrar para Stripe (ou similar) quando o volume justificar. A taxa do gateway fica absorvida no preço da assinatura.
+5. Entitlements continuam aplicados no servidor e no banco (trial/expirado como estados do plano da plataforma).
+
+## Critério de aceite
+Um professor novo se cadastra, usa o período de teste sem intervenção, recebe o aviso de fim e, sem assinar, mantém os dados em modo leitura; ao assinar, o acesso volta sem perda.
+~~~
+
+---
+
+## Roadmap de produto (análise out/2026)
+
+Priorização por ICE (pré-PMF, time mínimo, pouco dado). Itens com task detalhada acima estão marcados com ↑.
+
+### Agora
+
+- [x] **Concluir a revisão de validação dos formulários** ↑ — incluir regras no servidor, limites, combinações inválidas e mensagens de correção. Implementada em 20/10/2026: validação compartilhada, mensagens serializadas, limites de campos e migração 0021 aplicada; inventário em [docs/form-validation.md](docs/form-validation.md).
+- [x] **Consolidar o relatório de segurança** — Relatório centralizado em [docs/security-review.md](docs/security-review.md), separando corrigidos, descartados, pendentes e cenários ainda não validados. Os resultados informados por Gabriel (SAST limpo, ZAP 0 FAIL, D1–D17 sem violações, C1–C7/S1–S5/Q1–Q4 resolvidos ou descartados e 280 testes) são o registro da revisão recebida, não uma nova execução nesta atualização do backlog.
+- [x] **Atualizar README e documentação** — README atualizado e guias centralizados em [docs/README.md](docs/README.md); entradas antigas apontam aos documentos canônicos e `FUTURE_FEATURES.md` não mantém backlog duplicado.
+- [ ] **Landing page do Lessonara** — evoluir `/about` para uma página de venda: proposta de valor (controle de aulas e pacotes, cobrança, portal do aluno), prints, planos com preço, FAQ, contato e caminho claro para solicitar participação no piloto. Adicionar o CTA "Testar 7 dias grátis" quando o cadastro autônomo e o trial estiverem prontos. Permitir indexação das páginas comerciais, preservando a privacidade das páginas internas.
+- [ ] **Cadastro autônomo + trial de 7 dias + cobrança manual da assinatura** ↑ — implementar após comprovar o onboarding no piloto. Validar se sete dias permitem experimentar o valor; mostrar prazo e avisar antes do fim. Conta expirada preserva dados, informa restrições e permite reativação após pagamento. Medir conversão e motivos de não conversão.
+- [ ] **Pix da professora + botão "Já paguei"** ↑ — proposta em [docs/product-flows.md](docs/product-flows.md): Configurações → Recebimentos; card Renovar pacote no portal com preço específico do aluno/plano; confirmar em Pagamentos. Prototipar e testar com professores e alunos antes da implementação completa. Configuração dos dados Pix, valor/QR Code/copia-e-cola no portal e instruções na cobrança por WhatsApp; aluno avisa, professor confirma com dados preenchidos e só então entram os créditos. Verificar se reduz conversas e trabalho de conferência.
+- [ ] **Painel do admin funcional** — papel admin verificado no backend/RLS. Mínimo: lista de professores (plano, status do trial, último acesso, nº de alunos), ativar/desativar conta, registrar pagamento manual da assinatura, ver falhas de email/cron e pedidos de importação de alunos.
+- [ ] **Eventos do funil de ativação** — definir e gravar (tabela própria ou eventos customizados da Vercel), sem dados pessoais do aluno:
+  - `teacher_signed_up` (início do trial)
+  - `profile_completed` (nome + duração salvos)
+  - `plan_activated` (1º plano de aulas ativo)
+  - `first_student_created`
+  - `first_schedule_created` (1ª agenda fixa ou aula avulsa)
+  - `first_payment_registered` (pagamento/pacote real registrado)
+  - `teacher_activated` — **marco de ativação: primeiro aluno com agenda e pacote real registrados**, combinando os estados do mesmo aluno; um pagamento isolado ou dados de teste não bastam
+  - `student_portal_accessed` (1º aluno entrou no portal)
+  - `trial_ending_notified`, `subscription_started`, `subscription_lapsed`
+  - Métricas: % que chega ao marco de ativação em até 7 dias; tempo e ajuda necessária até o primeiro valor; pontos de interrupção do onboarding; conversão trial → assinatura e motivos de não conversão.
+
+### Próximo
+
+- [ ] **Importação de alunos (concierge)** — proposta em [docs/product-flows.md](docs/product-flows.md): passo opcional no onboarding e botão permanente depois, sem esconder pela idade da conta; sugestão de disponibilidade Plus/Pro ainda não aplicada. Em Configurações (e no onboarding), área "Importar alunos": professor envia a planilha/CSV/print no formato que tiver, incluindo alunos, agendas e saldos. Gera pedido + alerta no painel admin; a equipe prepara a importação e o professor revisa antes de confirmar. Oferecer essa ajuda durante o onboarding dos primeiros professores. Importador CSV autônomo só quando a operação assistida começar a consumir tempo demais.
+- [ ] **Aluno desmarca pelo portal** — refinar:
+  - Aluno desmarca uma aula futura e informa motivo opcional.
+  - Dentro do prazo → **desmarcada** (não conta); fora do prazo → **falta** (conta). Professor pode reverter a classificação.
+  - Professor fica sabendo **na hora**: aviso no painel (badge + lista "Desmarques recentes") e email imediato para o professor; WhatsApp/push depois, se houver demanda.
+  - Aluno recebe confirmação com a classificação ("desmarcada sem custo" / "contará como falta") **antes** de confirmar, para não haver surpresa.
+  - Opcional: pedir reposição no mesmo fluxo, sugerindo horários livres da disponibilidade.
+- [ ] **Regra de antecedência configurável pelo professor** — Configurações: horas mínimas para desmarcar sem custo (ex.: 2h, 12h, 24h, 48h), com padrão definido. Vale para desmarques feitos pelo aluno e para a classificação manual; mudanças valem só para aulas futuras. Mostrar a regra no portal do aluno.
+- [ ] **Discovery leve (contínuo)** — 5–8 entrevistas formais é difícil agora; alternativa:
+  - Conversa de 15 min com cada professor que iniciar o trial (onboarding assistido = entrevista).
+  - Pergunta curta no painel no fim do trial ("o que faltou para assinar?") e ao cancelar.
+  - Campo de feedback/sugestão no menu de suporte.
+  - Meta: 1 conversa por semana; registrar dores repetidas aqui.
+
+### Depois
+
+- [ ] **Automatizar a assinatura da plataforma com gateway** — começar com cobrança manual e automatizar quando o volume justificar; preservar a reativação sem perda de dados.
+- [ ] **Recibo e exportação para carnê-leão** — recibo por pagamento (PDF/link para o aluno) e exportação mensal dos recebimentos (CSV no formato que facilite o lançamento no carnê-leão: data, pagador, CPF opcional, valor).
+- [ ] **Webhooks do Resend** — implementação/testes locais e migração 0022 aplicada; endpoint criado e segredo Production configurado. Falta conferir o evento real após o deploy. Antes desta rodada, "enviado" significa só "o Resend aceitou". Webhook = o Resend chama uma rota nossa quando o email é entregue, rejeitado (bounce), marcado como spam ou aberto. Fazer: rota assinada (verificação de assinatura), atualizar o status na fila de emails, interromper os envios ao endereço após rejeição permanente/supressão ou reclamação de spam. Sem notificação extra ao professor, conforme decisão de 20/10; os estados aparecem em Emails. A interface deve distinguir "aceito pelo provedor", "entregue" e "falhou"; entrega desconhecida não deve ser apresentada como entrega confirmada. Mostrar o andamento do convite do aluno: aceite do envio, entrega conhecida e primeiro acesso ao portal.
+- [ ] **Avaliar responsáveis, múltiplos vínculos e escolas** — responsáveis com acesso a vários alunos por convites e permissões próprios; uma pessoa acompanhando aulas com vários professores, preservando a separação dos vínculos; escolas com vários professores, papéis (dono/admin/professor) e financeiro por professor e consolidado. Ver `FUTURE_FEATURES.md`.
+
+### Congelado até haver demanda
+
+- [ ] **Retomar melhorias no desktop e nas ferramentas de anotação** — somente quando houver demanda comprovada.
+- [ ] **Retomar expansão da sala online** — somente quando houver demanda comprovada.
+- [ ] **Retomar expansão das campanhas de email** — somente quando houver demanda comprovada.
+- [ ] **Retomar novos idiomas** — somente quando houver demanda comprovada.
+
+### Decidido
+
+- Sem gateway de pagamento para alunos (taxa teria que ser repassada; poucos alunos por professor).
+- Assinatura da plataforma: manual no início, Stripe quando o volume justificar.
+- Trial de 7 dias.
+
+### Concluído
+
+- [x] **Google Calendar/Meet real** — OAuth configurado e validado em out/2026 (README e `GOOGLE_CALENDAR_SETUP.md` ainda dizem "falta configurar as credenciais": atualizar).
+
+
+## QA e hardening após a revisão de segurança
+
+Pendências mantidas em TODO por solicitação de Gabriel em 20/10/2026. Não são bloqueadores da conclusão da auditoria de segurança; o QA da sala é necessário antes de liberar seu uso aos alunos.
+
+- [ ] **Jitsi sob a nova CSP com duas pessoas** — validar câmera, áudio, compartilhamento e WebSocket antes de liberar a sala aos alunos.
+- [ ] **C8 — ACAO `*` nas páginas HTML** — hardening de baixo risco, pós-lançamento.
+- [ ] **OTP real do aluno ponta a ponta** — recebimento e uso do código, com rejeição dos casos inválidos.
+- [ ] **Essencial × Pro** — validar permissões, limites e bloqueios no servidor com planos diferentes.
+- [ ] **Google Calendar ponta a ponta** — conexão e consulta real de disponibilidade confirmadas em 20/10/2026; uma conexão sem erro, 14 jobs concluídos e nenhuma pendência/falha. Criar, alterar e cancelar evento/Meet continua como cenário manual de QA, sem inferir a conclusão pelo estado da fila.
+
+Cenários e critérios de encerramento: [QA e hardening pendentes](docs/qa-pendente.md).
+
+
+## Operação e validação do piloto
+
+Consolidação da lista enviada em 20/10/2026. Os itens já descritos no roadmap acima foram complementados no próprio lugar. Nenhuma tarefa foi marcada como concluída apenas por ter sido incluída nesta lista.
+
+### Confiabilidade dos workers e das filas
+
+O histórico da sessão registra correção do `CRON_SECRET` em produção, respostas HTTP 200 dos dois workers e execução automática pelo Supabase Cron. Também registra uma pendência técnica de calendário processada. Isso não comprova, por si só, um novo lembrete preparado e enviado de ponta a ponta. Referências e evidências devem entrar na documentação operacional.
+
+- [ ] **Consolidar a validação dos dois workers em produção** — registrar a correção do segredo e as evidências das execuções, sem armazenar seu valor. Validar o ciclo completo com cenário elegível e destinatário autorizado: lembrete preparado, email processado e pendência de calendário resolvida. Distinguir execução HTTP bem-sucedida, processamento concluído e entrega do email.
+- [ ] **Detectar interrupção ou execução incompleta dos workers** — acompanhar última execução, progresso e conclusão; definir os limiares e o canal operacional para alertar quando não executarem ou não concluírem o processamento.
+- [ ] **Dar visibilidade às filas** — mostrar pendências por idade, filas sem progresso, falhas de envio, número de tentativas, tentativas esgotadas e conclusão dos workers. Medir esses indicadores e definir como investigar e retomar o processamento com segurança.
+
+### Público e pesquisa com professores e alunos
+
+- [x] **Segmento inicial definido** — professor particular que trabalha sozinho e vende pacotes de aulas. Diretriz de produto definida por Gabriel; a aderência ao público ainda deve ser validada no piloto.
+- [ ] **Recrutar um pequeno grupo para o piloto** — incluir professores além do usuário inicial e registrar interesse e participação.
+- [ ] **Entrevistar sobre situações reais recentes** — última renovação, conferência de saldo, desmarcação e trabalho feito fora do sistema; registrar as alternativas usadas e separar fatos observados de hipóteses.
+- [ ] **Observar alunos usando o portal** — pedir que acessem, encontrem a próxima aula e consultem o saldo; registrar dificuldades e ajuda necessária sem conduzir as respostas.
+- [ ] **Executar onboarding assistido e acompanhar pelo menos dois ciclos semanais** — registrar tempo, intervenções e dificuldades de cada professor. A importação assistida está detalhada no roadmap.
+- [ ] **Validar disposição real de pagar** — entender motivos para continuar ou abandonar e testar se a diferenciação entre Essencial, Plus e Pro é compreendida e valorizada.
+- [ ] **Medir retenção e indicações** — usar os resultados do piloto para orientar a próxima rodada de investimento no produto.
+
+### Ativação e uso recorrente
+
+- [x] **Marco de ativação definido** — primeiro aluno com agenda e pacote real registrados. Instrumentação e validação dessa definição seguem pendentes no item de eventos do funil.
+- [ ] **Ampliar o checklist de onboarding** — além de perfil e plano, incluir aluno, agenda, pacote e convite; mostrar ao professor a próxima ação necessária para começar a usar o produto.
+- [ ] **Medir uso recorrente por ações úteis** — definir e acompanhar ações de agenda, saldo, renovação e pagamentos, além de simples acessos ao sistema.
+- [ ] **Medir o ciclo de renovação** — tempo e quantidade de intervenções entre aviso de renovação e pagamento confirmado; comparar o fluxo atual com o protótipo Pix/“Já paguei”.
+
+### Resumo de pendências e evolução condicionada a evidência
+
+- [ ] **Testar manualmente “O que preciso resolver”** — validar se um resumo ajuda o professor a agir antes de construir uma tela dedicada.
+- [ ] **Implementar o resumo somente se demonstrar utilidade** — reunir alunos sem agenda, renovações, correções e falhas de comunicação; adicionar alertas específicos apenas para as pendências que realmente gerarem ação.
+
+### Dependências e ordem de aprendizado
+
+Primeiro recrutar e acompanhar o piloto com onboarding e importação assistidos. Usar as observações para ajustar a ativação, testar renovação e validar preço. O cadastro autônomo vem depois de comprovar o onboarding; automação da assinatura e importação CSV dependem do custo e volume da operação. A rotina contínua de discovery, canal de feedback e coleta dos motivos de cancelamento permanecem no roadmap acima.

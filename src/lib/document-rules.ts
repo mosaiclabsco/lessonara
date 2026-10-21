@@ -1,3 +1,4 @@
+import { textValue } from "./form-validation";
 export const DOCUMENT_BUCKET = "lessonara-documents";
 export const MAX_DOCUMENT_BYTES = 20 * 1024 * 1024;
 export const LIBRARY_BYTES = 1024 * 1024 * 1024;
@@ -23,7 +24,12 @@ export function validateDocumentFile(
   byteSize: number,
   maxBytes = MAX_DOCUMENT_BYTES,
 ) {
-  if (!fileName || fileName.length > 180 || /[\x00-\x1f/\\]/.test(fileName))
+  if (
+    typeof fileName !== "string" ||
+    !fileName ||
+    fileName.length > 180 ||
+    /[\x00-\x1f/\\]/.test(fileName)
+  )
     throw new Error("Confira o nome do arquivo.");
   const extension = fileName.split(".").at(-1)?.toLowerCase() ?? "";
   if (!MIME[extension])
@@ -36,14 +42,16 @@ export function validateDocumentFile(
 }
 
 export function validDocumentText(title: string, subject: string) {
-  if (!title.trim() || title.trim().length > 120 || subject.trim().length > 80)
-    throw new Error("Informe um título de até 120 caracteres e assunto de até 80.");
-  return { title: title.trim(), subject: subject.trim() };
+  return {
+    title: textValue(title, "title", 120, true),
+    subject: textValue(subject, "subject", 80),
+  };
 }
 
 export function validExpiry(value: string, today: string) {
-  if (!value) return null;
+  if (value === "") return null;
   if (
+    typeof value !== "string" ||
     !/^\d{4}-\d{2}-\d{2}$/.test(value) ||
     Number.isNaN(new Date(`${value}T12:00:00Z`).getTime()) ||
     new Date(`${value}T12:00:00Z`).toISOString().slice(0, 10) !== value ||

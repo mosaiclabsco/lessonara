@@ -21,6 +21,7 @@ export function StudentFields({ student, plans }: { student?: Student; plans: Pl
             className="input"
             id="student-name"
             name="name"
+            maxLength={120}
             required
             defaultValue={student?.name}
           />
@@ -100,6 +101,7 @@ export function StudentFields({ student, plans }: { student?: Student; plans: Pl
           className="input"
           id="student-notes"
           name="notes"
+          maxLength={4000}
           rows={2}
           defaultValue={student?.notes ?? ""}
         />

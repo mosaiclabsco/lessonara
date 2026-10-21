@@ -1,8 +1,10 @@
 "use client";
+import { isFormFailure } from "@/lib/form-validation";
 import { Toast } from "./toast";
 import {
   createContext,
   useContext,
+  useEffect,
   useId,
   useRef,
   useState,
@@ -31,10 +33,35 @@ export function ActionGroup({ children, className }: { children: ReactNode; clas
     </GroupContext>
   );
 }
-function FormContents({ children, blocked }: { children: ReactNode; blocked: boolean }) {
+function FormContents({
+  children,
+  blocked,
+  errorField,
+}: {
+  children: ReactNode;
+  blocked: boolean;
+  errorField: string;
+}) {
   const { pending } = useFormStatus();
+  const fields = useRef<HTMLFieldSetElement>(null);
+  useEffect(() => {
+    if (pending || blocked || !fields.current) return;
+    for (const element of fields.current.querySelectorAll<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >("input,select,textarea")) {
+      if (element.dataset.validationError) {
+        element.removeAttribute("aria-invalid");
+        delete element.dataset.validationError;
+      }
+      if (errorField && element.name === errorField && element.type !== "hidden") {
+        element.setAttribute("aria-invalid", "true");
+        element.dataset.validationError = "true";
+        element.focus();
+      }
+    }
+  }, [pending, blocked, errorField]);
   return (
-    <fieldset className="action-fields" disabled={blocked || pending}>
+    <fieldset ref={fields} className="action-fields" disabled={blocked || pending}>
       {children}
     </fieldset>
   );
@@ -45,7 +72,7 @@ export function ActionForm({
   className,
   id,
 }: {
-  action: (data: FormData) => void | Promise<void>;
+  action: (data: FormData) => unknown | Promise<unknown>;
   children: ReactNode;
   className?: string;
   id?: string;
@@ -53,17 +80,28 @@ export function ActionForm({
   const group = useContext(GroupContext);
   const formId = useId();
   const running = useRef(false);
+  const preserveValues = useRef(false);
   const [error, setError] = useState("");
+  const [errorField, setErrorField] = useState("");
   const { t } = useI18n();
   async function run(data: FormData) {
     if (running.current || group?.active) return;
     running.current = true;
     group?.setActive(formId);
     setError("");
+    setErrorField("");
+    preserveValues.current = false;
     try {
-      await action(data);
+      const result = await action(data);
+      if (isFormFailure(result)) {
+        preserveValues.current = true;
+        setError(result.validation.message);
+        setErrorField(result.validation.field);
+        return;
+      }
       notify(t("Alterações salvas."));
     } catch (cause) {
+      preserveValues.current = true;
       if (
         cause &&
         typeof cause === "object" &&
@@ -87,11 +125,17 @@ export function ActionForm({
       id={id}
       className={className}
       action={run}
+      onReset={(event) => {
+        if (preserveValues.current) event.preventDefault();
+      }}
       onSubmit={(event) => {
         if (running.current) event.preventDefault();
       }}
     >
-      <FormContents blocked={Boolean(group?.active && group.active !== formId)}>
+      <FormContents
+        blocked={Boolean(group?.active && group.active !== formId)}
+        errorField={errorField}
+      >
         {children}
       </FormContents>
       {error && <Toast message={t(error)} />}

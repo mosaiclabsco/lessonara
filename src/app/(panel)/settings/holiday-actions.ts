@@ -28,6 +28,8 @@ export async function addHoliday(date: string, name: string): Promise<Result> {
   const { supabase, userId } = await requireUser();
   const tomorrow = addDays(nowInTZ().today, 1);
   if (
+    typeof date !== "string" ||
+    typeof name !== "string" ||
     !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
     Number.isNaN(new Date(`${date}T12:00:00Z`).getTime()) ||
     new Date(`${date}T12:00:00Z`).toISOString().slice(0, 10) !== date ||
@@ -71,6 +73,8 @@ export async function removeHoliday(id: string): Promise<Result> {
 
 export async function saveSuggestedHolidays(year: number, dates: string[]): Promise<Result> {
   const { supabase, userId } = await requireUser();
+  if (!Number.isInteger(year) || year < 1900 || year > 2200)
+    return { ok: false, message: "Escolha um ano válido." };
   const choices = suggestedHolidays(year, nowInTZ().today);
   if (
     !Array.isArray(dates) ||

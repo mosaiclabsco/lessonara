@@ -31,3 +31,8 @@ it.each([
 ])("não confunde o painel com o prefixo aluno %s", (path) =>
   expect(isPublicPath(path)).toBe(false),
 );
+it("somente o endpoint exato do webhook dispensa login; a assinatura é conferida na rota", () => {
+  expect(isPublicPath("/api/webhooks/resend")).toBe(true);
+  expect(isPublicPath("/api/webhooks/resend/private")).toBe(false);
+  expect(isPublicPath("/api/webhooks/admin")).toBe(false);
+});

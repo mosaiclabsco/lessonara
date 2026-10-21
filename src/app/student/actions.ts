@@ -1,4 +1,5 @@
 "use server";
+import { textValue } from "@/lib/form-validation";
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { loadTeacherPlan } from "@/lib/platform-plan-server";
@@ -68,7 +69,11 @@ export async function finishActivitySubmission(
   submissionId: string,
   note: string,
 ): Promise<Result> {
-  if (note.length > 4000) return fail("Use observações de até 4.000 caracteres.");
+  try {
+    note = textValue(note, "note", 4000, false, true);
+  } catch {
+    return fail("Use observações válidas de até 4.000 caracteres.");
+  }
   const supabase = createAdminClient();
   const activity = await studentActivity(supabase, studentId, activityId);
   if (!activity || activity.archived_at) return fail("Atividade indisponível.");

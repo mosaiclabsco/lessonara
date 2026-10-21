@@ -1,12 +1,9 @@
 "use server";
+import { isoDate } from "@/lib/form-validation";
 import { requireUser } from "@/lib/supabase/server";
 import { googleBusy } from "@/lib/google/calendar";
 export async function teacherAvailability(date: string) {
-  if (
-    !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
-    new Date(date + "T12:00:00Z").toISOString().slice(0, 10) !== date
-  )
-    throw new Error("Escolha uma data válida.");
+  isoDate(date);
   const { supabase, userId } = await requireUser();
   const students = await supabase.from("students").select("id,name").eq("teacher_id", userId);
   if (students.error) throw new Error("Não foi possível consultar a agenda.");

@@ -50,3 +50,6 @@ next-env.d.ts
 /desktop/out/
 /desktop/Lessonara.iconset/
 /desktop/*.zip
+
+# Local-only tooling state
+/.local/

@@ -9,7 +9,15 @@ const PUBLIC_PATHS = [
   "/api/cron",
   "/api/preferences",
 ];
-const PUBLIC_PAGES = ["/calls", "/desktop", "/pdf.worker.min.mjs", "/about", "/privacy", "/terms"];
+const PUBLIC_PAGES = [
+  "/api/webhooks/resend",
+  "/calls",
+  "/desktop",
+  "/pdf.worker.min.mjs",
+  "/about",
+  "/privacy",
+  "/terms",
+];
 export function isPublicPath(path: string) {
   return (
     PUBLIC_PAGES.includes(path) ||

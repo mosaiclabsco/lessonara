@@ -2716,9 +2716,9 @@ html[data-theme="dark"] {
   --tone-background-f3f7f0: hsl(94 0% 10%);
   --tone-text-75846d: hsl(99 0% 85%);
   --tone-background-f5f7f5: hsl(120 0% 10%);
-  --tone-background-edf2e8: hsl(90 0% 10%);
-  --tone-text-71816c: hsl(106 0% 85%);
-  --tone-background-ffffffc9: hsl(0 0% 10% / 0.79);
+  --tone-background-edf2e8: #183c32;
+  --tone-text-71816c: #b8cbc2;
+  --tone-background-ffffffc9: #234a3e;
   --tone-border-fff: hsl(0 0% 23%);
   --tone-border-a2b394: hsl(93 0% 24%);
   --tone-text-7e8c76: hsl(98 0% 85%);
@@ -3384,14 +3384,16 @@ html[data-theme="dark"] .stat-renew {
   font-weight: 600;
 }
 .login-screen {
-  height: 100svh;
-  min-height: 0;
+  min-height: 100svh;
 }
 .login-screen .login-art {
   min-height: 0;
+  justify-content: flex-start;
+  gap: 24px;
   padding: clamp(20px, 4vh, 40px) clamp(24px, 4vw, 56px);
 }
 .login-screen .login-story {
+  margin-block: auto;
   padding: 24px 0;
   min-height: 0;
 }
@@ -3402,9 +3404,6 @@ html[data-theme="dark"] .stat-renew {
   font-size: clamp(28px, 4.8vh, 52px);
 }
 @media (max-height: 850px) {
-  .login-screen .login-preview {
-    display: none;
-  }
   .login-screen .login-form-wrap .mt-9 {
     margin-top: 24px;
   }

@@ -1,3 +1,4 @@
+import { integerValue, isoDate } from "./form-validation";
 import { addDays, weekday } from "./dates";
 export type FrequencyPeriod = "week" | "month";
 export type SchedulingMode = "recurring" | "flexible";
@@ -21,13 +22,15 @@ export function frequencyName(period: FrequencyPeriod, count: number) {
 }
 export function validatePlanFrequency(period: unknown, count: unknown, mode: unknown) {
   if (period !== "week" && period !== "month") throw new Error("Escolha semana ou mês.");
-  const n = Number(count);
+  const n = integerValue(count, "frequency_count", 1, period === "week" ? 7 : 31);
   if (!Number.isInteger(n) || n < 1 || n > (period === "week" ? 7 : 31))
     throw new Error(
       period === "week" ? "Escolha de 1 a 7 aulas por semana." : "Escolha de 1 a 31 aulas por mês.",
     );
   if (mode !== "recurring" && mode !== "flexible")
     throw new Error("Escolha datas fixas ou avulsas.");
+  if (period === "week" && mode === "flexible")
+    throw new Error("Datas avulsas estão disponíveis nos planos mensais.");
   return {
     frequency_period: period,
     frequency_count: n,
@@ -37,7 +40,13 @@ export function validatePlanFrequency(period: unknown, count: unknown, mode: unk
 }
 
 export function firstPlannedDate(starts: string, period: FrequencyPeriod, day: number) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(starts)) throw new Error("Escolha uma data válida.");
+  isoDate(starts, "starts_on");
+  integerValue(
+    day,
+    period === "week" ? "weekday" : "monthly_day",
+    period === "week" ? 0 : 1,
+    period === "week" ? 6 : 31,
+  );
   if (period === "week") return addDays(starts, (day - weekday(starts) + 7) % 7);
   if (day < 1 || day > 31 || !Number.isInteger(day)) throw new Error("Escolha um dia válido.");
   let month = starts.slice(0, 7);

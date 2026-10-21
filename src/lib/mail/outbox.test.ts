@@ -239,3 +239,15 @@ it("campanha monta assunto, conteúdo escapado e cancelamento usando a fila exis
     "lessonara/job",
   );
 });
+it("não envia mensagens para destinatário suprimido, incluindo OTP", async () => {
+  mocks.claim.mockImplementation(async (name: string) =>
+    name === "email_recipient_blocked"
+      ? { data: true, error: null }
+      : { data: [{ ...base, template: "otp" }], error: null },
+  );
+  expect(await processEmails()).toMatchObject({ failed: 1, sent: 0 });
+  expect(mocks.send).not.toHaveBeenCalled();
+  expect(mocks.updates).toHaveBeenCalledWith(
+    expect.objectContaining({ last_error: "recipient_suppressed", status: "failed" }),
+  );
+});

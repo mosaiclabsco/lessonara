@@ -20,7 +20,9 @@ async function Emails() {
   const [jobs, recipients] = await Promise.all([
     supabase
       .from("email_outbox")
-      .select("id,recipient,template,status,attempts,last_error,created_at")
+      .select(
+        "id,recipient,template,status,delivery_status,delivery_updated_at,attempts,last_error,created_at",
+      )
       .eq("teacher_id", userId)
       .order("created_at", { ascending: false })
       .limit(100),
