@@ -40,7 +40,7 @@ Não declarar um novo email real entregue apenas porque uma rota retornou 200 co
 ## Pendências separadas da conclusão da auditoria
 
 - Testar Jitsi com duas pessoas sob a CSP nova antes de liberar a sala aos alunos.
-- Executar OTP com email real, matriz Essencial × Pro e Google Calendar ponta a ponta.
+- Executar OTP com email real e matriz Essencial × Pro. Google Calendar ponta a ponta foi validado manualmente por Gabriel, conforme confirmação de 21/10/2026.
 - Tratar C8 como hardening pós-lançamento.
 - Confirmar configuração de backup e executar um restore de teste antes de ter clientes reais. Backup/restore ainda não foi verificado; não presumir recursos disponíveis apenas pelo plano do provedor.
 - Concluir o cenário operacional de lembrete novo, processamento e entrega autorizada.
@@ -55,7 +55,7 @@ A revisão de formulários e o webhook Resend desta rodada têm testes próprios
 
 - Migrações 0021/0022 aplicadas após teste transacional com rollback, sem persistir fixtures nem enfileirar emails reais.
 - RLS ativo nas duas novas tabelas privadas de eventos e supressões; papel `authenticated` sem execução da RPC de eventos.
-- Google: uma conexão sem erro, 14 jobs concluídos e nenhuma fila de calendário pendente; consulta real à API de disponibilidade passou, sem criar eventos/convites. O ciclo completo de evento/Meet continua em QA.
+- Google: uma conexão sem erro, 14 jobs concluídos e nenhuma fila de calendário pendente; consulta real à API de disponibilidade passou, sem criar eventos/convites. O ciclo completo ainda estava em QA nessa conferência; Gabriel confirmou sua validação manual em 21/10/2026.
 - Dashboard do Supabase mostrou “Last backup: No backups”. Isso não verifica se existe backup externo nem substitui teste de restore; manter a tarefa operacional aberta.
 - Webhook Resend criado com seis eventos necessários e signing secret somente no Production da Vercel. A ativação e a entrega após publicação têm evidência operacional separada.
 

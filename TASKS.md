@@ -192,7 +192,7 @@ Pendências mantidas em TODO por solicitação de Gabriel em 20/10/2026. Não s�
 - [ ] **C8 — ACAO `*` nas páginas HTML** — hardening de baixo risco, pós-lançamento.
 - [ ] **OTP real do aluno ponta a ponta** — recebimento e uso do código, com rejeição dos casos inválidos.
 - [ ] **Essencial × Pro** — validar permissões, limites e bloqueios no servidor com planos diferentes.
-- [ ] **Google Calendar ponta a ponta** — conexão e consulta real de disponibilidade confirmadas em 20/10/2026; uma conexão sem erro, 14 jobs concluídos e nenhuma pendência/falha. Criar, alterar e cancelar evento/Meet continua como cenário manual de QA, sem inferir a conclusão pelo estado da fila.
+- [x] **Google Calendar ponta a ponta** — Gabriel confirmou em 21/10/2026 que testou manualmente o fluxo de criar evento/Meet, alterar/reagendar e cancelar após as mudanças de segurança. Validação informada pelo usuário; a conferência técnica anterior de conexão, disponibilidade e fila permanece registrada separadamente.
 
 Cenários e critérios de encerramento: [QA e hardening pendentes](docs/qa-pendente.md).
 

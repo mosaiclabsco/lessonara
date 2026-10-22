@@ -6,7 +6,7 @@ Gestão de aulas para professor particular que trabalha sozinho e vende pacotes.
 
 - Perfil e plano de aulas são configurados antes de cadastrar alunos. Planos de aulas dos alunos são separados dos planos da plataforma (Essencial, Plus e Pro).
 - Pacotes preservam preço e créditos registrados no pagamento. Aulas passadas contam conforme agenda e ocorrências; faltas/reposições consomem crédito e desmarcações preservam, conforme a regra aplicável. O cálculo está em `src/lib/ledger.ts`.
-- Agenda semanal/mensal e aulas avulsas, feriados, reposições e integração Google Calendar/Meet por professor estão implementados. O teste Google completo após o hardening continua listado em QA.
+- Agenda semanal/mensal e aulas avulsas, feriados, reposições e integração Google Calendar/Meet por professor estão implementados. Gabriel confirmou o teste manual completo de criação, alteração/reagendamento e cancelamento com Calendar/Meet após o hardening em 21/10/2026.
 - Documentos privados e entregas de atividades usam upload direto ao Storage autorizado e download de curta duração. Reservas incompletas também consomem cota.
 - Emails usa fila durável com retentativas. Aceite pelo provedor e entrega são estados diferentes; a integração de webhooks tem migração/configuração próprias.
 - Sala integrada Jitsi é Pro. Entrada entre cinco minutos antes do início e trinta minutos depois do término, validada também no servidor. QA de câmera, áudio e compartilhamento com duas pessoas sob a CSP nova é obrigatório antes de liberar a sala aos alunos.
@@ -62,7 +62,7 @@ pnpm build
 
 Executar as verificações sequencialmente para preservar os recursos da máquina. As regras de formulário são aplicadas no servidor, com limites no banco quando cabíveis; ver [inventário](docs/form-validation.md).
 
-O [relatório consolidado de segurança](docs/security-review.md) registra o parecer recebido, correções e limitações. O resultado histórico do pentest não certifica mudanças posteriores. QA manual pendente: Jitsi com duas pessoas, OTP real, Essencial × Pro, Google completo; C8 é hardening pós-lançamento. Backup e restore ainda precisam de confirmação operacional.
+O [relatório consolidado de segurança](docs/security-review.md) registra o parecer recebido, correções e limitações. O resultado histórico do pentest não certifica mudanças posteriores. QA manual pendente: Jitsi com duas pessoas, OTP real e Essencial × Pro; C8 é hardening pós-lançamento. Backup e restore ainda precisam de confirmação operacional.
 
 ## Documentação e prioridades
 

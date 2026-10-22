@@ -42,7 +42,7 @@ Confirmado: conexão/token/API de disponibilidade e estado atual da fila. Ainda 
 
 ## Pendências mantidas
 
-[QA manual](qa-pendente.md): Jitsi com duas pessoas sob CSP, OTP real, Essencial × Pro e ciclo Google completo. C8 continua hardening de baixo risco pós-lançamento. O dashboard Supabase exibiu “Last backup: No backups”; backup externo e restore não foram verificados. Monitoramento contínuo de workers, filas sem progresso e tentativas esgotadas continua no backlog.
+[QA manual](qa-pendente.md): Jitsi com duas pessoas sob CSP, OTP real e Essencial × Pro. O ciclo Google completo, pendente na conferência técnica anterior, foi posteriormente validado manualmente por Gabriel. C8 continua hardening de baixo risco pós-lançamento. O dashboard Supabase exibiu “Last backup: No backups”; backup externo e restore não foram verificados. Monitoramento contínuo de workers, filas sem progresso e tentativas esgotadas continua no backlog.
 
 Na rodada de 20/10, Pix e importação eram [propostas documentadas](product-flows.md). A implementação posterior está registrada abaixo.
 
@@ -57,3 +57,7 @@ A suíte local final passou com **56 arquivos / 353 testes**. Inclui decodifica�
 O comando operacional de suporte foi executado em leitura contra a fila privada; retornou vazia. Isso valida a inicialização/acesso do comando, sem alegar atendimento de um pedido real. O modo assistido depende de um operador consultar a fila e preparar o CSV; ainda não há painel admin web/alerta automático. Originais encerrados têm limpeza imediata com repetição pelo worker, com contadores na resposta e metadados pendentes visíveis ao operador.
 
 Leitura do QR em app bancário, pagamento/confirmação com professor/aluno real, planilha real do piloto e ganho de tempo continuam no [QA](qa-pendente.md). O ciclo completo assistido não foi executado com dados pessoais reais. Os resultados históricos do pentest não são uma reauditoria automática dessas funcionalidades novas.
+
+## Confirmação manual do Calendar — 21/10/2026
+
+Gabriel confirmou ter testado com sucesso a criação de evento/Meet, alteração/reagendamento e cancelamento após as mudanças de segurança. A tarefa e o checklist foram marcados como concluídos com base nesse relato. Nenhum novo teste automatizado ou consulta ao estado da aprovação OAuth é alegado por essa atualização.

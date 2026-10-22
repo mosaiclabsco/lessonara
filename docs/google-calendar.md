@@ -30,6 +30,8 @@ A importação exige confirmação: cria eventos reais e pode enviar convites ao
 
 ## Limite da confirmação atual
 
-Conexão e processamento técnico de fila têm evidências anteriores; isso não substitui o QA completo de criar evento/Meet, alterar e cancelar uma aula real autorizada após as alterações de segurança. Esse cenário continua no [checklist de QA](qa-pendente.md). O estado atual da verificação OAuth no console do Google também exige consulta ao provedor; não inferir aprovação somente porque um token funciona.
+Conexão e processamento técnico de fila têm evidências anteriores; isso não substitui o QA completo de criar evento/Meet, alterar e cancelar uma aula real autorizada após as alterações de segurança. Esse cenário foi encerrado no [checklist de QA](qa-pendente.md) após Gabriel confirmar sua validação manual em 21/10/2026. O estado atual da verificação OAuth no console do Google também exige consulta ao provedor; não inferir aprovação somente porque um token funciona.
 
 Conferência de 20/10/2026: uma conexão armazenada sem erro, 14 jobs em `sent`, nenhum `pending`/`sending`/`failed`, e consulta real `freeBusy` bem-sucedida usando a conexão existente. Não foram criados eventos nem enviados convites nessa conferência.
+
+Confirmação posterior (21/10/2026): Gabriel informou ter testado com sucesso a criação de evento/Meet, alteração/reagendamento e cancelamento após o hardening. O cenário ponta a ponta está concluído por validação manual do usuário; isso não comprova a aprovação OAuth no console do provedor.

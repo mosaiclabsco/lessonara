@@ -1,6 +1,6 @@
 # QA e hardening pendentes
 
-Status registrado em 20/10/2026, conforme revisão informada por Gabriel. Estes itens permanecem em TODO; não representam testes concluídos nem achados críticos de segurança abertos.
+Status atualizado em 21/10/2026. Itens desmarcados permanecem em TODO; conclusões identificam a origem da validação. Este checklist não representa achados críticos de segurança abertos.
 
 ## Antes de liberar a sala para alunos
 
@@ -10,7 +10,7 @@ Status registrado em 20/10/2026, conforme revisão informada por Gabriel. Estes 
 
 - [ ] **OTP real do aluno.** Solicitar código para um email real autorizado, confirmar recebimento e acesso; verificar rejeição de código incorreto, expirado e reutilizado. Não registrar códigos nem credenciais nas evidências.
 - [ ] **Matriz Essencial × Pro.** Usar professores com planos diferentes para confirmar liberação e bloqueio de Emails e sala, inclusive por acesso direto às rotas e operações do servidor; conferir limites de documentos e isolamento entre contas. A matriz anterior com duas contas Pro não cobre essa diferença.
-- [ ] **Google Calendar ponta a ponta.** Com conta e agenda de teste autorizadas, confirmar conexão, criação e alteração de aula, cancelamento e resolução da pendência de sincronização. Conferir o resultado no Google e no Lessonara. Uma tarefa técnica de calendário processada não substitui este fluxo completo.
+- [x] **Google Calendar ponta a ponta.** Gabriel confirmou em 21/10/2026 a execução manual bem-sucedida de criação de evento/Meet, alteração/reagendamento e cancelamento após as mudanças de segurança. Encerrado com base na validação informada pelo usuário, sem alegar uma nova execução automatizada.
 
 ## Operação antes de clientes reais
 
