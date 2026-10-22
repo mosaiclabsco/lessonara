@@ -14,6 +14,7 @@
 | [Sala de aula](classroom.md) | Jitsi, acesso, quadro e desktop |
 | [Performance](performance.md) | Arquitetura de leitura e medições registradas |
 | [Pix e importação](product-flows.md) | Fluxos implementados, limites, suporte e validação pendente |
+| [Migração do repositório](repository-migration.md) | Histórico Git, releases e continuidade da Vercel na organização |
 | [Guia de estilo](../STYLE_GUIDE.md) | Componentes e padrões compartilhados |
 
 Código implementado, migração aplicada, deploy publicado e teste real concluído são estados distintos. Manter essa separação nos relatos e no backlog; não marcar validação por inferência.

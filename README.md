@@ -22,6 +22,8 @@ Limites de produto não ampliam a cota contratada no Supabase. Emails de acesso 
 
 Pix do professor com QR/copia-e-cola e “Já paguei” tem confirmação manual em Pagamentos. Importação guiada por CSV e assistida por CSV/XLSX estão disponíveis no Plus/Pro, com prévia e saldo de abertura separado dos recebimentos; veja [fluxos e operação](docs/product-flows.md). Cadastro autônomo, trial e cobrança da assinatura permanecem no backlog, sem cobrança automática implementada. O marco de ativação definido é **primeiro aluno com agenda e pacote real registrados**; sua instrumentação continua pendente.
 
+O repositório principal é [mosaiclabsco/lessonara](https://github.com/mosaiclabsco/lessonara). A [migração para a organização](docs/repository-migration.md) preservou o histórico e a produção existente.
+
 ## Desenvolvimento local
 
 ```sh
