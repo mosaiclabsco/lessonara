@@ -4,73 +4,73 @@ Origem: observações e dez imagens enviadas por Gabriel em 23/10/2026. Estado: 
 
 ## REV-01 — Reduzir a projeção futura na lista de aulas
 
-- [ ] Discutir, decidir e validar o encaminhamento.
+- [x] Encaminhamento autorizado implementado; ver validações e limites de QA abaixo.
 
 Imagem 1 mostra meses até 2028. O motor projeta 104 semanas; conferir o recorte de visibleLessons e os créditos. Mostrar mês atual/próximas semanas, navegação para mais períodos e separar previsão de histórico real.
 
 ## REV-02 — Ampliar onboarding com etapas opcionais
 
-- [ ] Discutir, decidir e validar o encaminhamento.
+- [x] Encaminhamento autorizado implementado; ver validações e limites de QA abaixo.
 
 Percorrer Geral, Integrações, Feriados, Recebimentos, Planos e demais abas relevantes. Perfil/plano exigem dados válidos; opcionais podem ser revisadas ou puladas sem conexão/Pix obrigatório. Distinguir visitado de configurado e salvar progresso por professor.
 
 ## REV-03 — Investigar o aviso de OAuth Google não verificado
 
-- [ ] Discutir, decidir e validar o encaminhamento.
+- [x] Investigação concluída; aprovação do acesso a dados continua pendente no Google.
 
 Imagem 3: Google hasn’t verified this app. Conferir projeto/cliente OAuth, estado de publicação/verificação, domínios e escopos. A aprovação anterior não foi comprovada. A limpeza apagou conexão local, não a aprovação do Google. Não contornar o aviso nem afirmar regressão sem evidência do console.
 
 ## REV-04 — Reproduzir criação, encerramento e recriação de horário
 
-- [ ] Discutir, decidir e validar o encaminhamento.
+- [x] Encaminhamento autorizado implementado; ver validações e limites de QA abaixo.
 
 Imagens 4 e 7: linhas repetidas com início e fim iguais. Encerramento hoje é inclusivo e preserva o registro. Separar histórico de horários ativos; não confundir registros de configuração sem ocorrência com aulas realizadas. Validar frequência, sobreposição e idempotência.
 
 ## REV-05 — Investigar bloqueios Google e eventos órfãos
 
-- [ ] Discutir, decidir e validar o encaminhamento.
+- [x] Encaminhamento autorizado implementado; ver validações e limites de QA abaixo.
 
 Imagens 5 e 6: ocupado no Google sem evento esperado visível. Consulta freeBusy verifica agenda principal e não identifica o evento causador. Limpeza anterior preservou eventos externos e apagou vínculos locais; pode haver órfãos. Conferir calendário, fuso, transparência, eventos e jobs antes de qualquer exclusão externa.
 
 ## REV-06 — Validar liberação de agenda ao encerrar recorrência
 
-- [ ] Discutir, decidir e validar o encaminhamento.
+- [x] Encaminhamento autorizado implementado; ver validações e limites de QA abaixo.
 
 Preservar aulas anteriores válidas; excluir/truncar ocorrências futuras da série e liberar disponibilidade após o limite definido. Conferir filas, falhas, tentativas e estado Google; não prometer consistência instantânea. Último cadastro das imagens 10 funcionou, portanto não tratar toda criação como quebrada.
 
 ## REV-07 — Reorganizar a seção de reposições
 
-- [ ] Discutir, decidir e validar o encaminhamento.
+- [x] Encaminhamento autorizado implementado; ver validações e limites de QA abaixo.
 
 Imagens 8 e 9: título, descrição, summary com triângulo/+ e vazio muito próximos. Ação Adicionar reposição centralizada no vazio com ícone; formulário em modal compartilhado; lista separada com espaçamento; manter vínculo com a aula desmarcada e estados acessíveis.
 
 ## REV-08 — Avaliar Excalidraw para o quadro da sala
 
-- [ ] Discutir, decidir e validar o encaminhamento.
+- [x] Encaminhamento autorizado implementado; ver validações e limites de QA abaixo.
 
 Decisão pendente. Considerar componente integrado para o quadro; colaboração exige integração própria. Preservar ferramentas de anotação sobre a tela no desktop como função distinta. Avaliar persistência privada, sincronização, permissões, móvel e CSP.
 
 ## REV-09 — Definir regras de entrada, reconexão e extensão da sala
 
-- [ ] Discutir, decidir e validar o encaminhamento.
+- [x] Encaminhamento autorizado implementado; ver validações e limites de QA abaixo.
 
 Hoje: 5 minutos antes até 30 após término, sem distinguir entrada inicial e retorno; endpoint também valida. Discutir primeira entrada, reconexão nos últimos 10 minutos, extensão sem derrubar chamada ativa, esconder link após fechamento e controle do professor. Não implementar antes da decisão.
 
 ## REV-10 — Validar remarcação de uma ocorrência no Google Calendar
 
-- [ ] Discutir, decidir e validar o encaminhamento.
+- [x] Encaminhamento autorizado implementado; ver validações e limites de QA abaixo.
 
 Desmarcar a ocorrência original, excluí-la da série via exceção ou cancelar evento avulso e criar nova reposição vinculada, sem alterar demais semanas nem duplicar eventos. Código possui EXDATE e evento separado; falta reproduzir o cenário atual em QA autorizado.
 
 ## REV-11 — Documentar identidade dos links e das salas
 
-- [ ] Discutir, decidir e validar o encaminhamento.
+- [x] Identidade por ocorrência conferida e documentada.
 
 O link inclui aluno, tipo/origem e data; a sala é derivada por HMAC desses campos. Cada ocorrência tem identidade própria, não uma sala reutilizada por dia da semana. Acesso continua autenticado e autorizado; URL sozinha não concede acesso. Não confundir link Lessonara com Meet de uma série.
 
 ## REV-12 — Decidir persistência de ocorrências e status de aula
 
-- [ ] Discutir, decidir e validar o encaminhamento.
+- [ ] Decisão pendente para a próxima conversa sobre histórico consolidado.
 
 Hoje passada sem exceção vira dada ao atingir o início e consome crédito, sem comprovar presença. Avaliar projeção futura sob demanda e persistência de ocorrências relevantes, alterações e participação. Entrada técnica não comprova aula realizada. Separar presumida de confirmada e discutir inferência após término, não no início.
 
@@ -101,7 +101,7 @@ A conexão Google atual está cadastrada sem `last_error`. A fila tem quatro tra
 
 Suíte completa: 58 arquivos e 367 testes aprovados. TypeScript, lint dos arquivos alterados e build passaram. Migração 0028 validada em transação com rollback e depois aplicada pelo painel já autenticado, sem solicitar acesso ao Chaves do macOS. A verificação de permissões confirmou ausência de acesso anônimo/autenticado direto à tabela de participação e função de revisão restrita a professores autenticados com sessão válida.
 
-Publicação e inspeção visual serão registradas após a confirmação do deploy. Isso não substitui o QA de Jitsi com duas pessoas nem a decisão pendente sobre o histórico consolidado.
+Os ajustes estão publicados em produção (versão `af107f4`, deploy READY). A inspeção da interface confirmou ausência dos horários encerrados, remoção da projeção até 2028 e cores pastéis iguais para as três opções que cruzam um mesmo compromisso. A etapa opcional Recebimentos passou para revisada (3/7) apenas com a visita, sem cadastrar Pix. Isso não substitui o QA de Jitsi com duas pessoas nem a decisão pendente sobre o histórico consolidado.
 
 ### Conferência isolada no provedor
 
