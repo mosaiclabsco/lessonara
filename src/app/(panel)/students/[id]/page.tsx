@@ -90,7 +90,8 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
   );
   const link = `${await getOrigin()}/p/${student.teacher_id}/s/${encodeURIComponent(student.slug)}`;
   const lessonActions = (l: (typeof lessons)[number]) =>
-    l.status === "feriado" ? null : l.event ? (
+    l.status === "feriado" ||
+    (l.sourceKind === "makeup" && l.status === "desmarcada") ? null : l.event ? (
       <ActionForm action={deleteEvent.bind(null, id, l.event.id)}>
         <SubmitButton className="btn-xs">{t("desfazer")}</SubmitButton>
       </ActionForm>
@@ -146,7 +147,7 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
           </ReplacementManager>
         }
         aulas={
-          <div className="detail-grid profile-lessons-grid">
+          <div className="space-y-6">
             <section className="card">
               <h2 className="h2">{t("Pr\u00F3ximas aulas")}</h2>
               {classroomLink && classroomNext && (
@@ -163,20 +164,31 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
                 )}
               />
             </section>
-
-            <section className="card">
-              <h2 className="h2">{t("Aulas por mês e pacote")}</h2>
-              <LessonHistory
-                openingCredits={ledger.openingCredits}
-                lessons={lessons}
-                today={today}
-                packages={packages}
-                actions={Object.fromEntries(
-                  lessons.map((l) => [`${l.date}-${l.time}-${l.status}`, lessonActions(l)]),
-                )}
-              />
-            </section>
           </div>
+        }
+        historico={
+          <section className="card space-y-4">
+            <div>
+              <h2 className="h2">{t("Histórico de aulas")}</h2>
+              <p className="mt-2 text-sm text-muted">
+                {t(
+                  "Aulas anteriores, com o plano e o pacote registrados na época.",
+                )}
+              </p>
+            </div>
+            <LessonHistory
+              pastOnly
+              openingCredits={ledger.openingCredits}
+              lessons={lessons.filter((l) => l.past)}
+              today={today}
+              packages={packages}
+              actions={Object.fromEntries(
+                lessons
+                  .filter((l) => l.past)
+                  .map((l) => [`${l.date}-${l.time}-${l.status}`, lessonActions(l)]),
+              )}
+            />
+          </section>
         }
         pacotes={
           <section id="pagamentos" className="card space-y-3 scroll-mt-6">

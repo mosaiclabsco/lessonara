@@ -125,3 +125,8 @@ O aluno de teste deve estar ativo e possuir um vínculo de sessão existente. O 
 ### Complemento da proposta de histórico, ainda pendente
 
 Gabriel propôs registrar a confirmação de entrada na sala, identificar cada aula dentro do pacote e oferecer uma aba Histórico no perfil do aluno, agrupada por mês ou pacote. A identidade e o retrato da ocorrência devem sobreviver a mudanças de plano e à recriação de horários. Participação técnica não deve, sozinha, confirmar aula realizada ou consumir crédito; reconexões precisam ser idempotentes. Aulas presenciais ou realizadas fora da sala também precisam de um caminho de confirmação. A arquitetura permanece para discussão antes de implementar.
+
+
+## REV-12 — Implementação autorizada em 24/10/2026
+
+A proposta foi autorizada e implementada: ocorrências persistidas, retratos de plano/pacote, proteção antes de mudanças na agenda e captura idempotente na entrada técnica. Aba Histórico adicionada ao perfil do aluno. As projeções futuras continuam sob demanda; a regra de realização presumida pelo horário permanece explícita. As notas anteriores de decisão pendente são o registro da discussão, substituído por este encaminhamento. Regras, permissões e limites da consolidação inicial em [histórico de aulas](lesson-history.md).

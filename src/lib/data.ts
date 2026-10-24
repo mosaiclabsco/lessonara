@@ -1,3 +1,4 @@
+import { loadLessonHistory, historicalLesson } from "./lesson-history-data";
 import { measure } from "./performance";
 import { loadHolidayRules } from "./holiday-data";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -111,7 +112,7 @@ export async function loadLedgers(
   const rulesPromise = studentsPromise.then((students) =>
     loadHolidayRules(supabase, [...new Set(students.data.map((student) => student.teacher_id))]),
   );
-  const [students, schedules, packages, events, appointments, rules] = await measure(
+  const [students, schedules, packages, events, appointments, rules, history] = await measure(
     "ledger.reads",
     () =>
       Promise.all([
@@ -136,6 +137,7 @@ export async function loadLedgers(
           meet_url: string | null;
         }>("appointments", "id,student_id,date,time,meet_url,duration_minutes"),
         rulesPromise,
+        loadLessonHistory(supabase, studentIds),
       ]),
   );
   return measure("ledger.compute", async () => {
@@ -152,7 +154,8 @@ export async function loadLedgers(
     const scheduleGroups = group(schedules.data ?? []),
       packageGroups = group(packages.data ?? []),
       eventGroups = group(events.data ?? []),
-      appointmentGroups = group(appointments.data ?? []);
+      appointmentGroups = group(appointments.data ?? []),
+      historyGroups = group(history);
     const teacherByStudent = new Map(
       (students.data ?? []).map((student) => [student.id, student.teacher_id]),
     );
@@ -179,6 +182,7 @@ export async function loadLedgers(
       result.set(id, {
         ledger: computeLedger({
           openingCredits: openingByStudent.get(id) ?? 0,
+          history: (historyGroups.get(id) ?? []).map((row) => historicalLesson(row, today, time)),
           schedules: s,
           events: e,
           appointments: (appointmentGroups.get(id) ?? []).map((a) => ({

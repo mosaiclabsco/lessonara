@@ -5,11 +5,11 @@ Gestão de aulas para professor particular que trabalha sozinho e vende pacotes.
 ## Estado do produto
 
 - Perfil e plano de aulas são configurados antes de cadastrar alunos. Planos de aulas dos alunos são separados dos planos da plataforma (Essencial, Plus e Pro).
-- Pacotes preservam preço e créditos registrados no pagamento. Aulas passadas contam conforme agenda e ocorrências; faltas/reposições consomem crédito e desmarcações preservam, conforme a regra aplicável. O cálculo está em `src/lib/ledger.ts`.
+- Pacotes preservam preço e créditos registrados no pagamento. Aulas passadas contam conforme agenda e ocorrências; faltas/reposições consomem crédito e desmarcações preservam, conforme a regra aplicável. Ocorrências iniciadas têm identidade, data, horário, plano e posição no pacote persistidos; alterar ou excluir um horário não reescreve o passado. Entrada na sala registra participação técnica. Sem exceção registrada, a realização continua presumida pelo horário. Ver [histórico de aulas](docs/lesson-history.md). O cálculo está em `src/lib/ledger.ts`.
 - Agenda semanal/mensal e aulas avulsas, feriados, reposições e integração Google Calendar/Meet por professor estão implementados. Gabriel confirmou o teste manual completo de criação, alteração/reagendamento e cancelamento com Calendar/Meet após o hardening em 21/10/2026.
 - Documentos privados e entregas de atividades usam upload direto ao Storage autorizado e download de curta duração. Reservas incompletas também consomem cota.
 - Emails usa fila durável com retentativas. Aceite pelo provedor e entrega são estados diferentes; a integração de webhooks tem migração/configuração próprias.
-- Sala integrada Jitsi é Pro. Entrada entre cinco minutos antes do início e trinta minutos depois do término, validada também no servidor. QA de câmera, áudio e compartilhamento com duas pessoas sob a CSP nova é obrigatório antes de liberar a sala aos alunos.
+- Sala integrada Jitsi é Pro. Primeira entrada entre cinco minutos antes do início e o término previsto; reconexão até trinta minutos depois para quem já participou, validada também no servidor. QA de câmera, áudio e compartilhamento com duas pessoas sob a CSP nova é obrigatório antes de liberar a sala aos alunos.
 - Desktop 0.3.1: chamadas, captura de monitor/janela e ferramentas nativas. Há instaladores Mac e Windows; o teste real de mídia depende do sistema operacional.
 
 | Plano da plataforma | Por arquivo | Armazenamento total | Emails e sala integrada | Importação |

@@ -13,6 +13,7 @@ function Groups({
   grouping,
   openingCredits = 0,
   today,
+  pastOnly = false,
 }: {
   lessons: Lesson[];
   packages: Package[];
@@ -20,6 +21,7 @@ function Groups({
   openingCredits?: number;
   grouping: "month" | "package";
   today: string;
+  pastOnly?: boolean;
 }) {
   const { t, locale } = useI18n();
   const groups = new Map<string, Lesson[]>();
@@ -31,7 +33,7 @@ function Groups({
     settled.set(pack.id, value);
     debt -= value;
   }
-  if (grouping === "package") for (const pack of ordered) groups.set(pack.id, []);
+  if (grouping === "package" && !pastOnly) for (const pack of ordered) groups.set(pack.id, []);
   for (const lesson of lessons) {
     if (!lesson.past && !lesson.packageId && grouping === "package") continue;
     const key = grouping === "month" ? lesson.date.slice(0, 7) : (lesson.packageId ?? "uncovered");
@@ -140,17 +142,20 @@ export function LessonHistory({
   actions,
   openingCredits = 0,
   today = "",
+  pastOnly = false,
 }: {
   lessons: Lesson[];
   packages: Package[];
   actions?: Record<string, ReactNode>;
   openingCredits?: number;
   today?: string;
+  pastOnly?: boolean;
 }) {
   return (
     <HistoryTabs
       monthContent={
         <Groups
+          pastOnly={pastOnly}
           openingCredits={openingCredits}
           lessons={lessons}
           packages={packages}
@@ -161,6 +166,7 @@ export function LessonHistory({
       }
       packageContent={
         <Groups
+          pastOnly={pastOnly}
           openingCredits={openingCredits}
           lessons={lessons}
           packages={packages}

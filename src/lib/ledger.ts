@@ -38,6 +38,12 @@ export type HolidayPolicy = "consume" | "preserve";
 export type LessonStatus = "agendada" | "dada" | "falta" | "desmarcada" | "reposicao" | "feriado";
 
 export type Lesson = {
+  historyId?: string;
+  planName?: string | null;
+  packagePosition?: number | null;
+  packageLessons?: number;
+  firstJoinedAt?: string | null;
+  statusSource?: "presumed" | "exception" | "holiday";
   sourceKind?: "schedule" | "appointment" | "makeup";
   sourceId?: string;
   date: string;
@@ -48,7 +54,7 @@ export type Lesson = {
   past: boolean;
   /** Índice do pacote (ordem de pagamento) que cobre a aula; null = sem pacote. */
   packageIndex: number | null;
-  /** ID do pacote calculado; não é um vínculo persistido no banco. */
+  /** Vínculo histórico persistido; nas previsões futuras, alocação calculada. */
   packageId: string | null;
   event: LessonEvent | null;
   durationMinutes?: number;
@@ -80,6 +86,7 @@ const MAX_WEEKS = 104;
 
 export function computeLedger(input: {
   openingCredits?: number;
+  history?: Lesson[];
   schedules: Schedule[];
   appointments?: {
     id: string;
@@ -211,36 +218,75 @@ export function computeLedger(input: {
     });
   }
 
-  lessons.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+  const history = input.history ?? [];
+  const identity = (l: Lesson) => `${l.sourceKind}/${l.sourceId}/${l.date}`;
+  const frozen = new Set(history.map(identity));
+  const frozenTimes = new Set(
+    history
+      .filter((l) => l.status !== "desmarcada")
+      .map((l) => `${l.sourceKind}/${l.date}/${l.time}`),
+  );
+  const merged = [
+    ...lessons.filter(
+      (l) => !frozen.has(identity(l)) && !frozenTimes.has(`${l.sourceKind}/${l.date}/${l.time}`),
+    ),
+    ...history,
+  ].sort(
+    (a, b) =>
+      a.date.localeCompare(b.date) ||
+      a.time.localeCompare(b.time) ||
+      identity(a).localeCompare(identity(b)),
+  );
+  lessons.splice(0, lessons.length, ...merged);
 
-  let pkg = 0;
-  let usedInPkg = Math.max(0, -opening);
-  let openingLeft = Math.max(0, opening);
-  while (pkg < packages.length && usedInPkg >= packages[pkg].lessons) {
-    usedInPkg -= packages[pkg].lessons;
-    pkg++;
+  // Reserve persisted slots first: editing a schedule cannot reassign past credits.
+  const occupied = new Map<string, Set<number>>();
+  const reserve = (id: string, pos: number) => {
+    if (!occupied.has(id)) occupied.set(id, new Set());
+    occupied.get(id)!.add(pos);
+  };
+  let debt = Math.max(0, -opening);
+  for (const pack of packages) {
+    for (let pos = 1; pos <= Math.min(debt, pack.lessons); pos++) reserve(pack.id, pos);
+    debt = Math.max(0, debt - pack.lessons);
   }
+  for (const l of history) {
+    l.packageIndex =
+      l.packageId === "opening" ? -1 : packages.findIndex((p) => p.id === l.packageId);
+    if (l.packageIndex === -1 && l.packageId !== "opening") l.packageIndex = null;
+    if (l.counts && l.packageId && l.packagePosition) reserve(l.packageId, l.packagePosition);
+  }
+  const firstFree = (id: string, total: number) => {
+    for (let pos = 1; pos <= total; pos++) if (!occupied.get(id)?.has(pos)) return pos;
+    return null;
+  };
   let used = 0;
   let coveredUntil: string | null = null;
   for (const l of lessons) {
     if (!l.counts) continue;
     if (l.past) used++;
-    if (openingLeft > 0) {
-      l.packageIndex = -1;
-      l.packageId = "opening";
-      openingLeft--;
-      coveredUntil = l.date;
-      continue;
-    }
-    if (pkg < packages.length) {
-      l.packageIndex = pkg;
-      l.packageId = packages[pkg].id;
-      coveredUntil = l.date;
-      if (++usedInPkg === packages[pkg].lessons) {
-        pkg++;
-        usedInPkg = 0;
+    if (!l.historyId) {
+      const openingSlot = firstFree("opening", Math.max(0, opening));
+      if (openingSlot) {
+        l.packageIndex = -1;
+        l.packageId = "opening";
+        l.packagePosition = openingSlot;
+        reserve("opening", openingSlot);
+      } else {
+        for (let index = 0; index < packages.length; index++) {
+          const pack = packages[index];
+          const pos = firstFree(pack.id, pack.lessons);
+          if (!pos) continue;
+          l.packageIndex = index;
+          l.packageId = pack.id;
+          l.packagePosition = pos;
+          l.packageLessons = pack.lessons;
+          reserve(pack.id, pos);
+          break;
+        }
       }
     }
+    if (l.packageId) coveredUntil = l.date;
   }
 
   return {

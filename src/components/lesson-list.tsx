@@ -35,7 +35,7 @@ export function LessonList({
         const controls = actions?.[`${l.date}-${l.time}-${l.status}`];
         return (
           <li
-            key={`${l.date}-${l.time}-${l.status}`}
+            key={l.historyId ?? `${l.sourceKind}-${l.sourceId}-${l.date}-${l.time}`}
             className={`lesson-row ${controls ? "lesson-row-with-actions" : ""}`}
           >
             <div className="lesson-info">
@@ -51,6 +51,18 @@ export function LessonList({
                       : t("Feriado \u00B7 cr\u00E9dito mantido")
                     : t(s.label)}
                 </span>
+                {l.historyId && l.status === "dada" && l.statusSource === "presumed" && (
+                  <span className="text-xs text-muted">{t("Presumida pelo horário")}</span>
+                )}
+                {l.planName && <span className="text-xs text-muted">{l.planName}</span>}
+                {l.packagePosition && l.packageLessons && (
+                  <span className="text-xs text-muted">
+                    {t("Aula")} {l.packagePosition}/{l.packageLessons}
+                  </span>
+                )}
+                {l.firstJoinedAt && (
+                  <span className="text-xs text-muted">{t("Entrada na sala registrada")}</span>
+                )}
                 {l.status === "falta" && (
                   <span className="text-xs text-muted">
                     {t("Aviso em cima da hora ou n\u00E3o compareceu")}

@@ -5,6 +5,10 @@ vi.mock("./performance", () => ({
 }));
 const holiday = vi.hoisted(() => ({ load: vi.fn() }));
 vi.mock("./holiday-data", () => ({ loadHolidayRules: holiday.load }));
+vi.mock("./lesson-history-data", () => ({
+  loadLessonHistory: vi.fn(async () => []),
+  historicalLesson: vi.fn(),
+}));
 import { loadLedgers } from "./data";
 beforeEach(() => {
   vi.clearAllMocks();

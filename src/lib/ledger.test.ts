@@ -150,3 +150,82 @@ it("preserves past lessons without packages when trimming the future projection"
   expect(visible.every((l) => l.past)).toBe(true);
   expect(ledger.remaining).toBe(-6);
 });
+
+it("keeps saved lessons and their package slots after the schedule is replaced", () => {
+  const history = [
+    {
+      historyId: "saved",
+      sourceKind: "schedule" as const,
+      sourceId: "old",
+      date: "2026-10-06",
+      time: "19:00",
+      durationMinutes: 60,
+      status: "dada" as const,
+      statusSource: "presumed" as const,
+      counts: true,
+      past: true,
+      packageId: "paid",
+      packageIndex: 0,
+      packagePosition: 1,
+      event: null,
+      planName: "Original",
+    },
+  ];
+  const ledger = computeLedger({
+    history,
+    schedules: [{ ...tuesday, id: "new", starts_on: "2026-10-06" }],
+    events: [],
+    packages: [{ id: "paid", paid_on: "2026-10-01", lessons: 4, amount: 300 }],
+    today: "2026-10-07",
+    time: "10:00",
+  });
+  expect(ledger.lessons.filter((l) => l.date === "2026-10-06")).toHaveLength(1);
+  expect(ledger.lessons[0]).toMatchObject({
+    historyId: "saved",
+    planName: "Original",
+    packageId: "paid",
+    packagePosition: 1,
+  });
+  expect(ledger.used).toBe(1);
+  expect(ledger.remaining).toBe(3);
+  expect(ledger.lessons.find((l) => l.date === "2026-10-13")).toMatchObject({ packagePosition: 2 });
+  const removed = computeLedger({
+    history,
+    schedules: [],
+    events: [],
+    packages: [{ id: "paid", paid_on: "2026-10-01", lessons: 4, amount: 300 }],
+    today: "2026-10-07",
+    time: "10:00",
+  });
+  expect(removed.used).toBe(1);
+  expect(removed.lessons[0].historyId).toBe("saved");
+});
+it("reserves an early joined occurrence once without consuming a credit before its time", () => {
+  const history = [
+    {
+      historyId: "joined",
+      sourceKind: "appointment" as const,
+      sourceId: "once",
+      date: "2026-10-07",
+      time: "19:00",
+      status: "agendada" as const,
+      counts: true,
+      past: false,
+      packageId: "paid",
+      packageIndex: 0,
+      packagePosition: 1,
+      event: null,
+    },
+  ];
+  const ledger = computeLedger({
+    history,
+    schedules: [],
+    events: [],
+    packages: [{ id: "paid", paid_on: "2026-10-01", lessons: 4, amount: 300 }],
+    today: "2026-10-07",
+    time: "18:55",
+  });
+  expect(ledger.used).toBe(0);
+  expect(ledger.remaining).toBe(4);
+  expect(ledger.lessons).toHaveLength(1);
+});
