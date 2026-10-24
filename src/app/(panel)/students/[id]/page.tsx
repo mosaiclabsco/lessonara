@@ -171,9 +171,7 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
             <div>
               <h2 className="h2">{t("Histórico de aulas")}</h2>
               <p className="mt-2 text-sm text-muted">
-                {t(
-                  "Aulas anteriores, com o plano e o pacote registrados na época.",
-                )}
+                {t("Aulas anteriores, com o plano e o pacote registrados na época.")}
               </p>
             </div>
             <LessonHistory
