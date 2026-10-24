@@ -95,7 +95,12 @@ function Groups({
               </summary>
               {pack && (
                 <p className="mb-4 text-xs text-muted">
-                  {used} {t("utilizadas")} · {next.length} {t("agendadas")} ·{" "}
+                  {used} {t("utilizadas")} ·{" "}
+                  {!pastOnly && (
+                    <>
+                      {next.length} {t("agendadas")} ·{" "}
+                    </>
+                  )}
                   {settled.get(pack.id)
                     ? `${settled.get(pack.id)} para quitar saldo inicial · `
                     : ""}
