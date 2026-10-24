@@ -5285,7 +5285,7 @@ html:has(.app-shell) {
 /* Scheduling previews use clear groups instead of disabled-control opacity. */
 .mini-agenda-slots {
   max-height: min(64vh, 680px);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
   padding: 2px;
 }
 .mini-agenda-slot {
@@ -5294,6 +5294,7 @@ html:has(.app-shell) {
 }
 .mini-agenda-slot.mini-agenda-busy:disabled {
   opacity: 1;
+  filter: none;
   color: var(--fg);
   background: color-mix(in srgb, hsl(var(--slot-hue, 140) 65% 80%) 38%, var(--surface));
   border-color: color-mix(in srgb, hsl(var(--slot-hue, 140) 45% 50%) 50%, var(--line));
