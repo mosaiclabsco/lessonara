@@ -22,6 +22,35 @@ export function PlanFields({ plan }: { plan?: Plan }) {
   return (
     <>
       <div>
+        <label className="label" htmlFor={`${id}-name`}>
+          {t("Nome do plano")}
+        </label>
+        <input
+          id={`${id}-name`}
+          name="name"
+          className="input"
+          required
+          maxLength={120}
+          defaultValue={plan?.name ?? ""}
+          placeholder={t("Ex.: Inglês individual")}
+        />
+      </div>
+      <div>
+        <label className="label" htmlFor={`${id}-code`}>
+          {t("Código do plano")}
+        </label>
+        <input
+          id={`${id}-code`}
+          className="input"
+          readOnly
+          value={plan?.code ? `#${plan.code}` : t("Gerado ao salvar")}
+          aria-describedby={`${id}-code-help`}
+        />
+        <p id={`${id}-code-help`} className="mt-2 text-sm text-muted">
+          {t("Use este código no CSV. Ele não muda ao editar o plano.")}
+        </p>
+      </div>
+      <div>
         <label className="label" htmlFor={`${id}-period`}>
           {t("Frequência")}
         </label>
@@ -128,7 +157,6 @@ export function PlanFields({ plan }: { plan?: Plan }) {
           defaultValue={plan?.price ?? 0}
         />
       </div>
-      <input type="hidden" name="name" value={frequencyName(period, count)} />
       <p className="plan-generated-name">
         {t(frequencyName(period, count))} · {credits || "—"} {t("créditos no pacote")}
         {period === "week" && credits && (

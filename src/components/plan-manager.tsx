@@ -83,9 +83,11 @@ export function PlanManager({ plans }: { plans: Plan[] }) {
               {handle}
               <span className="plan-position">{index + 1}</span>
               <div className="saved-plan-info">
-                <h3>{t(frequencyName(frequency.period, frequency.count))}</h3>
+                <h3>{plan.name}</h3>
+                {plan.code && <p className="font-mono text-sm">#{plan.code}</p>}
                 <p>
-                  {plan.lessons} {t("aulas no pacote")} ·{" "}
+                  {t(frequencyName(frequency.period, frequency.count))} · {plan.lessons}{" "}
+                  {t("aulas no pacote")} ·{" "}
                   {t(frequency.mode === "flexible" ? "Datas avulsas" : "Datas fixas")}
                 </p>
                 {!plan.is_active && (

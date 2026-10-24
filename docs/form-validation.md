@@ -42,3 +42,7 @@ Testes de regressão: `form-validation.test.ts`, `teacher-form-actions.test.ts`,
 Pix valida a chave por tipo, dígitos de CPF/CNPJ, limites BR Code e valor positivo de até R$ 99.000. Dados do pacote são obtidos no servidor e preservados numa solicitação; a confirmação não aceita preço/créditos enviados pelo navegador. O banco exige uma escolha booleana explícita e data de recebimento válida.
 
 Importação valida plano Plus/Pro, arquivo de até 512 KB, UTF-8/CSV ou original XLSX assistido, até 200 linhas, colunas, contatos, nome de plano ativo, saldo inicial, início e horários. A confirmação exige revisão explícita, seleção válida e versão atual; RLS/RPCs repetem as regras de propriedade, plano, sessão e conflitos. [Contrato e limites](product-flows.md).
+
+### Identificação dos planos — 23/10/2026
+
+Nome editável e obrigatório, de 1 a 120 caracteres, validado na action e no banco. Código de dez caracteres hexadecimais gerado no banco, único e imutável; valores forjados na criação são ignorados. O CSV usa `codigo_plano`, com ou sem `#`, e resolve apenas planos ativos da conta autenticada. Compatibilidade por nome permanece na coluna antiga `plano`, recusando nomes ambíguos.

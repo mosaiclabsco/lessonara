@@ -4,7 +4,7 @@ import type { Plan } from "./data";
 export const IMPORT_MAX_BYTES = 512 * 1024,
   IMPORT_MAX_ROWS = 200;
 export const IMPORT_TEMPLATE =
-  "nome;email;telefone;pais;plano;valor_diferente;saldo_inicial;inicio;horarios;observacoes\nAluno Exemplo;aluno@example.com;;BR;NOME EXATO DO PLANO;;4;AAAA-MM-DD;seg 18:00|qua 18:00;\n";
+  "nome;email;telefone;pais;codigo_plano;valor_diferente;saldo_inicial;inicio;horarios;observacoes\nAluno Exemplo;aluno@example.com;;BR;#CODIGO_DO_PLANO;;4;AAAA-MM-DD;seg 18:00|qua 18:00;\n";
 export type ImportRow = {
   row_id: string;
   name: string;
@@ -96,17 +96,19 @@ export function previewImport(
     "email",
     "telefone",
     "pais",
-    "plano",
+    "codigo_plano",
     "valor_diferente",
     "saldo_inicial",
     "inicio",
     "horarios",
     "observacoes",
   ];
+  const referenceColumn = header.includes("codigo_plano") ? "codigo_plano" : "plano";
+  const expectedColumns = columns.map((c) => (c === "codigo_plano" ? referenceColumn : c));
   if (
     new Set(header).size !== header.length ||
-    columns.some((c) => !header.includes(c)) ||
-    header.some((c) => !columns.includes(c))
+    expectedColumns.some((c) => !header.includes(c)) ||
+    header.some((c) => !expectedColumns.includes(c))
   )
     throw new Error("Use as colunas do modelo, sem acrescentar ou repetir cabeçalhos.");
   const normalize = (s: string) =>
@@ -153,12 +155,20 @@ export function previewImport(
         );
       names.add(normalize(row.name));
       emails.add(row.email);
+      const reference = get(referenceColumn);
+      const code = reference.replace(/^#/, "").toUpperCase();
       const matching = plans.filter(
-        (p) => p.is_active !== false && normalize(p.name) === normalize(get("plano")),
+        (p) =>
+          p.is_active !== false &&
+          (referenceColumn === "codigo_plano"
+            ? Boolean(p.code && p.code.toUpperCase() === code)
+            : normalize(p.name) === normalize(reference)),
       );
       if (matching.length !== 1)
         throw new Error(
-          "O nome do plano deve identificar exatamente um plano ativo. Revise seus planos.",
+          referenceColumn === "codigo_plano"
+            ? "Código de plano não encontrado entre seus planos ativos. Confira o código em Configurações → Planos."
+            : "O nome do plano deve identificar exatamente um plano ativo. Use codigo_plano para evitar nomes repetidos.",
         );
       const plan = matching[0];
       row.plan_id = plan.id;

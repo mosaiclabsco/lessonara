@@ -81,8 +81,9 @@ export function ImportWizard({
             </a>
             <div className="space-y-2 text-sm text-muted">
               <p>
-                Use o nome exato de um plano ativo. Saldo inicial é a quantidade de aulas disponível
-                na mudança, inclusive negativa; não é pagamento.
+                Use o código de um plano ativo, disponível em Configurações → Planos (com ou sem #).
+                Saldo inicial é a quantidade de aulas disponível na mudança, inclusive negativa; não
+                é pagamento.
               </p>
               <p>
                 Início: AAAA-MM-DD, hoje ou no futuro. Horários: seg 18:00|qua 18:00; mensal fixo:

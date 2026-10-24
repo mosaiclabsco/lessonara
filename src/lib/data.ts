@@ -36,6 +36,7 @@ export type Teacher = {
 };
 
 export type Plan = {
+  code?: string;
   is_active?: boolean;
   frequency_period?: "week" | "month";
   frequency_count?: number;

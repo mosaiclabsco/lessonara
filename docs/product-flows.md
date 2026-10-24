@@ -29,7 +29,7 @@ Disponível em **Plus e Pro**, com validação no servidor e no banco. O Essenci
 
 ### Importar com modelo CSV
 
-Baixar o modelo, preencher os dados e enviar um CSV UTF-8. A prévia mostra nome/contato, plano, valor específico, saldo inicial, início e horários. Linhas com erro não podem ser selecionadas. O professor pode desmarcar linhas válidas e deve confirmar que revisou os dados antes de gravar. Não há criação/atualização automática de planos: o nome deve identificar exatamente um plano ativo da própria conta.
+Baixar o modelo, preencher os dados e enviar um CSV UTF-8. A prévia mostra nome/contato, plano, valor específico, saldo inicial, início e horários. Linhas com erro não podem ser selecionadas. O professor pode desmarcar linhas válidas e deve confirmar que revisou os dados antes de gravar. Não há criação/atualização automática de planos: o `codigo_plano` identifica um plano ativo da própria conta e permanece estável após renomear. O código é gerado pelo banco e aparece em Configurações → Planos; o prefixo `#` é opcional no CSV. Arquivos antigos com a coluna `plano` por nome continuam aceitos somente quando o nome identifica exatamente um plano ativo. Não misturar as duas colunas.
 
 Colunas obrigatórias do arquivo, com células opcionais conforme indicado:
 
@@ -37,7 +37,7 @@ Colunas obrigatórias do arquivo, com células opcionais conforme indicado:
 |---|---|
 | `nome`, `email` | Nome de até 120 caracteres e email válido; possíveis duplicatas são bloqueadas |
 | `telefone`, `pais` | Telefone opcional; país ISO de duas letras, BR quando vazio |
-| `plano` | Nome exato de um único plano ativo |
+| `codigo_plano` | Código de um plano ativo da conta, com ou sem `#`; não muda com o nome |
 | `valor_diferente` | Opcional; 0 a 99000,00; sem separador de milhar |
 | `saldo_inicial` | Inteiro entre -1000 e 1000; vazio equivale a zero |
 | `inicio` | AAAA-MM-DD, hoje ou no futuro |
