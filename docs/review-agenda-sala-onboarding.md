@@ -106,3 +106,22 @@ Os ajustes estão publicados em produção (versão `af107f4`, deploy READY). A 
 ### Conferência isolada no provedor
 
 Uma série técnica temporária de três ocorrências, sem convidados, foi criada no Google para testar o mesmo formato de EXDATE usado pelo worker. Somente a ocorrência selecionada foi retirada; as outras duas semanas permaneceram. Uma reposição individual foi criada separadamente. Os dois eventos técnicos foram removidos ao final e nenhum email foi enviado. Isso valida o comportamento da API e do gerador de exceções, não substitui o QA completo dos formulários com professor e aluno. A consulta freeBusy confirmou livres os intervalos de 11h a 12h nas duas próximas datas das séries antigas autorizadas para limpeza.
+
+
+## Regressão do portal autenticado após a migração 0028
+
+O erro de servidor com identificador `141027836` foi associado nos logs a `PGRST201`: a relação de alunos com professores ficou ambígua. A chave composta da tabela de participação permite ao PostgREST inferir uma relação adicional entre as duas tabelas. A tela pública de acesso continuava funcionando, mas a consulta do portal após autenticação falhava.
+
+As consultas do portal, da seleção de vínculos do aluno, do preparo de lembretes e da revalidação de destinatários passam a especificar a FK `students_teacher_id_fkey`. Os filtros de autorização e de professor permanecem aplicados. Não é necessário apagar sessões ou solicitar um novo código para corrigir essa consulta.
+
+Para conferir os quatro seletores reais no banco configurado, sem criar sessões, alterar registros ou enviar emails:
+
+```sh
+node --env-file=.env.local --import tsx supabase/operations/verify-student-relations.mts --student-id UUID_DO_ALUNO_DE_TESTE
+```
+
+O aluno de teste deve estar ativo e possuir um vínculo de sessão existente. O verificador extrai os seletores diretamente dos arquivos de produção e exige um único professor responsável em cada resultado. Essa conferência de banco não substitui o teste visual do portal com uma sessão real de aluno.
+
+### Complemento da proposta de histórico, ainda pendente
+
+Gabriel propôs registrar a confirmação de entrada na sala, identificar cada aula dentro do pacote e oferecer uma aba Histórico no perfil do aluno, agrupada por mês ou pacote. A identidade e o retrato da ocorrência devem sobreviver a mudanças de plano e à recriação de horários. Participação técnica não deve, sozinha, confirmar aula realizada ou consumir crédito; reconexões precisam ser idempotentes. Aulas presenciais ou realizadas fora da sala também precisam de um caminho de confirmação. A arquitetura permanece para discussão antes de implementar.

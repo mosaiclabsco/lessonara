@@ -14,7 +14,7 @@ async function MyArea() {
   const { data, error } = await db
     .from("student_session_links")
     .select(
-      "access_version,students!inner(id,teacher_id,slug,name,email,active,access_version,teachers(name))",
+      "access_version,students!inner(id,teacher_id,slug,name,email,active,access_version,teachers!students_teacher_id_fkey(name))",
     )
     .eq("session_id", session.id);
   if (error) throw new Error("Não foi possível abrir sua área.");

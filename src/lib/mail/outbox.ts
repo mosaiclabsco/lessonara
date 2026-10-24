@@ -126,7 +126,7 @@ export async function processEmails(id?: string) {
         const row = await db
           .from("students")
           .select(
-            "id,access_version,teacher_id,slug,name,email,active,promotional_email_opt_out,teachers(name,email)",
+            "id,access_version,teacher_id,slug,name,email,active,promotional_email_opt_out,teachers!students_teacher_id_fkey(name,email)",
           )
           .eq("id", job.student_id)
           .maybeSingle<MailStudent>();

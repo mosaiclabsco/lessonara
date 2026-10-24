@@ -21,7 +21,9 @@ export async function StudentContent({
   const supabase = createAdminClient();
   const { data: student, error } = await supabase
     .from("students")
-    .select("*, teachers(name,platform_plan),plans(price,lessons,name,is_active)")
+    .select(
+      "*, teachers!students_teacher_id_fkey(name,platform_plan),plans(price,lessons,name,is_active)",
+    )
     .eq("id", access.id)
     .eq("teacher_id", access.teacher_id)
     .maybeSingle<

@@ -14,7 +14,9 @@ export async function prepareReminderBatch(db: SupabaseClient, pageSize = 100) {
     return { checked: 0, queued: 0, done: !!run?.done, busy: !!run?.busy };
   let query = db
     .from("students")
-    .select("id,teacher_id,email,opening_credits,teachers!inner(platform_plan)")
+    .select(
+      "id,teacher_id,email,opening_credits,teachers!students_teacher_id_fkey!inner(platform_plan)",
+    )
     .eq("active", true)
     .not("email", "is", null)
     .eq("teachers.platform_plan", "pro")
