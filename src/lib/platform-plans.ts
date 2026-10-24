@@ -1,5 +1,6 @@
 export type PlatformPlan = "essential" | "plus" | "pro";
-export type PlatformFeature = "emails" | "classroom" | "imports";
+export type PlatformFeature =
+  "emails" | "classroom" | "imports" | "google" | "exports" | "lessonReminders";
 const MB = 1024 * 1024,
   GB = 1024 * MB;
 export const PLATFORM_PLANS = {
@@ -11,24 +12,33 @@ export const PLATFORM_PLANS = {
     imports: false,
     emails: false,
     classroom: false,
+    google: false,
+    exports: false,
+    lessonReminders: false,
   },
   plus: {
     id: "plus",
     name: "Plus",
-    maxFileBytes: 100 * MB,
+    maxFileBytes: 50 * MB,
     storageBytes: 5 * GB,
     imports: true,
-    emails: false,
+    emails: true,
     classroom: false,
+    google: true,
+    exports: true,
+    lessonReminders: false,
   },
   pro: {
     id: "pro",
     name: "Pro",
-    maxFileBytes: GB,
-    storageBytes: 20 * GB,
+    maxFileBytes: 100 * MB,
+    storageBytes: 10 * GB,
     imports: true,
     emails: true,
     classroom: true,
+    google: true,
+    exports: true,
+    lessonReminders: true,
   },
 } as const;
 export function resolvePlatformPlan(value: unknown): PlatformPlan {
@@ -38,7 +48,12 @@ export function resolvePlatformPlan(value: unknown): PlatformPlan {
       ? "plus"
       : "essential";
 }
-export const platformPlan = (value: unknown) => PLATFORM_PLANS[resolvePlatformPlan(value)];
+// Current Supabase Free project has a fixed 50 MB global upload ceiling.
+export const PROVIDER_MAX_FILE_BYTES = 50 * MB;
+export function platformPlan(value: unknown) {
+  const plan = PLATFORM_PLANS[resolvePlatformPlan(value)];
+  return { ...plan, maxFileBytes: Math.min(plan.maxFileBytes, PROVIDER_MAX_FILE_BYTES) };
+}
 export function hasPlatformFeature(plan: unknown, feature: PlatformFeature) {
   return platformPlan(plan)[feature];
 }

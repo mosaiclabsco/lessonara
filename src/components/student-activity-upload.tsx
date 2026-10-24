@@ -8,7 +8,7 @@ import { Icon } from "@/components/icon";
 import { BusyContent } from "@/components/busy-content";
 import { useI18n } from "@/components/browser-preferences-provider";
 import { useState, useTransition, type FormEvent } from "react";
-import { createBrowserSupabase } from "@/lib/supabase/browser";
+import { useUploads } from "./upload-provider";
 import { DOCUMENT_ACCEPT, validateDocumentFile } from "@/lib/document-rules";
 import { ACTIVITY_BUCKET } from "@/lib/activities";
 import {
@@ -27,10 +27,12 @@ export function StudentActivityUpload({
 }) {
   const { t } = useI18n();
   const plan = usePlatformPlan();
+  const uploads = useUploads();
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState("");
   function send(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (pending || uploads.busy) return;
     const data = new FormData(event.currentTarget);
     const file = data.get("file");
     if (!(file instanceof File)) return;
@@ -42,36 +44,36 @@ export function StudentActivityUpload({
     }
     setMessage("");
     startTransition(async () => {
-      let prepared = false;
       try {
         const result = await beginActivitySubmission(studentId, activityId, {
           fileName: file.name,
           byteSize: file.size,
         });
         if (!result.ok) throw new Error(result.message);
-        prepared = true;
-        const client = createBrowserSupabase();
-        const uploaded = await client.storage
-          .from(ACTIVITY_BUCKET)
-          .uploadToSignedUrl(result.data.path, result.data.token, file, {
-            contentType: result.data.mimeType,
-          });
-        if (uploaded.error)
-          throw new Error("O envio falhou. Confira sua conexão e tente novamente.");
-        const finished = await finishActivitySubmission(
-          studentId,
-          activityId,
-          result.data.id,
-          String(data.get("note") ?? ""),
-        );
-        if (!finished.ok) throw new Error(finished.message);
+
+        await uploads.send({
+          file,
+          bucket: ACTIVITY_BUCKET,
+          id: result.data.id,
+          path: result.data.path,
+          token: result.data.token,
+          mimeType: result.data.mimeType,
+          complete: async () => {
+            const finished = await finishActivitySubmission(
+              studentId,
+              activityId,
+              result.data.id,
+              String(data.get("note") ?? ""),
+            );
+            if (!finished.ok) throw new Error(finished.message);
+          },
+          discard: async () => {
+            const cancelled = await cancelActivitySubmission(studentId, activityId);
+            if (!cancelled.ok) throw new Error(cancelled.message);
+          },
+        });
         setMessage("Atividade entregue. Sua professora já pode conferir o arquivo.");
       } catch (error) {
-        if (prepared) {
-          try {
-            await cancelActivitySubmission(studentId, activityId);
-          } catch {}
-        }
         setMessage((error as Error).message);
       }
     });
@@ -86,7 +88,7 @@ export function StudentActivityUpload({
           </p>
           <button
             className="btn-xs"
-            disabled={pending}
+            disabled={pending || uploads.busy}
             onClick={() =>
               startTransition(async () => {
                 try {
@@ -118,7 +120,7 @@ export function StudentActivityUpload({
               className="input"
               accept={DOCUMENT_ACCEPT}
               required
-              disabled={pending}
+              disabled={pending || uploads.busy}
             />
           </div>
           <div>
@@ -131,11 +133,11 @@ export function StudentActivityUpload({
               className="input"
               maxLength={4000}
               rows={2}
-              disabled={pending}
+              disabled={pending || uploads.busy}
             />
           </div>
           <div className="form-actions">
-            <button className="btn" disabled={pending}>
+            <button className="btn" disabled={pending || uploads.busy}>
               <BusyContent pending={pending}>
                 <Icon name="mail" className="h-4 w-4" />
                 {pending ? t("Enviando atividade\u2026") : t("Entregar atividade")}

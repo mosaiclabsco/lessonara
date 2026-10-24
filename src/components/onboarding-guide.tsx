@@ -1,3 +1,4 @@
+import { hasPlatformFeature } from "@/lib/platform-plans";
 import Link from "next/link";
 import { getTranslator } from "@/lib/i18n/server";
 import type { OnboardingState } from "@/lib/onboarding";
@@ -25,11 +26,15 @@ export async function OnboardingGuide({ state }: { state: OnboardingState }) {
       { id: "receivables", label: "Conheça os recebimentos por Pix", icon: "check" as const },
       { id: "subscription", label: "Confira seu plano da empresa", icon: "book" as const },
       { id: "support", label: "Saiba onde pedir ajuda", icon: "chat" as const },
-    ].map((step) => ({
-      ...step,
-      done: state.reviewedSettings?.includes(step.id) ?? false,
-      required: false,
-    })),
+    ]
+      .filter(
+        (step) => step.id !== "integrations" || hasPlatformFeature(state.platformPlan, "google"),
+      )
+      .map((step) => ({
+        ...step,
+        done: state.reviewedSettings?.includes(step.id) ?? false,
+        required: false,
+      })),
   ];
   return (
     <section className="card onboarding-guide">

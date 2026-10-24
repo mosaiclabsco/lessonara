@@ -1,3 +1,4 @@
+import { UploadProvider } from "@/components/upload-provider";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
@@ -44,7 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           }
         >
           <LocaleFrame>
-            {children}
+            <UploadProvider>{children}</UploadProvider>
             <Suspense fallback={null}>
               <SiteAnalytics />
             </Suspense>

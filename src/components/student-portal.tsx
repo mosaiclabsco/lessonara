@@ -1,4 +1,5 @@
 "use client";
+import { StudentEmailPreferences } from "./student-email-preferences";
 import { StudentRenewalCard } from "./student-renewal";
 import type { StudentRenewal } from "@/lib/renewals";
 import { useI18n } from "@/components/browser-preferences-provider";
@@ -26,11 +27,13 @@ const tabs = [
   { id: "materiais", label: "Documentos", icon: "book" as const },
   { id: "atividades", label: "Atividades", icon: "check" as const },
   { id: "historico", label: "Histórico e pacotes", icon: "book" as const },
+  { id: "preferencias", label: "Emails", icon: "settings" as const },
 ];
 export function StudentPortal({
   renewal,
   classroomEnabled = false,
   meetEnabled = false,
+  emailPreferences,
   name,
   teacherName,
   ledger,
@@ -44,6 +47,7 @@ export function StudentPortal({
   renewal: StudentRenewal;
   classroomEnabled?: boolean;
   meetEnabled?: boolean;
+  emailPreferences?: { operational: boolean; promotional: boolean };
   name: string;
   teacherName: string;
   ledger: Ledger;
@@ -317,6 +321,7 @@ export function StudentPortal({
                 packages={packages}
               />
             </section>
+
             <section className="card">
               <h2 className="h2">{t("Meus pacotes")}</h2>
               {packages.length ? (
@@ -339,7 +344,15 @@ export function StudentPortal({
                             {formatDate(pack.paid_on, locale)}
                           </p>
                         </div>
-                        <Icon name="check" className="ml-auto h-4 w-4 text-ok" />
+                        {pack.paid_on <= today && pack.amount >= 0 && (
+                          <a
+                            className="btn-outline ml-auto"
+                            href={`/student/portal/${slug}/receipts/${pack.id}`}
+                          >
+                            <Icon name="download" className="h-4 w-4" />
+                            Recibo PDF
+                          </a>
+                        )}
                       </li>
                     ))}
                 </ul>
@@ -347,6 +360,13 @@ export function StudentPortal({
                 <p className="text-sm text-muted">{t("Nenhum pacote registrado ainda.")}</p>
               )}
             </section>
+          </div>
+        )}
+        {tab === "preferencias" && (
+          <div id="panel-preferencias" role="tabpanel" aria-labelledby="tab-preferencias">
+            {emailPreferences && (
+              <StudentEmailPreferences studentId={slug} initial={emailPreferences} />
+            )}
           </div>
         )}
         <footer className="portal-footer">

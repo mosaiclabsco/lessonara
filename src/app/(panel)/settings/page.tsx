@@ -1,3 +1,4 @@
+import { platformPlan as planDefinition } from "@/lib/platform-plans";
 import { ImportOnboarding } from "@/components/import-onboarding";
 import { PixSettingsForm } from "@/components/pix-settings";
 import type { PixSettings } from "@/lib/pix";
@@ -117,6 +118,13 @@ async function SettingsContent({
         );
       }
       case "integrations": {
+        if (!planDefinition(teacher.platform_plan).google)
+          return (
+            <section className="card">
+              <h2 className="h2">Integrações</h2>
+              <p className="mt-3 text-sm text-muted">Nenhuma integração disponível neste plano.</p>
+            </section>
+          );
         const google = await supabase
           .from("google_calendar_connections")
           .select("teacher_id,last_error")

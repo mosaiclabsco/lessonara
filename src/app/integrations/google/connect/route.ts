@@ -1,11 +1,18 @@
+import { hasPlatformFeature } from "@/lib/platform-plans";
+import { requireUser } from "@/lib/supabase/server";
 import { randomBytes, createHash } from "node:crypto";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { requireUser } from "@/lib/supabase/server";
+
 import { seal } from "@/lib/mail/crypto";
 import { googleConfigured, googleRedirectUri } from "@/lib/google/calendar";
 export async function GET() {
-  const { userId } = await requireUser();
+  const { userId, teacher } = await requireUser();
+  if (!hasPlatformFeature(teacher.platform_plan, "google"))
+    return new Response("Integração disponível no Plus e Pro.", {
+      status: 403,
+      headers: { "Cache-Control": "private, no-store" },
+    });
   if (!googleConfigured())
     return NextResponse.redirect(
       new URL("/settings?google=setup", process.env.APP_URL || "http://localhost:3001"),

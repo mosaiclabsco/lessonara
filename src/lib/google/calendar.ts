@@ -1,3 +1,4 @@
+import { loadTeacherPlan } from "../platform-plan-server";
 import { createHash } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/server";
 import { seal, unseal } from "@/lib/mail/crypto";
@@ -21,6 +22,7 @@ export function calendarEventId(kind: string, id: string, teacherId = "") {
 export { safeMeetUrl } from "../meeting-url";
 export async function googleAccessToken(teacherId: string) {
   if (!googleConfigured()) return null;
+  if (!(await loadTeacherPlan(teacherId)).google) return null;
   const db = createAdminClient();
   const row = await db
     .from("google_calendar_connections")

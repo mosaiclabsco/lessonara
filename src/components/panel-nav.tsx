@@ -11,6 +11,7 @@ const links: {
 }[] = [
   { href: "/", label: "Visão geral", icon: "grid" },
   { href: "/students", label: "Alunos", icon: "users" },
+  { href: "/pending", label: "Pendências", icon: "check" },
   { href: "/payments", label: "Pagamentos", icon: "book" },
   { href: "/finance", label: "Financeiro", icon: "chart" },
   { href: "/documents", label: "Documentos", icon: "book" },
@@ -35,30 +36,32 @@ function NavLinks({
   const { t } = useI18n();
   return (
     <nav className="panel-nav" aria-label={t("Navega\u00E7\u00E3o principal")}>
-      {links.map(({ href, label, icon }) => {
-        const active =
-          pathname !== undefined &&
-          (href === "/students"
-            ? pathname === "/students" || pathname.startsWith("/students/")
-            : pathname === href);
-        return (
-          <Link
-            key={href}
-            href={href}
-            title={t(label)}
-            aria-label={t(label)}
-            aria-current={active ? "page" : undefined}
-            className={`nav-link ${active ? "nav-active" : ""}`}
-          >
-            <Icon name={icon} />
-            <span>{t(label)}</span>
-            {href === "/emails" && !hasPlatformFeature(platformPlan, "emails") && (
-              <span className="count-badge">Pro</span>
-            )}
-            {active && <span className="nav-dot" />}
-          </Link>
-        );
-      })}
+      {links
+        .filter((link) => link.href !== "/emails" || hasPlatformFeature(platformPlan, "emails"))
+        .map(({ href, label, icon }) => {
+          const active =
+            pathname !== undefined &&
+            (href === "/students"
+              ? pathname === "/students" || pathname.startsWith("/students/")
+              : pathname === href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              title={t(label)}
+              aria-label={t(label)}
+              aria-current={active ? "page" : undefined}
+              className={`nav-link ${active ? "nav-active" : ""}`}
+            >
+              <Icon name={icon} />
+              <span>{t(label)}</span>
+              {href === "/emails" && !hasPlatformFeature(platformPlan, "emails") && (
+                <span className="count-badge">Pro</span>
+              )}
+              {active && <span className="nav-dot" />}
+            </Link>
+          );
+        })}
     </nav>
   );
 }

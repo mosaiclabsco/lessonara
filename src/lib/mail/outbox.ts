@@ -1,3 +1,5 @@
+import { loadLedgers } from "../data";
+import { lessonNoticeDue } from "./lesson-notices";
 import { createUnsubscribeToken } from "./unsubscribe-token";
 import { loadTeacherPlan } from "../platform-plan-server";
 import { createWelcomeInvite } from "./welcome-invite";
@@ -5,7 +7,13 @@ import { randomUUID } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/server";
 import { EmailSendError, sendEmail, type EmailInput } from "@/lib/email";
 import { seal, unseal } from "./crypto";
-import { otpEmail, reminderEmail, welcomeEmail, campaignEmail } from "./templates";
+import {
+  otpEmail,
+  reminderEmail,
+  welcomeEmail,
+  campaignEmail,
+  lessonNoticeEmail,
+} from "./templates";
 
 type MailStudent = {
   id: string;
@@ -16,6 +24,7 @@ type MailStudent = {
   email: string;
   active: boolean;
   promotional_email_opt_out: boolean;
+  operational_email_opt_out: boolean;
   teachers: { name: string; email: string };
 };
 type Job = {
@@ -24,7 +33,7 @@ type Job = {
   lease_id: string;
   student_id: string | null;
   recipient: string;
-  template: "otp" | "welcome" | "reminder" | "campaign";
+  template: "otp" | "welcome" | "reminder" | "campaign" | "lesson_notice";
   payload: Record<string, string>;
   attempts: number;
   delivery: { sealed: string } | null;
@@ -60,7 +69,7 @@ export async function enqueueReminder(input: {
   message: string;
 }) {
   if (!(await loadTeacherPlan(input.teacherId)).emails)
-    throw new Error("Emails está disponível no plano Pro.");
+    throw new Error("Emails está disponível nos planos Plus e Pro.");
   const { error } = await createAdminClient()
     .from("email_outbox")
     .upsert(
@@ -106,14 +115,23 @@ export async function processEmails(id?: string) {
         result.failed++;
         continue;
       }
-      if (job.template === "reminder" || job.template === "campaign") {
+      if (
+        job.template === "reminder" ||
+        job.template === "campaign" ||
+        job.template === "lesson_notice"
+      ) {
         const owner = await db
           .from("students")
           .select("teacher_id")
           .eq("id", job.student_id)
           .maybeSingle();
         if (owner.error) throw owner.error;
-        if (!owner.data || !(await loadTeacherPlan(owner.data.teacher_id, db)).emails) {
+        if (
+          !owner.data ||
+          !(await loadTeacherPlan(owner.data.teacher_id, db))[
+            job.template === "lesson_notice" ? "lessonReminders" : "emails"
+          ]
+        ) {
           await finish({ status: "cancelled", payload: {}, delivery: null });
           result.cancelled++;
           continue;
@@ -126,7 +144,7 @@ export async function processEmails(id?: string) {
         const row = await db
           .from("students")
           .select(
-            "id,access_version,teacher_id,slug,name,email,active,promotional_email_opt_out,teachers!students_teacher_id_fkey(name,email)",
+            "id,access_version,teacher_id,slug,name,email,active,promotional_email_opt_out,operational_email_opt_out,teachers!students_teacher_id_fkey(name,email)",
           )
           .eq("id", job.student_id)
           .maybeSingle<MailStudent>();
@@ -136,6 +154,8 @@ export async function processEmails(id?: string) {
           !student ||
           !student.active ||
           (job.template === "campaign" && student.promotional_email_opt_out) ||
+          (["reminder", "lesson_notice"].includes(job.template) &&
+            student.operational_email_opt_out) ||
           student.email?.trim().toLowerCase() !== job.recipient
         ) {
           await finish({ status: "cancelled", payload: {}, delivery: null });
@@ -154,6 +174,29 @@ export async function processEmails(id?: string) {
           .maybeSingle();
         if (challenge.error) throw new EmailSendError("database_unavailable", true);
         if (!challenge.data) {
+          await finish({ status: "cancelled", payload: {}, delivery: null });
+          result.cancelled++;
+          continue;
+        }
+      }
+      if (job.template === "lesson_notice") {
+        const current = (await loadLedgers(db, [job.student_id!]))
+          .get(job.student_id!)
+          ?.ledger.lessons.find(
+            (l) =>
+              l.sourceKind === job.payload.source_kind &&
+              l.sourceId === job.payload.source_id &&
+              l.date === job.payload.date &&
+              l.time.slice(0, 5) === job.payload.time,
+          );
+        if (
+          !current ||
+          current.past ||
+          !current.counts ||
+          !current.packageId ||
+          current.status === "feriado" ||
+          !lessonNoticeDue(current.date, current.time)
+        ) {
           await finish({ status: "cancelled", payload: {}, delivery: null });
           result.cancelled++;
           continue;
@@ -198,13 +241,22 @@ export async function processEmails(id?: string) {
                         .href,
                     );
                   })()
-                : reminderEmail(
-                    student!.name,
-                    student!.teachers.name,
-                    job.payload.message,
-                    student!.teacher_id,
-                    student!.slug,
-                  );
+                : job.template === "lesson_notice"
+                  ? lessonNoticeEmail(
+                      student!.name,
+                      student!.teachers.name,
+                      job.payload.date,
+                      job.payload.time,
+                      student!.teacher_id,
+                      student!.slug,
+                    )
+                  : reminderEmail(
+                      student!.name,
+                      student!.teachers.name,
+                      job.payload.message,
+                      student!.teacher_id,
+                      student!.slug,
+                    );
         body = {
           ...content,
           to: job.recipient,

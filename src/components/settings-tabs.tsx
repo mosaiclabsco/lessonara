@@ -1,4 +1,5 @@
 "use client";
+import { usePlatformPlan } from "./platform-plan-provider";
 import { useEffect, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "./browser-preferences-provider";
@@ -21,6 +22,8 @@ export function SettingsTabs({
   reviewed?: boolean;
 }) {
   const { t } = useI18n();
+  const plan = usePlatformPlan();
+  const visibleTabs = settingsTabs.filter((tab) => tab.id !== "integrations" || plan.google);
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   useEffect(() => {
@@ -55,7 +58,7 @@ export function SettingsTabs({
   return (
     <>
       <div className="portal-tabs profile-tab-bar" role="tablist" aria-label={t("Configurações")}>
-        {settingsTabs.map((tab, index) => (
+        {visibleTabs.map((tab, index) => (
           <button
             type="button"
             role="tab"
@@ -68,18 +71,18 @@ export function SettingsTabs({
             onKeyDown={(event) => {
               const next =
                 event.key === "ArrowRight"
-                  ? (index + 1) % settingsTabs.length
+                  ? (index + 1) % visibleTabs.length
                   : event.key === "ArrowLeft"
-                    ? (index + settingsTabs.length - 1) % settingsTabs.length
+                    ? (index + visibleTabs.length - 1) % visibleTabs.length
                     : event.key === "Home"
                       ? 0
                       : event.key === "End"
-                        ? settingsTabs.length - 1
+                        ? visibleTabs.length - 1
                         : null;
               if (next === null) return;
               event.preventDefault();
-              navigate(settingsTabs[next].id);
-              document.getElementById(`settings-${settingsTabs[next].id}`)?.focus();
+              navigate(visibleTabs[next].id);
+              document.getElementById(`settings-${visibleTabs[next].id}`)?.focus();
             }}
           >
             <Icon name={tab.icon} className="h-4 w-4" />

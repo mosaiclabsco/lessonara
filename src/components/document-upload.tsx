@@ -7,7 +7,7 @@ import { Icon } from "@/components/icon";
 
 import { useI18n } from "@/components/browser-preferences-provider";
 import { useRef, useState, useTransition, type FormEvent } from "react";
-import { createBrowserSupabase } from "@/lib/supabase/browser";
+import { useUploads } from "./upload-provider";
 import { DOCUMENT_ACCEPT, DOCUMENT_BUCKET, validateDocumentFile } from "@/lib/document-rules";
 import {
   beginDocumentUpload,
@@ -17,6 +17,7 @@ import {
 export function DocumentUpload({ available }: { available: boolean }) {
   const { t } = useI18n();
   const plan = usePlatformPlan();
+  const uploads = useUploads();
   const form = useRef<HTMLFormElement>(null);
   const [title, setTitle] = useState("");
   const [pending, startTransition] = useTransition();
@@ -24,7 +25,7 @@ export function DocumentUpload({ available }: { available: boolean }) {
 
   function upload(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (pending || !available) return;
+    if (pending || uploads.busy || !available) return;
     const data = new FormData(event.currentTarget);
     const file = data.get("file");
     if (!(file instanceof File)) return;
@@ -46,16 +47,22 @@ export function DocumentUpload({ available }: { available: boolean }) {
         });
         if (!prepared.ok) throw new Error(prepared.message);
         documentId = prepared.data.id;
-        const client = createBrowserSupabase();
-        const uploaded = await client.storage
-          .from(DOCUMENT_BUCKET)
-          .uploadToSignedUrl(prepared.data.path, prepared.data.token, file, {
-            contentType: prepared.data.mimeType,
-          });
-        if (uploaded.error)
-          throw new Error("O envio do arquivo falhou. Confira sua conexão e tente novamente.");
-        const finished = await finishDocumentUpload(documentId);
-        if (!finished.ok) throw new Error(finished.message);
+        await uploads.send({
+          file,
+          bucket: DOCUMENT_BUCKET,
+          id: documentId,
+          path: prepared.data.path,
+          token: prepared.data.token,
+          mimeType: prepared.data.mimeType,
+          complete: async () => {
+            const result = await finishDocumentUpload(prepared.data.id);
+            if (!result.ok) throw new Error(result.message);
+          },
+          discard: async () => {
+            const result = await removeLibraryDocument(prepared.data.id, true);
+            if (!result.ok) throw new Error(result.message);
+          },
+        });
         form.current?.reset();
         setTitle("");
 
@@ -63,12 +70,6 @@ export function DocumentUpload({ available }: { available: boolean }) {
           "Arquivo salvo em Documentos. Agora você pode compartilhá-lo no perfil de cada aluno.",
         );
       } catch (error) {
-        if (documentId) {
-          try {
-            await removeLibraryDocument(documentId, true);
-          } catch {}
-        }
-
         setMessage((error as Error).message || "Não foi possível enviar o arquivo.");
       }
     });
@@ -82,7 +83,10 @@ export function DocumentUpload({ available }: { available: boolean }) {
         })}
       </p>
       <form ref={form} onSubmit={upload}>
-        <fieldset disabled={!available || pending} className="document-upload-fields">
+        <fieldset
+          disabled={!available || pending || uploads.busy}
+          className="document-upload-fields"
+        >
           <div>
             <label className="label" htmlFor="document-file">
               {t("Arquivo")}

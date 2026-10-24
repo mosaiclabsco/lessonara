@@ -1,3 +1,4 @@
+import { loadTeacherPlan } from "../platform-plan-server";
 import { calendarExclusions } from "./recurrence";
 import { createAdminClient } from "@/lib/supabase/server";
 import { calendarEventId, googleRequest, safeMeetUrl } from "./calendar";
@@ -56,6 +57,10 @@ export async function processCalendarJobs(teacherId?: string) {
       if (released.error) throw new Error("calendar_job_write_failed");
     };
     try {
+      if (!(await loadTeacherPlan(job.teacher_id, db)).google) {
+        await finish({ status: "cancelled", last_error: null });
+        continue;
+      }
       const eventId = calendarEventId(job.source_kind, job.source_id, job.teacher_id);
       const table =
         job.source_kind === "schedule"

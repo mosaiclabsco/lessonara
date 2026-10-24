@@ -55,6 +55,7 @@ export function Dashboard({
   teacherName,
   today,
   directoryOnly = false,
+  initialFilter = "all",
   setupReady = true,
 }: {
   rows: Row[];
@@ -62,12 +63,13 @@ export function Dashboard({
   teacherName: string;
   today: string;
   directoryOnly?: boolean;
+  initialFilter?: Filter;
   setupReady?: boolean;
 }) {
   const { t, locale } = useI18n();
   const [query, setQuery] = useState("");
   const [pageByFilter, setPageByFilter] = useState<Record<string, number>>({});
-  const [filter, setFilter] = useState<Filter>("all");
+  const [filter, setFilter] = useState<Filter>(initialFilter);
   const active = rows.filter((r) => r.active && !r.pending);
   const renew = active.filter((r) => r.remaining <= 1);
   const matches = rows.filter(

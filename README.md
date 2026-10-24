@@ -12,11 +12,13 @@ Gestão de aulas para professor particular que trabalha sozinho e vende pacotes.
 - Sala integrada Jitsi é Pro. Primeira entrada entre cinco minutos antes do início e o término previsto; reconexão até trinta minutos depois para quem já participou, validada também no servidor. QA de câmera, áudio e compartilhamento com duas pessoas sob a CSP nova é obrigatório antes de liberar a sala aos alunos.
 - Desktop 0.3.1: chamadas, captura de monitor/janela e ferramentas nativas. Há instaladores Mac e Windows; o teste real de mídia depende do sistema operacional.
 
-| Plano da plataforma | Por arquivo | Armazenamento total | Emails e sala integrada | Importação |
-|---|---:|---:|---|---|
-| Essencial | 20 MB | 1 GB | Não | Não |
-| Plus | 100 MB | 5 GB | Não | Sim |
-| Pro | 1 GB | 20 GB | Sim | Sim |
+| Plano da plataforma | Por arquivo | Armazenamento total | Gestão de emails | Sala integrada | Importação |
+|---|---:|---:|---|---|---|
+| Essencial | 20 MB | 1 GB | Não | Não | Não |
+| Plus | 50 MB | 5 GB | Sim | Não | Sim |
+| Pro | 50 MB¹ | 10 GB | Sim | Sim | Sim |
+
+**Revisão local, ainda não publicada:** os limites da tabela e as permissões de email correspondem ao código preparado em 24/10. Produção continua com os limites anteriores até aplicar a entrega conjunta. A [matriz completa de planos](docs/plans.md) separa recursos implementados de propostas futuras. Recibos individuais em PDF, exportações Plus/Pro, central de pendências, lembretes de aula Pro e upload TUS estão nesta rodada local.
 
 Limites de produto não ampliam a cota contratada no Supabase. Emails de acesso necessários à autenticação não são campanhas Pro.
 
@@ -49,9 +51,9 @@ Produção usa envelopes v3 com `EMAIL_ENCRYPTION_KEY_NEXT`, `SEAL_WRITE_VERSION
 
 ## Workers
 
-`/api/cron/reminders` prepara lembretes em lotes com cursor/checkpoint duráveis; `/api/cron/emails` processa emails e calendário. As rotas exigem Bearer secreto. O Supabase Cron as chama a cada cinco minutos em horários defasados, conforme [schedule-workers.sql](supabase/operations/schedule-workers.sql), usando referência ao segredo no Vault. Isso não depende de cron frequente da Vercel Hobby.
+Em produção, os dois endpoints originais continuam ativos até a publicação conjunta. A revisão local separa renovação (`/api/cron/reminders`, 08h/18h), lembretes Pro (`/api/cron/lessons`, cinco minutos), envio (`/api/cron/emails`, cinco minutos), Calendar (`/api/cron/calendar`, cinco minutos) e limpeza (`/api/cron/cleanup`, 03h). Todas as rotas exigem Bearer secreto. Renovação mantém retomada condicional em lotes. O [procedimento de agendamento](supabase/operations/schedule-workers.sql) preserva o segredo no Vault; aplicar somente depois das migrações e das novas rotas publicadas. Veja [jobs e filas](docs/workers.md).
 
-Há registro de autenticação manual/automática dos dois workers com HTTP 200. Entrega de email real, ausência de filas paradas e conclusão de cada execução precisam de observação própria; uma resposta 200 com fila vazia não comprova o fluxo completo. Monitoramento de interrupção, idade das filas e tentativas esgotadas está no backlog.
+Há registro de autenticação manual/automática dos dois workers com HTTP 200. Entrega de email real, ausência de filas paradas e conclusão de cada execução precisam de observação própria; uma resposta 200 com fila vazia não comprova o fluxo completo. Monitoramento de interrupção, idade das filas e tentativas esgotadas foi preparado localmente no admin; ativação e validação real seguem pendentes no backlog.
 
 ## Validação e segurança
 
@@ -77,3 +79,6 @@ node tools/backlog/server.mjs
 ```
 
 Acesse `http://127.0.0.1:4317`. Prioridades e ordem ficam em `.local/backlog-priorities.json` e não são publicadas. O leitor não cria rotas no app Next.js nem altera o status de uma tarefa por conta própria.
+
+
+¹ **Limite efetivo confirmado no provedor em 24/10/2026:** Supabase Free fixa o limite global em 50 MB. O direito de produto Pro permanece planejado em 100 MB, mas interface, servidor e SQL usam 50 MB enquanto o provedor não for ampliado. Migração `0032_storage_provider_ceiling.sql`. Nenhuma assinatura paga foi contratada nesta publicação. Elevar para 100 MB exige primeiro ampliar o limite real do provedor e então atualizar o teto efetivo da aplicação/SQL.

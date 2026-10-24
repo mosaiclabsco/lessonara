@@ -1,10 +1,17 @@
+import { hasPlatformFeature } from "@/lib/platform-plans";
+import { requireUser } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { requireUser, createAdminClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { seal, unseal } from "@/lib/mail/crypto";
 import { googleRedirectUri } from "@/lib/google/calendar";
 export async function GET(request: Request) {
-  const { userId } = await requireUser();
+  const { userId, teacher } = await requireUser();
+  if (!hasPlatformFeature(teacher.platform_plan, "google"))
+    return new Response("Integração disponível no Plus e Pro.", {
+      status: 403,
+      headers: { "Cache-Control": "private, no-store" },
+    });
   const jar = await cookies();
   const encoded = jar.get("lessonara_google_state")?.value;
   jar.delete("lessonara_google_state");

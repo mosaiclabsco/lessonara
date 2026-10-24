@@ -85,3 +85,23 @@ export function campaignEmail(
     text: `Oi, ${name}!\n\n${message}\n\n${teacher}\n\nCancelar comunicações promocionais: ${unsubscribeUrl}`,
   };
 }
+
+export function lessonNoticeEmail(
+  name: string,
+  teacher: string,
+  date: string,
+  time: string,
+  teacherId: string,
+  slug: string,
+) {
+  const subject = `Sua aula começa às ${time}`;
+  const message = `Você tem uma aula com ${teacher || "seu professor(a)"} em ${date.split("-").reverse().join("/")} às ${time}.`;
+  return {
+    subject,
+    html: layout(
+      subject,
+      `<p>Oi, ${escapeHtml(name)}!</p><p>${escapeHtml(message)}</p>${button(teacherId, slug)}<p>Você pode desativar lembretes nas preferências de email da área do aluno.</p>`,
+    ),
+    text: `Oi, ${name}! ${message} Acesse ${studentLoginUrl(teacherId, slug)}. Você pode desativar lembretes nas preferências da área do aluno.`,
+  };
+}

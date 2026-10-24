@@ -10,6 +10,8 @@
 | [Revisão de segurança](security-review.md) | Parecer recebido, correções, limitações e pendências |
 | [QA pendente](qa-pendente.md) | Cenários manuais e critérios de encerramento |
 | [Validação operacional](operations-validation.md) | Publicação, migrações e testes reais desta rodada |
+| [Planos e permissões](plans.md) | Matriz de diferenciação, capacidades, recibos/exportações e limites |
+| [Jobs e filas](workers.md) | Frequências propostas, retentativas, histórico, monitoramento e aplicação futura |
 | [Entrega de emails](email-delivery.md) | Estados, assinatura, supressões e setup do webhook |
 | [Google Calendar/Meet](google-calendar.md) | Setup OAuth, sincronização e limites de validação |
 | [Revisão de agenda e sala](review-agenda-sala-onboarding.md) | Ajustes, OAuth, limpeza autorizada e decisão pendente sobre histórico |

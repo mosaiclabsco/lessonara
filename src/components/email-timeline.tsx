@@ -43,7 +43,7 @@ export function EmailTimeline({ jobs }: { jobs: EmailStatus[] }) {
         <div>
           <h2>{t("Histórico de envios")}</h2>
           <p>
-            {t("Boas-vindas são automáticas. Lembretes de renovação são enviados em Pagamentos.")}
+            {t("Acompanhe convites, renovações, lembretes e comunicados disponíveis no seu plano.")}
           </p>
         </div>
         <Icon name="mail" className="h-5 w-5 text-accent" />
@@ -102,7 +102,11 @@ export function EmailTimeline({ jobs }: { jobs: EmailStatus[] }) {
                     ? "Boas-vindas"
                     : job.template === "campaign"
                       ? "Campanha"
-                      : "Renovação do pacote",
+                      : job.template === "lesson_notice"
+                        ? "Lembrete de aula"
+                        : job.template === "otp"
+                          ? "Código de acesso"
+                          : "Renovação do pacote",
                 )}{" "}
                 · {job.recipient}
               </p>

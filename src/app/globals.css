@@ -5342,3 +5342,7 @@ html:has(.app-shell) {
     font-size: 13px;
   }
 }
+
+.upload-status {position:fixed;right:24px;bottom:24px;z-index:90;width:min(380px,calc(100vw - 32px));padding:20px;border-radius:16px;border:1px solid var(--line);background:var(--surface, var(--background));color:var(--fg);box-shadow:0 12px 40px #0002;}
+.upload-status progress {accent-color:var(--accent);height:8px;}
+@media(max-width:640px){.upload-status{right:16px;bottom:16px;}}

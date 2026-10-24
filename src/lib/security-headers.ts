@@ -17,7 +17,16 @@ export function securityHeaders(jitsiUrl?: string, supabaseUrl?: string, develop
   const connections = [
     "'self'",
     ...(meet ? [meet, meet.replace("https:", "wss:")] : []),
-    ...(supabase ? [supabase, supabase.replace("https:", "wss:")] : []),
+    ...(supabase
+      ? [
+          supabase,
+          supabase.replace("https:", "wss:"),
+          ...(new URL(supabase).hostname.endsWith(".supabase.co") &&
+          !new URL(supabase).hostname.endsWith(".storage.supabase.co")
+            ? [supabase.replace(/\.supabase\.co$/, ".storage.supabase.co")]
+            : []),
+        ]
+      : []),
   ].join(" ");
   const mediaSources = ["'self'", "blob:", ...(meet ? [meet] : [])].join(" ");
   const csp = [

@@ -71,3 +71,19 @@ Uma cópia privada das 67 tabelas inventariadas e dos três arquivos foi verific
 Esquema, políticas de acesso, funções, cron, operadores, segredos e controles de supressão de destinatários foram preservados. O administrador permanece em banco separado. O catálogo comercial do admin foi configurado com Essencial R$ 49, Plus R$ 79 e Pro R$ 99 mensais; a conta original de teste tem isenção explícita, sem geração de cobrança ou registro fictício de pagamento.
 
 O domínio administrativo é https://admin.mosaic-labs.co, com DNS e HTTPS validados. Acesso anônimo ao painel redireciona ao login; webhook sem assinatura retorna 401 e com assinatura válida retorna 200. O webhook Resend passou a usar o domínio próprio sem segredo de bypass na URL.
+
+
+## 24/10/2026 — revisão local dos dez itens de planos e operação
+
+Sem push, deploy, migrações ou alterações de provedores em produção nesta rodada. O estado implantado não foi substituído.
+
+- Itens 1–2: separação dos workers, duas janelas de renovação, dead letter, telemetria e monitor no admin.
+- Itens 3–10: recibos por pagamento, exportação por período CSV/XLSX/PDF, Google/Meet por plano, lembretes Pro e preferências do aluno, gestão de emails por plano, central de pendências, limites e upload TUS, regras de autorização e matriz de diferenciação.
+- Suíte completa Lessonara: 435 testes passaram; depois, regressão adicional para controle/fórmula em CSV e os dez testes do módulo de arquivos passaram. Admin: 49 testes passaram.
+- Lint e builds locais dos dois projetos passaram com Node 24.22.1. Auditoria das dependências de produção do Lessonara: nenhuma vulnerabilidade conhecida reportada.
+- SQL 0030/0031 exercitado em PostgreSQL isolado: matriz/cotas em paridade com a aplicação, RLS, acesso cruzado, impedimento de alteração de plano (inclusive sem sub), suspensão, deduplicação, opt-out, falhas e reservas. Gatilho real da migração 0016 bloqueou arquivo acima do plano e soma de documentos/entregas acima da cota.
+- Cliente TUS real contra servidor HTTP local: recuperação de 503, um objeto e somente os bytes esperados, sem envio ao Supabase.
+- PDFs de dados fictícios renderizados e inspecionados; texto e total conferidos em leitor independente. XLSX de 48 pagamentos aberto com leitor independente, total R$ 14.412,00, valores numéricos, estilos e cabeçalhos congelados verificados.
+- Escopo e decisões em [planos e permissões](plans.md) e [jobs e filas](workers.md). `doing.md` é limpo ao encerrar o trabalho local; publicação e QA real permanecem no backlog.
+
+Pendências de aplicação: migrações 0030/0031 e do admin, publicação conjunta, novo cron somente após rotas disponíveis, conferência do limite global de Storage e QA de Google/Resend/Storage reais. O teste local não é um novo pentest nem comprovação de entrega de emails ou upload de 100 MB em produção. Acompanhar também uso físico e reservas incompletas de Storage.

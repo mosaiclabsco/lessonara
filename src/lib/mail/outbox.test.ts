@@ -7,7 +7,9 @@ const mocks = vi.hoisted(() => ({
   challenge: vi.fn(),
   claim: vi.fn(),
   plan: vi.fn(),
+  ledger: vi.fn(),
 }));
+vi.mock("../data", () => ({ loadLedgers: mocks.ledger }));
 vi.mock("./welcome-invite", () => ({
   createWelcomeInvite: vi
     .fn()
@@ -249,5 +251,95 @@ it("não envia mensagens para destinatário suprimido, incluindo OTP", async () 
   expect(mocks.send).not.toHaveBeenCalled();
   expect(mocks.updates).toHaveBeenCalledWith(
     expect.objectContaining({ last_error: "recipient_suppressed", status: "failed" }),
+  );
+});
+
+it("encerra na quinta tentativa mesmo quando a falha é recuperável", async () => {
+  mocks.claim.mockResolvedValue({ data: [{ ...base, attempts: 5 }], error: null });
+  mocks.send.mockRejectedValue(new EmailSendError("rate_limit_exceeded", true));
+  expect(await processEmails()).toMatchObject({ failed: 1, pending: 0 });
+  expect(mocks.updates).toHaveBeenCalledWith(
+    expect.objectContaining({ status: "failed", payload: {}, delivery: null }),
+  );
+});
+it("convite de acesso continua disponível no Essencial", async () => {
+  mocks.plan.mockResolvedValue({ id: "essential", emails: false });
+  expect((await processEmails()).sent).toBe(1);
+});
+
+it("preferência operacional cancela renovação antes do envio", async () => {
+  mocks.claim.mockResolvedValue({
+    data: [{ ...base, template: "reminder", payload: { message: "Renovação" } }],
+    error: null,
+  });
+  const student = await mocks.student();
+  mocks.student.mockResolvedValue({
+    data: { ...student.data, operational_email_opt_out: true },
+    error: null,
+  });
+  expect((await processEmails()).cancelled).toBe(1);
+  expect(mocks.send).not.toHaveBeenCalled();
+});
+it("Plus não envia lembrete Pro mesmo se já estiver na fila", async () => {
+  mocks.plan.mockResolvedValue({ id: "plus", emails: true, lessonReminders: false });
+  mocks.claim.mockResolvedValue({ data: [{ ...base, template: "lesson_notice" }], error: null });
+  expect((await processEmails()).cancelled).toBe(1);
+  expect(mocks.send).not.toHaveBeenCalled();
+});
+it("aula remarcada cancela lembrete já preparado, inclusive em retry", async () => {
+  mocks.plan.mockResolvedValue({ id: "pro", emails: true, lessonReminders: true });
+  mocks.ledger.mockResolvedValue(new Map([["student", { ledger: { lessons: [] } }]]));
+  mocks.claim.mockResolvedValue({
+    data: [
+      {
+        ...base,
+        template: "lesson_notice",
+        payload: { date: "2026-10-08", time: "10:00", source_kind: "schedule", source_id: "old" },
+      },
+    ],
+    error: null,
+  });
+  expect((await processEmails()).cancelled).toBe(1);
+  expect(mocks.send).not.toHaveBeenCalled();
+});
+
+it("Pro envia lembrete elegível com horário e chave de idempotência", async () => {
+  mocks.plan.mockResolvedValue({ id: "pro", emails: true, lessonReminders: true });
+  mocks.ledger.mockResolvedValue(
+    new Map([
+      [
+        "student",
+        {
+          ledger: {
+            lessons: [
+              {
+                sourceKind: "schedule",
+                sourceId: "slot",
+                date: "2026-10-08",
+                time: "09:30",
+                past: false,
+                counts: true,
+                packageId: "paid",
+              },
+            ],
+          },
+        },
+      ],
+    ]),
+  );
+  mocks.claim.mockResolvedValue({
+    data: [
+      {
+        ...base,
+        template: "lesson_notice",
+        payload: { date: "2026-10-08", time: "09:30", source_kind: "schedule", source_id: "slot" },
+      },
+    ],
+    error: null,
+  });
+  expect((await processEmails()).sent).toBe(1);
+  expect(mocks.send).toHaveBeenCalledWith(
+    expect.objectContaining({ subject: "Sua aula começa às 09:30" }),
+    "lessonara/job",
   );
 });

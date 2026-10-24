@@ -1,4 +1,5 @@
 "use server";
+import { requirePlatformFeature } from "@/lib/platform-plan-server";
 import { revalidatePath } from "next/cache";
 import { requireUser, createAdminClient } from "@/lib/supabase/server";
 import { unseal } from "@/lib/mail/crypto";
@@ -37,7 +38,7 @@ export async function disconnectGoogle() {
   revalidatePath("/settings");
 }
 export async function previewGoogleSync() {
-  const { supabase, userId } = await requireUser();
+  const { supabase, userId } = await requirePlatformFeature("google");
   const db = createAdminClient();
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" });
   const [students, jobs] = await Promise.all([
@@ -71,7 +72,7 @@ export async function previewGoogleSync() {
   };
 }
 export async function syncGoogle() {
-  const { supabase, userId } = await requireUser();
+  const { supabase, userId } = await requirePlatformFeature("google");
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" });
   const db = createAdminClient();
   const students = await supabase

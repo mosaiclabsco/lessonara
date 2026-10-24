@@ -22,7 +22,7 @@ export async function StudentContent({
   const { data: student, error } = await supabase
     .from("students")
     .select(
-      "*, teachers!students_teacher_id_fkey(name,platform_plan),plans(price,lessons,name,is_active)",
+      "*, teachers!students_teacher_id_fkey(name,platform_plan,access_suspended),plans(price,lessons,name,is_active)",
     )
     .eq("id", access.id)
     .eq("teacher_id", access.teacher_id)
@@ -32,6 +32,7 @@ export async function StudentContent({
           teachers: {
             name: string;
             platform_plan: string;
+            access_suspended: boolean;
           } | null;
         }
     >();
@@ -59,13 +60,25 @@ export async function StudentContent({
       return activity;
     },
   );
-  const plan = platformPlan(student.teachers?.platform_plan);
+  const plan = platformPlan(
+    student.teachers?.access_suspended ? null : student.teachers?.platform_plan,
+  );
   return (
     <PlatformPlanProvider plan={plan.id}>
       <StudentPortal
+        emailPreferences={{
+          operational: !Boolean(
+            (student as Student & { operational_email_opt_out?: boolean })
+              .operational_email_opt_out,
+          ),
+          promotional: !Boolean(
+            (student as Student & { promotional_email_opt_out?: boolean })
+              .promotional_email_opt_out,
+          ),
+        }}
         renewal={renewal}
         classroomEnabled={plan.classroom && Boolean(getJitsiConfig())}
-        meetEnabled={plan.classroom}
+        meetEnabled={plan.google}
         activities={activities}
         slug={student.id}
         materials={materials}

@@ -43,7 +43,7 @@ export async function SubscriptionPlan({ active }: { active: PlatformPlan }) {
               </li>
               <li>
                 <Icon name={plan.emails ? "check" : "clock"} className="h-4 w-4" />
-                {t(plan.emails ? "Gestão de emails" : "Gestão de emails no Pro")}
+                {t(plan.emails ? "Gestão de emails" : "Gestão de emails no Plus e Pro")}
               </li>
               <li>
                 <Icon name={plan.classroom ? "check" : "clock"} className="h-4 w-4" />

@@ -1,4 +1,4 @@
-import { resolvePlatformPlan, type PlatformPlan } from "./platform-plans";
+import { hasPlatformFeature, resolvePlatformPlan, type PlatformPlan } from "./platform-plans";
 import { cache } from "react";
 import { requireUser } from "./supabase/server";
 export type OnboardingState = {
@@ -37,9 +37,9 @@ export function onboardingState(
     complete:
       profileDone &&
       plansDone &&
-      ["integrations", "holidays", "receivables", "subscription", "support"].every((tab) =>
-        teacher.reviewed_settings?.includes(tab),
-      ),
+      ["integrations", "holidays", "receivables", "subscription", "support"]
+        .filter((tab) => tab !== "integrations" || hasPlatformFeature(platformPlan, "google"))
+        .every((tab) => teacher.reviewed_settings?.includes(tab)),
     profileDone,
     plansDone,
     ready: profileDone && plansDone,

@@ -1,5 +1,6 @@
 "use client";
 import { useI18n } from "@/components/browser-preferences-provider";
+import { usePlatformPlan } from "./platform-plan-provider";
 import { useState } from "react";
 import Link from "next/link";
 import { Icon } from "./icon";
@@ -33,6 +34,7 @@ export function FinanceDashboard({
   today: string;
 }) {
   const { t, locale } = useI18n();
+  const plan = usePlatformPlan();
   const currentYear = Number(today.slice(0, 4));
   const currentMonth = Number(today.slice(5, 7)) - 1;
   const years = [
@@ -400,6 +402,20 @@ export function FinanceDashboard({
             </select>
           </label>
         </div>
+        {plan.exports && (
+          <div className="mb-5 flex flex-wrap gap-2" aria-label="Exportar recebimentos">
+            {["csv", "xlsx", "pdf"].map((format) => (
+              <a
+                className="btn-outline"
+                key={format}
+                href={`/finance/export?period=${year}${receiptMonth === "all" ? "" : `-${String(receiptMonth + 1).padStart(2, "0")}`}&format=${format}`}
+              >
+                <Icon name="download" className="h-4 w-4" />
+                {format.toUpperCase()}
+              </a>
+            ))}
+          </div>
+        )}
         {receipts.length ? (
           <>
             <div className="finance-table-wrap">
@@ -423,7 +439,15 @@ export function FinanceDashboard({
                         {payment.lessons}
                         {t(" aulas")}
                       </td>
-                      <td className="finance-amount">{formatBRL(payment.amount, locale)}</td>
+                      <td className="finance-amount">
+                        {formatBRL(payment.amount, locale)}
+                        <a
+                          className="ml-3 text-accent underline"
+                          href={`/payments/${payment.id}/receipt`}
+                        >
+                          Recibo PDF
+                        </a>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

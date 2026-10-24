@@ -1,0 +1,97 @@
+# Planos, permissões e limites
+
+Estado: revisão local de 24/10/2026. Os itens desta rodada aguardam publicação conjunta e aplicação das migrações 0030/0031; “pronto localmente” não significa ativo em produção.
+
+A assinatura é do professor. Pacotes pagos pelos alunos são outro domínio: trocar Essencial/Plus/Pro não altera créditos nem pagamentos de aulas.
+
+## Recursos implementados
+
+| Recurso | Essencial | Plus | Pro | Pronto | Tratamento por plano / autorização |
+| --- | --- | --- | --- | --- | --- |
+| Perfil e cadastro de alunos | Sim | Sim | Sim | Sim | Sessão de professor e isolamento por tenant |
+| Agenda fixa e datas avulsas | Sim | Sim | Sim | Sim | Sessão, vínculo e conflitos no servidor/banco |
+| Histórico de aulas e vínculo ao pacote | Sim | Sim | Sim | Sim | Histórico privado, identidade preservada |
+| Pacotes, saldo e pagamentos manuais | Sim | Sim | Sim | Sim | Somente professor responsável |
+| Portal do aluno e acesso por código | Sim | Sim | Sim | Sim | Sessão, vínculo e versão de acesso |
+| Pix do professor e “Já paguei” | Sim | Sim | Sim | Sim | Créditos após confirmação do professor |
+| Cobrança manual pelo WhatsApp | Sim | Sim | Sim | Sim | Dados da própria conta |
+| Financeiro e recebimentos | Sim | Sim | Sim | Sim | Dados da própria conta |
+| Recibo individual em PDF | Sim | Sim | Sim | Sim, local | Professor responsável ou aluno dono do pagamento |
+| Exportação por período em CSV/XLSX/PDF | — | Sim | Sim | Sim, local | Endpoint verifica plano e tenant no servidor |
+| Atividades e entrega de arquivos | Sim | Sim | Sim | Sim | Aluno associado; cota do professor |
+| Biblioteca e compartilhamento privado | Sim | Sim | Sim | Sim | Reserva, cota, autorização e validade |
+| Feriados e consumo de crédito | Sim | Sim | Sim | Sim | Regras por professor, preservando histórico |
+| Central “O que preciso resolver” | Sim | Sim | Sim | Sim, local | Categorias premium omitidas e não consultadas sem direito |
+| Importação guiada e assistida | — | Sim | Sim | Sim | Aplicação e RPC privada de importação |
+| Google Calendar e links Meet | — | Sim | Sim | Sim, restrições locais | UI, OAuth, actions, leitura de tokens e worker |
+| Avisos de renovação por email | — | Sim | Sim | Sim, revisão local | Plano no enfileiramento e antes do envio; preferência do aluno |
+| Gestão de envios e falhas de email | — | Sim | Sim | Sim, revisão local | Navegação, página, actions e RLS |
+| Campanhas de email | — | Sim | Sim | Sim, revisão local | RPC, limites, supressão e opt-out promocional |
+| Lembretes de horário por email | — | — | Sim | Sim, local | Pro no servidor/SQL; aula atual revalidada e opt-out operacional |
+| Sala integrada no navegador e desktop | — | — | Sim | Sim | Autorização no servidor antes do token de sala |
+| Quadro e ferramentas de anotação | — | — | Sim | Sim | Acesso vinculado à sala autorizada |
+| Armazenamento total | 1 GB | 5 GB | 10 GB | Sim, novos limites locais | Reserva serializada no banco; documentos e entregas compartilham cota |
+| Tamanho máximo por arquivo | 20 MB | 50 MB | 50 MB¹ | Sim, novos limites locais | Cliente, servidor e banco; teto do bucket 100 MB |
+| Upload em partes com progresso e retomada | Sim | Sim | Sim | Sim, local | Token assinado para um caminho reservado; mesmos limites por plano |
+
+Exportação é uma conveniência de formato para dados que o professor já pode consultar. A restrição protege o endpoint; não tenta impedir alguém de copiar seus próprios dados manualmente.
+
+## Como as permissões funcionam
+
+- Fonte de aplicação: `src/lib/platform-plans.ts`, com capacidades explícitas e limites; não há papel “Pro” enviado pelo navegador para conceder acesso.
+- Apresentação: provider e `hasPlatformFeature` ocultam controles indisponíveis. Isso não é uma barreira de segurança.
+- Servidor: `requireUser` autentica; `requirePlatformFeature` e `loadTeacherPlan` usam o plano do professor no banco. Downloads verificam tenant e vínculo antes de buscar o arquivo.
+- Banco: RLS mantém isolamento e sessão válida; políticas restritivas adicionais limitam emails e Calendar. RPCs de importação/campanha e enfileiramento também verificam o direito. A matriz SQL privada tem teste de paridade com a aplicação.
+- Alteração do plano: o gatilho recusa mudança por `anon`/`authenticated`, inclusive sem `sub`. A administração conserva seu fluxo auditado. Alterar HTML, query string, provider ou localStorage não modifica o plano autoritativo.
+- Jobs: verificam novamente o plano ao processar trabalho já enfileirado. Uma aula cancelada/remarcada invalida o lembrete antigo; opt-out também é revalidado antes do envio.
+- Downloads: não recebem `teacher_id` do cliente como autorização; recibo de aluno exige sessão vinculada ao aluno e pagamento daquele cadastro. Não se publica PDF/planilha em storage público.
+
+## Recibos e exportações
+
+Recibo é individual, com professor, aluno, data recebida, quantidade de aulas, valor e referência integral do pagamento. Professor baixa no perfil do aluno ou no Financeiro; aluno baixa em Histórico e pacotes. O recibo reflete os registros atuais quando gerado; não é um documento assinado nem um snapshot imutável de emissão.
+
+A exportação do professor é um relatório de recebimentos por mês ou ano: CSV para integração, XLSX com cabeçalho/valores numéricos/filtro e PDF paginado para leitura e impressão. Não é outro recibo. Exclui pagamentos futuros e valores negativos, como a tela financeira. Limite de 10 mil registros por solicitação; períodos grandes devem ser divididos.
+
+CSV neutraliza fórmulas em campos textuais; XLSX usa strings inline para nomes e números reais para valores. Downloads têm cache privado desabilitado e validação de parâmetros no servidor.
+
+## Lembretes e preferências
+
+O cron Pro procura aulas pagas nos próximos 60 minutos, em páginas de 100 alunos com cursor, retomando em chamadas subsequentes quando necessário. Uma execução drena até 20 páginas/20 segundos; o cron roda a cada cinco minutos. Não existe promessa de horário exato: atrasos do agendador/provedor reduzem a antecedência. Emails expiram no início da aula e passam pelo limite de tentativas e idempotência da fila existente.
+
+No menu Emails do portal do aluno há duas escolhas por vínculo: lembretes/renovação e comunicados promocionais. Desativar avisos operacionais impede novos lembretes de aula e renovação, inclusive jobs preparados. Códigos/convites de acesso continuam disponíveis.
+
+Com 30 alunos e duas aulas semanais por aluno, são 60 lembretes por semana, aproximadamente 260 por mês (52 semanas / 12), além de convites, códigos, renovações e campanhas. Monitorar volume no provedor antes de ampliar o piloto.
+
+## Upload e cotas
+
+Supabase recomenda TUS para arquivos acima de 6 MB, instabilidade e progresso: [documentação oficial](https://supabase.com/docs/guides/storage/uploads/resumable-uploads). O app usa chunks de 6 MB e o hostname direto de Storage, liberado especificamente na CSP. O arquivo vai do navegador ao Storage, sem atravessar o corpo de uma Server Action.
+
+O painel fixo permite acompanhar percentual, pausar, retomar e descartar. Persiste ao navegar pelo app na mesma aba. Fechar/recarregar a aba interrompe; a página avisa e o navegador pode pedir confirmação. Não se promete envio em segundo plano com navegador fechado nem retomada automática após recarregar. Dentro da mesma sessão, o TUS retoma as partes confirmadas após falhas de rede, com retentativas finitas. Tokens assinados expiram conforme o provedor; se expirarem, descarte e selecione o arquivo novamente.
+
+Uma reserva serializada contabiliza o tamanho esperado e há no máximo três reservas incompletas por professor. Identidade, caminho, tipo e tamanho da reserva não podem ser alterados para reduzir a cota depois. A confirmação verifica o tamanho e tipo reais e o gatilho do banco verifica o objeto existente; arquivos incompletos não são disponibilizados ao aluno. Arquivos antigos não são apagados em downgrade; novos envios obedecem aos limites atuais.
+
+O token assinado permite gravar em um caminho, mas não embute a cota individual do plano. O teto do bucket limita o tamanho físico a 100 MB; a confirmação recusa divergência da reserva. Isso exige acompanhar reservas/objetos incompletos e uso físico no provedor: a cota lógica não substitui monitoramento de Storage. Não alteramos o schema gerenciado `storage.objects`.
+
+Na publicação, conferir também o limite global do projeto Supabase: ele pode ser menor que o teto configurado no bucket. Sem essa validação, não declarar envio de 100 MB comprovado em produção.
+
+## Propostas ainda não implementadas
+
+Estes itens ficam no backlog e não devem ser anunciados como disponíveis:
+
+- Speaking: atividade de áudio, gravação/upload, feedback e histórico de tentativas.
+- LearningGap: catálogo de habilidades, avaliação por habilidade, painel de evolução e sugestões com evidências.
+- ProgressLetter: relatórios revisados pelo professor, PDF pedagógico, publicação no portal e comparação entre períodos.
+- Logo/apresentação personalizada da professora e relatórios com sua identidade.
+- Política configurável de antecedência e desmarcação solicitada pelo aluno com consequência de crédito.
+- IA para speaking, revisão espaçada e relatórios, após validação dos fluxos manuais.
+
+Proposta de destino para os módulos pedagógicos e identidade: Pro. Ainda não há componentes/flags ativas que os liberem, porque não foram implementados. A especificação completa permanece em `docs/learning-modules.md` e as tarefas em `TASKS.md`.
+
+## Entrega e validação
+
+Rodada mantida local por solicitação de Gabriel: sem push/deploy/aplicação no Supabase. Publicar somente depois da revisão conjunta dos dez itens. Migrações precisam preceder o código que depende delas; o novo agendamento vem depois das novas rotas estarem disponíveis. Verificar SQL 0030, SQL 0031 e migração do admin, depois os workers reais e cenários manuais já registrados.
+
+Testes locais não substituem um novo pentest ou testes reais com Google/Resend/Storage. As amostras dos arquivos e os testes de protocolo usam dados fictícios e servidor local, sem envio em produção.
+
+
+¹ **Limite efetivo confirmado no provedor em 24/10/2026:** Supabase Free fixa o limite global em 50 MB. O direito de produto Pro permanece planejado em 100 MB, mas interface, servidor e SQL usam 50 MB enquanto o provedor não for ampliado. Migração `0032_storage_provider_ceiling.sql`. Nenhuma assinatura paga foi contratada nesta publicação. Elevar para 100 MB exige primeiro ampliar o limite real do provedor e então atualizar o teto efetivo da aplicação/SQL.

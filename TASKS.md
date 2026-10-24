@@ -172,6 +172,7 @@ Priorização por ICE (pré-PMF, time mínimo, pouco dado). Itens com task detal
 
 - [ ] **Automatizar a assinatura da plataforma com gateway** — começar com cobrança manual e automatizar quando o volume justificar; preservar a reativação sem perda de dados.
 - [ ] **Recibo e exportação para carnê-leão** — recibo por pagamento (PDF/link para o aluno) e exportação mensal dos recebimentos (CSV no formato que facilite o lançamento no carnê-leão: data, pagador, CPF opcional, valor).
+  - **24/10/2026, local:** recibo individual PDF e relatório geral CSV/XLSX/PDF implementados e testados, aguardando publicação conjunta. Formato fiscal específico/CPF não fazem parte desta rodada; este item permanece aberto para essa definição.
 - [x] **Webhooks do Resend** — publicado em 20/10/2026 com assinatura, deduplicação e status separado de entrega. Simulações oficiais de entrega, rejeição e spam confirmadas no provedor (HTTP 200) e no banco; bloqueio de novos envios conferido. A tela de Emails distingue aceite, entrega, atraso e falha, sem notificação extra ao professor. Evidências em [docs/operations-validation.md](docs/operations-validation.md). O primeiro acesso do aluno continua pendente no item de instrumentação do funil; entrega não comprova acesso ao portal.
 
 - [ ] **Avaliar responsáveis, múltiplos vínculos e escolas** — responsáveis com acesso a vários alunos por convites e permissões próprios; uma pessoa acompanhando aulas com vários professores, preservando a separação dos vínculos; escolas com vários professores, papéis (dono/admin/professor) e financeiro por professor e consolidado. Ver `FUTURE_FEATURES.md`.
@@ -211,6 +212,10 @@ Cenários e critérios de encerramento: [QA e hardening pendentes](docs/qa-pende
 Consolidação da lista enviada em 20/10/2026. Os itens já descritos no roadmap acima foram complementados no próprio lugar. Nenhuma tarefa foi marcada como concluída apenas por ter sido incluída nesta lista.
 
 ### Confiabilidade dos workers e das filas
+
+**24/10/2026 — itens 3–10 preparados localmente:** recibos por pagamento, exportação Plus/Pro, bloqueios de Google/Meet, lembretes de aula Pro com opt-out do aluno, gestão de emails por plano, central de pendências, limites 20/50/100 MB e 1/5/10 GB e TUS com progresso/retomada na mesma aba. Permissões centralizadas na aplicação/SQL e regras de trabalho no AGENTS.md; matriz e limitações em [docs/plans.md](docs/plans.md). Não foram publicados nem aplicados no Supabase. Permanecem para a entrega conjunta: migrações 0030/0031 e admin, agendamento, limite global do Storage, QA real de Google/Resend/Storage e monitoramento do uso físico/reservas incompletas. A política de desmarcação e os módulos pedagógicos continuam no backlog. Prioridades do leitor local foram preservadas.
+
+**24/10/2026 — revisão dos itens 1 e 2, implementada localmente, sem publicação:** renovação às 08h/18h com retomada condicional, rotas separadas para emails/Calendar/limpeza diária, encerramento de tentativas esgotadas e telemetria. Tela “Jobs e filas” preparada no admin, com consulta periódica apenas enquanto visível, status, filas e histórico. Renovação e campanhas passam a Plus/Pro; emails de acesso preservados no Essencial. Regressão de renovação cobre histórico após remoção da agenda e entrada antecipada na sala. Detalhes: [Jobs e filas](docs/workers.md). Migrações, cron e validação real continuam pendentes até a entrega conjunta dos dez itens; os checkboxes operacionais abaixo permanecem abertos.
 
 
 O histórico da sessão registra correção do `CRON_SECRET` em produção, respostas HTTP 200 dos dois workers e execução automática pelo Supabase Cron. Também registra uma pendência técnica de calendário processada. Isso não comprova, por si só, um novo lembrete preparado e enviado de ponta a ponta. Referências e evidências devem entrar na documentação operacional.
@@ -279,3 +284,8 @@ Origem: solicitação de 23/10/2026. Escopo e critérios completos em [docs/lear
 - [x] **Definir histórico de aulas diante de mudanças de plano e horário** — discutir antes de implementar: projeções futuras sob demanda e ocorrências passadas consolidadas com retrato dos dados. Considerar upgrade/downgrade, exclusão de origem, encerramento/recriação, correções e auditoria. Não reescrever retroativamente o histórico. Incluir confirmação técnica de entrada, identidade da aula dentro do pacote e aba Histórico no perfil do aluno, agrupada por mês/pacote; participação não confirma sozinha realização ou débito, e reconexões não podem duplicar registros.
 
 - [x] **Persistir ocorrências e separar o histórico de aulas** — 24/10/2026. UUID, data, horário, duração, plano/pacote e posição do crédito preservados; captura antes de mudanças e no callback de entrada, correções auditadas e aba Histórico. Ver [regras e limites](docs/lesson-history.md). Não confundir entrada técnica com confirmação de realização.
+
+
+### Limite físico de arquivo do provedor
+
+- [ ] **Liberar 100 MB por arquivo no Pro após ampliar o provedor** — revisão de publicação em 24/10/2026 confirmou Supabase Free com teto global fixo de 50 MB. Aplicação/SQL passam a respeitar 50 MB efetivos para impedir erro de upload; Essencial continua 20 MB. Avaliar o custo do upgrade e, depois de autorizado/ativado, ampliar o teto global, `PROVIDER_MAX_FILE_BYTES` e a função SQL, testar arquivo entre 50 e 100 MB e atualizar a matriz. Não marcar como concluído pelo teto do bucket: o global tem precedência.
