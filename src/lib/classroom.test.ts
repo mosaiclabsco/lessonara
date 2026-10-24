@@ -117,7 +117,9 @@ describe("autorização da sala", () => {
       for (const [instant, state, status] of cases) {
         const now = Date.parse(instant);
         expect(lessonAccess(lesson, now).state).toBe(state);
-        expect(authorizeClassroom({ participant, lesson, ref, config, now }).status).toBe(status);
+        expect(
+          authorizeClassroom({ participant, lesson, ref, config, now, hasJoined: true }).status,
+        ).toBe(status);
       }
     },
   );
@@ -184,4 +186,25 @@ describe("autorização da sala", () => {
       ["makeup", "makeup"],
     ]);
   });
+});
+
+it("blocks first admission after the end but allows a recorded participant to reconnect", () => {
+  const after = Date.parse("2026-10-12T12:10:00-03:00");
+  expect(authorizeClassroom({ participant: teacher, lesson, ref, config, now: after }).status).toBe(
+    423,
+  );
+  expect(
+    authorizeClassroom({ participant: teacher, lesson, ref, config, now: after, hasJoined: true })
+      .status,
+  ).toBe(200);
+  expect(
+    authorizeClassroom({
+      participant: student,
+      lesson,
+      ref,
+      config,
+      now: Date.parse("2026-10-12T12:30:00-03:00"),
+      hasJoined: true,
+    }).status,
+  ).toBe(423);
 });

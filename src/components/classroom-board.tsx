@@ -31,12 +31,15 @@ export function ClassroomBoard({
   const [tool, setTool] = useState<AnnotationTool>(null),
     [color, setColor] = useState("#e5484d"),
     [busy, setBusy] = useState(false);
+  const [fontSize, setFontSize] = useState(24);
+  const selectedText = useRef<string | null>(null);
   const [canUndo, setCanUndo] = useState(false);
   const [entry, setEntry] = useState<{
     id: string;
     x: number;
     y: number;
     text: string;
+    fontSize?: number;
     color: string;
   } | null>(null);
   const token = useRef(""),
@@ -263,16 +266,19 @@ export function ClassroomBoard({
     const [x, y] = point(event),
       text = textAt(event);
     if (tool === "text") {
+      selectedText.current = text?.id ?? null;
+      if (text) setFontSize(text.fontSize ?? 24);
       setEntry(
         text
           ? { ...text, color: text.color ?? color }
-          : { id: crypto.randomUUID(), x, y, text: "", color },
+          : { id: crypto.randomUUID(), x, y, text: "", color, fontSize },
       );
       return;
     }
     event.currentTarget.setPointerCapture(event.pointerId);
     if (tool === "select") {
       if (text) {
+        selectedText.current = text.id;
         checkpoint();
         drag.current = { id: text.id, dx: x - text.x, dy: y - text.y };
       }
@@ -371,6 +377,7 @@ export function ClassroomBoard({
     if (entry.text.trim()) {
       checkpoint();
       const text = { ...entry, text: entry.text.trim(), page: 1 };
+      selectedText.current = text.id;
       update({
         ...stateRef.current,
         texts: [...stateRef.current.texts.filter((item) => item.id !== text.id), text],
@@ -405,10 +412,28 @@ export function ClassroomBoard({
               canUndo={canUndo}
               onTool={(value) => {
                 end();
+                selectedText.current = null;
                 setEntry(null);
                 setTool(value);
               }}
               onColor={setColor}
+              fontSize={entry?.fontSize ?? fontSize}
+              onFontSize={(value) => {
+                setFontSize(value);
+                if (entry) setEntry({ ...entry, fontSize: value });
+                if (
+                  selectedText.current &&
+                  stateRef.current.texts.some((text) => text.id === selectedText.current)
+                ) {
+                  checkpoint();
+                  update({
+                    ...stateRef.current,
+                    texts: stateRef.current.texts.map((text) =>
+                      text.id === selectedText.current ? { ...text, fontSize: value } : text,
+                    ),
+                  });
+                }
+              }}
               onUndo={() => {
                 const previous = history.current.pop();
                 if (previous) update(previous);
@@ -432,7 +457,11 @@ export function ClassroomBoard({
                 onDoubleClick={(event) => {
                   if (!teacher || !(tool === "select" || tool === "text")) return;
                   const text = textAt(event);
-                  if (text) setEntry({ ...text, color: text.color ?? color });
+                  if (text) {
+                    selectedText.current = text.id;
+                    setFontSize(text.fontSize ?? 24);
+                    setEntry({ ...text, color: text.color ?? color });
+                  }
                 }}
                 aria-label="Anotações do professor"
               >
@@ -481,7 +510,7 @@ export function ClassroomBoard({
                     y={text.y * size.height}
                     dominantBaseline="hanging"
                     fill={text.color ?? "#e5484d"}
-                    fontSize="24"
+                    fontSize={text.fontSize ?? 24}
                   >
                     {text.text}
                   </text>
@@ -495,6 +524,7 @@ export function ClassroomBoard({
                     left: `${entry.x * 100}%`,
                     top: `${entry.y * 100}%`,
                     color: entry.color,
+                    fontSize: entry.fontSize ?? fontSize,
                     borderColor: entry.color,
                   }}
                   aria-label="Texto da anotação"

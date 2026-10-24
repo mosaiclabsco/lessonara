@@ -1,3 +1,4 @@
+import { calendarExclusions } from "./recurrence";
 import { createAdminClient } from "@/lib/supabase/server";
 import { calendarEventId, googleRequest, safeMeetUrl } from "./calendar";
 import { firstScheduleDate } from "@/lib/schedule-rules";
@@ -92,6 +93,7 @@ export async function processCalendarJobs(teacherId?: string) {
         if (removed && !removed.ok && ![404, 410].includes(removed.status))
           throw new Error("google_delete_failed");
         await finish({ status: removed ? "sent" : "cancelled", last_error: null });
+        if (removed) result.sent++;
         continue;
       }
       const date =
@@ -114,7 +116,8 @@ export async function processCalendarJobs(teacherId?: string) {
           );
           if (removed && !removed.ok && ![404, 410].includes(removed.status))
             throw new Error("google_delete_failed");
-          await finish({ status: "sent", last_error: null });
+          await finish({ status: removed ? "sent" : "cancelled", last_error: null });
+          if (removed) result.sent++;
           continue;
         }
         let rule = item.monthly_day
@@ -146,28 +149,13 @@ export async function processCalendarJobs(teacherId?: string) {
               .eq("teacher_id", job.teacher_id)
               .gte("date", holidayRule.data.effective_from)
           : { data: [] };
-        const exceptions = (cancelled.data ?? [])
-          .filter(
-            (e) =>
-              (!e.time || e.time === item.time) &&
-              e.date >= date &&
-              (!item.ends_on || e.date <= item.ends_on),
-          )
-          .map(
-            (e) =>
-              e.date.replaceAll("-", "") +
-              "T" +
-              String(item.time).slice(0, 5).replace(":", "") +
-              "00",
-          );
-        for (const holiday of holidays.data ?? [])
-          if (holiday.date >= date && (!item.ends_on || holiday.date <= item.ends_on))
-            exceptions.push(
-              holiday.date.replaceAll("-", "") +
-                "T" +
-                String(item.time).slice(0, 5).replace(":", "") +
-                "00",
-            );
+        const exceptions = calendarExclusions(
+          date,
+          item.ends_on ?? null,
+          item.time,
+          cancelled.data ?? [],
+          holidays.data ?? [],
+        );
         if (exceptions.length)
           recurrence.push("EXDATE;TZID=America/Sao_Paulo:" + exceptions.join(","));
       }

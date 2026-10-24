@@ -62,7 +62,7 @@ async function Overview() {
           </p>
         </Link>
       </div>
-      {!onboarding.ready && <OnboardingGuide state={onboarding} />}
+      {!onboarding.complete && <OnboardingGuide state={onboarding} />}
       <LessonCalendar lessons={calendarLessons} today={today} time={time} {...range} />
     </main>
   );

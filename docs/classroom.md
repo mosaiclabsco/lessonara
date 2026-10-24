@@ -56,3 +56,11 @@ O seletor nativo do aplicativo lista monitores inteiros e janelas, com miniatura
 Minimizar uma chamada ativa transforma a mesma janela em uma janela pequena flutuante; não reinicia o Jitsi. O Dock e Voltar à sala restauram suas dimensões. Uma barra nativa arrastável reúne seleção, caneta, laser contínuo com cauda de 850 ms, texto, borracha, desfazer, limpeza e dez cores. Esc ou × devolve os cliques ao aplicativo abaixo, mantendo a barra disponível para selecionar outra ferramenta. Dois cliques editam texto e a seleção permite movê-lo. Interromper a captura fecha a barra e limpa os desenhos. Compartilhar uma janela não captura a sobreposição e deixa esses controles externos desabilitados. O quadro interno usa seu próprio transporte.
 
 A versão 0.3.1 oferece instalador Windows x64 e corrige o foco da caixa de texto externa. A proteção de conteúdo é aplicada somente à barra no Windows; o canvas continua capturável. No Mac, a barra pode aparecer ao aluno por limitações do ScreenCaptureKit. Os testes de instalação e inicialização no Windows não substituem uma chamada real de câmera/áudio/compartilhamento.
+
+## Participação e reconexão
+
+A primeira entrada abre cinco minutos antes e termina no fim previsto. Quem possui confirmação técnica de participação naquela ocorrência pode retornar até trinta minutos após o término. A admissão é registrada no servidor e o callback da conferência confirma a participação; ator, papel, aluno, origem e data são obtidos da autorização do backend. A tabela é acessível somente pelo backend e não comprova que a aula foi ministrada ou deve consumir crédito.
+
+O aplicativo não encerra uma chamada ativa ao atingir esse limite. Não há botão para prorrogar; depois da tolerância, o backend deixa de emitir tokens para nova entrada. A continuidade real sob Jitsi e a reconexão com dois participantes permanecem QA manual.
+
+O quadro usa estado por ocorrência e autorizações vinculadas à mesma referência. Navegar para outra sala reinicia o componente para evitar carregar conteúdo da anterior. A área útil foi ampliada e os textos aceitam tamanhos de 12 a 72 px, validados pelo servidor. As ferramentas de anotação sobre a tela do desktop continuam uma função separada; não foi incorporado Excalidraw.

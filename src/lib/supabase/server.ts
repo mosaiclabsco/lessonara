@@ -52,7 +52,9 @@ export const requireUser = cache(async function requireUser() {
   const teacher = await measure("auth.teacher", () =>
     supabase
       .from("teachers")
-      .select("id,name,email,lesson_minutes,profile_completed_at,platform_plan,import_onboarding")
+      .select(
+        "id,name,email,lesson_minutes,profile_completed_at,platform_plan,import_onboarding,reviewed_settings",
+      )
       .eq("id", data.claims.sub)
       .maybeSingle(),
   );

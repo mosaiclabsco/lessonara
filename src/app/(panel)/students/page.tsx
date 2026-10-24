@@ -18,7 +18,7 @@ async function PageContent() {
   const [state, overview] = await Promise.all([loadOnboarding(), loadTeacherOverview("directory")]);
   return (
     <>
-      {!state.ready && <OnboardingGuide state={state} />}
+      {!state.complete && <OnboardingGuide state={state} />}
       <ImportOnboarding state={state} />
 
       <Dashboard setupReady={state.ready} directoryOnly {...overview} />

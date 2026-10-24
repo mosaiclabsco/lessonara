@@ -18,6 +18,8 @@ export function AnnotationToolbar({
   onClear,
   disabled = false,
   canUndo = false,
+  fontSize = 24,
+  onFontSize,
 }: {
   tool: AnnotationTool;
   color: string;
@@ -27,6 +29,8 @@ export function AnnotationToolbar({
   onClear: () => void;
   disabled?: boolean;
   canUndo?: boolean;
+  fontSize?: number;
+  onFontSize?: (size: number) => void;
 }) {
   return (
     <div className="annotation-toolbar" role="toolbar" aria-label="Ferramentas do quadro">
@@ -64,6 +68,24 @@ export function AnnotationToolbar({
           Esc
         </button>
       </div>
+      {onFontSize && (tool === "text" || tool === "select") && (
+        <label className="annotation-font-size">
+          Tamanho da fonte
+          <select
+            className="input"
+            aria-label="Tamanho da fonte"
+            disabled={disabled}
+            value={fontSize}
+            onChange={(e) => onFontSize(Number(e.target.value))}
+          >
+            {[12, 16, 20, 24, 32, 40, 48, 60, 72].map((size) => (
+              <option key={size} value={size}>
+                {size} px
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <div className="annotation-colors" role="group" aria-label="Cores de anotação">
         {palette.map((item) => (
           <button

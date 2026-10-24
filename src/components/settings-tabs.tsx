@@ -2,6 +2,7 @@
 import { useEffect, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "./browser-preferences-provider";
+import { reviewSettings } from "@/app/settings-review-actions";
 import { Icon } from "./icon";
 import {
   settingsTabs,
@@ -10,10 +11,34 @@ import {
   type SettingsTab,
 } from "@/lib/settings-navigation";
 
-export function SettingsTabs({ active, children }: { active: SettingsTab; children: ReactNode }) {
+export function SettingsTabs({
+  active,
+  children,
+  reviewed = false,
+}: {
+  active: SettingsTab;
+  children: ReactNode;
+  reviewed?: boolean;
+}) {
   const { t } = useI18n();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  useEffect(() => {
+    if (
+      reviewed ||
+      !["integrations", "holidays", "receivables", "subscription", "support"].includes(active)
+    )
+      return;
+    let cancelled = false;
+    void reviewSettings(active)
+      .then(() => {
+        if (!cancelled) router.refresh();
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [active, reviewed, router]);
   // Preserve bookmarked links from before tabs had their own server navigation.
   useEffect(() => {
     const read = () => {

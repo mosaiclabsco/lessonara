@@ -2,6 +2,7 @@
 import { StudentRenewalCard } from "./student-renewal";
 import type { StudentRenewal } from "@/lib/renewals";
 import { useI18n } from "@/components/browser-preferences-provider";
+import { useClassroomRejoin } from "./use-classroom-rejoin";
 import { useState, type KeyboardEvent } from "react";
 import { classroomHref, nextJoinableLesson, lessonAccess, lessonWindow } from "@/lib/classroom";
 import { useLessonClock } from "./use-lesson-clock";
@@ -18,7 +19,7 @@ import { LessonList } from "./lesson-list";
 import { LessonCalendar } from "./lesson-calendar";
 import { calendarRange } from "@/lib/calendar";
 import { formatDate, formatDateLong } from "@/lib/dates";
-import type { Ledger, Package } from "@/lib/ledger";
+import { visibleLessons, type Ledger, type Package } from "@/lib/ledger";
 const tabs = [
   { id: "resumo", label: "Meu resumo", icon: "grid" as const },
   { id: "calendario", label: "Calendário", icon: "calendar" as const },
@@ -55,7 +56,8 @@ export function StudentPortal({
 }) {
   const { t, locale } = useI18n();
   const [tab, setTab] = useState("resumo");
-  const upcoming = ledger.lessons.filter(
+  const displayedLessons = visibleLessons(ledger, today);
+  const upcoming = displayedLessons.filter(
     (lesson) => !lesson.past && lesson.counts && lesson.status !== "feriado",
   );
   const roomNow = useLessonClock(
@@ -74,6 +76,8 @@ export function StudentPortal({
         ? next.meetUrl
         : null
     : null;
+  const afterEnd = Boolean(access && roomNow >= access.endsAt);
+  const canRejoin = useClassroomRejoin(classroomEnabled ? (entryHref ?? null) : null, afterEnd);
   const range = calendarRange(today);
   const progress =
     ledger.credits > 0 ? Math.min(100, Math.round((ledger.used / ledger.credits) * 100)) : 0;
@@ -185,15 +189,16 @@ export function StudentPortal({
                     <div className="portal-next-actions">
                       {entryHref &&
                         access &&
-                        (access.state === "open" ? (
+                        (access.state === "open" &&
+                        (!classroomEnabled || !afterEnd || canRejoin) ? (
                           <a className="btn" href={entryHref} target="_blank" rel="noreferrer">
                             <Icon name="video" className="h-4 w-4" />
-                            {t("Entrar na aula")}
+                            {t(afterEnd && classroomEnabled ? "Voltar à aula" : "Entrar na aula")}
                           </a>
                         ) : (
                           <LessonUnavailable
                             opensAt={access.opensAt}
-                            closed={access.state === "closed"}
+                            closed={access.state === "closed" || afterEnd}
                           />
                         ))}
                       <button className="btn-ghost" onClick={() => setTab("calendario")}>
@@ -307,7 +312,7 @@ export function StudentPortal({
               <h2 className="h2">{t("Aulas por mês e pacote")}</h2>
               <LessonHistory
                 openingCredits={ledger.openingCredits}
-                lessons={ledger.lessons}
+                lessons={displayedLessons}
                 today={today}
                 packages={packages}
               />

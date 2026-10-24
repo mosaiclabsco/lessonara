@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, type CSSProperties } from "react";
 import { slotOccupancy } from "@/lib/availability-slot";
 import { teacherAvailability } from "@/app/(panel)/availability/actions";
 import { useI18n } from "./browser-preferences-provider";
@@ -84,6 +84,11 @@ export function AvailabilityPreview({
             />
             {t("Mostrar horários antes das 08:00")}
           </label>
+          <p className="mt-3 text-sm text-muted">
+            {t(
+              "Opções com a mesma cor cruzam o mesmo compromisso. O intervalo mostra a duração completa da aula.",
+            )}
+          </p>
           <div ref={list} className="mini-agenda-slots">
             {slots.map(({ time, minutes, occupancy }) => (
               <button
@@ -92,6 +97,18 @@ export function AvailabilityPreview({
                 aria-pressed={time === selected}
                 disabled={disabled || occupancy.blocked || data.googleError}
                 className={`mini-agenda-slot ${occupancy.blocked ? "mini-agenda-busy" : time === selected ? "mini-agenda-selected" : "mini-agenda-free"}`}
+                style={
+                  occupancy.blocked
+                    ? ({
+                        "--slot-hue": String(
+                          [...occupancy.groups.join("")].reduce(
+                            (hash, c) => (hash * 31 + c.charCodeAt(0)) % 360,
+                            0,
+                          ),
+                        ),
+                      } as CSSProperties)
+                    : undefined
+                }
                 onClick={() => onPick(time)}
               >
                 <span>
@@ -102,7 +119,7 @@ export function AvailabilityPreview({
                 <span>
                   {occupancy.blocked
                     ? occupancy.names.length
-                      ? occupancy.names.join(" · ")
+                      ? `${t("Bloqueado")} · ${occupancy.names.join(" · ")}`
                       : t(
                           occupancy.reason === "lesson"
                             ? "Bloqueado · sobrepõe outra aula"

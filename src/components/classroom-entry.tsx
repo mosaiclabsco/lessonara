@@ -1,4 +1,5 @@
 "use client";
+import { useClassroomRejoin } from "./use-classroom-rejoin";
 import type { Lesson } from "@/lib/ledger";
 import { lessonAccess, lessonWindow } from "@/lib/classroom";
 import { useLessonClock } from "./use-lesson-clock";
@@ -24,8 +25,10 @@ export function ClassroomEntry({
   const plan = usePlatformPlan();
   const dialog = useRef<HTMLDialogElement>(null);
   const timing = lessonWindow(lesson);
-  const clock = useLessonClock(now, [timing.opensAt, timing.closesAt]);
+  const clock = useLessonClock(now, [timing.opensAt, timing.endsAt, timing.closesAt]);
   const access = lessonAccess(lesson, clock);
+  const afterEnd = clock >= timing.endsAt;
+  const canRejoin = useClassroomRejoin(href, afterEnd);
   if (!plan.classroom)
     return (
       <a href="/settings?tab=subscription#subscription" className="btn-xs">
@@ -33,11 +36,11 @@ export function ClassroomEntry({
         {t("Sala de aula · Pro")}
       </a>
     );
-  if (access.state !== "open")
+  if (access.state !== "open" || (afterEnd && !canRejoin))
     return (
       <LessonUnavailable
         opensAt={access.opensAt}
-        closed={access.state === "closed"}
+        closed={access.state === "closed" || afterEnd}
         compact={compact}
       />
     );
@@ -56,7 +59,7 @@ export function ClassroomEntry({
         }}
       >
         <Icon name="video" className="h-4 w-4" />
-        {!compact && t("Entrar na aula")}
+        {!compact && t(afterEnd ? "Voltar à aula" : "Entrar na aula")}
       </button>
       <dialog
         ref={dialog}

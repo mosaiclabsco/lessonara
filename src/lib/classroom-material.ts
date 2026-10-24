@@ -16,6 +16,7 @@ export type PdfText = {
   x: number;
   y: number;
   text: string;
+  fontSize?: number;
   color?: string;
 };
 export type MaterialState = {
@@ -115,10 +116,20 @@ export function validateMaterial(value: unknown): MaterialState {
       !coord(t.x) ||
       !coord(t.y) ||
       typeof t.text !== "string" ||
-      t.text.length > 200
+      t.text.length > 200 ||
+      (t.fontSize !== undefined &&
+        (!Number.isInteger(t.fontSize) || t.fontSize < 12 || t.fontSize > 72))
     )
       throw new Error("Texto inválido.");
-    return { id: t.id, page: t.page, x: t.x, y: t.y, text: t.text, color: ink(t.color) };
+    return {
+      id: t.id,
+      page: t.page,
+      x: t.x,
+      y: t.y,
+      text: t.text,
+      fontSize: t.fontSize ?? 24,
+      color: ink(t.color),
+    };
   });
   const scrollY = v.scrollY ?? 0;
   if (!coord(scrollY)) throw new Error("Posição inválida.");

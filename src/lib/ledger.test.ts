@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { computeLedger, type LessonEvent, type Package, type Schedule } from "./ledger";
+import {
+  visibleLessons,
+  computeLedger,
+  type LessonEvent,
+  type Package,
+  type Schedule,
+} from "./ledger";
 
 // 2026-10-06 é terça-feira.
 const tuesday: Schedule = { weekday: 2, time: "19:00", starts_on: "2026-09-01", ends_on: null };
@@ -117,4 +123,30 @@ it("does not turn imported debt into historical income or used lessons", () => {
   });
   expect(result.remaining).toBe(-3);
   expect(result.used).toBe(0);
+});
+
+it("only displays future occurrences covered by real package or opening credits", () => {
+  const ledger = computeLedger({
+    schedules: [{ ...tuesday, starts_on: "2026-10-06" }],
+    events: [],
+    packages: [pkg("2026-10-05", 4)],
+    today: "2026-10-05",
+    time: "10:00",
+  });
+  expect(visibleLessons(ledger, "2026-10-05")).toHaveLength(4);
+  const empty = computeLedger({
+    schedules: [{ ...tuesday, starts_on: "2026-10-06" }],
+    events: [],
+    packages: [],
+    today: "2026-10-05",
+    time: "10:00",
+  });
+  expect(visibleLessons(empty, "2026-10-05")).toEqual([]);
+});
+it("preserves past lessons without packages when trimming the future projection", () => {
+  const ledger = run([], []);
+  const visible = visibleLessons(ledger, "2026-10-07");
+  expect(visible).toHaveLength(6);
+  expect(visible.every((l) => l.past)).toBe(true);
+  expect(ledger.remaining).toBe(-6);
 });

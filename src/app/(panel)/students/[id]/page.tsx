@@ -1,3 +1,4 @@
+import { ReplacementManager } from "@/components/replacement-manager";
 import { FormActions } from "@/components/button";
 import { needsSchedule } from "@/lib/student-setup";
 import { ReplacementPrompt, CancelLessonButton } from "@/components/cancel-lesson-button";
@@ -14,7 +15,6 @@ import { StudentProfileTabs } from "@/components/student-profile-tabs";
 import { StudentDocuments } from "@/components/student-documents";
 import { ScheduleForm } from "@/components/schedule-form";
 import { weeklyScheduleLimit } from "@/lib/schedule-rules";
-import { TimeField } from "@/components/time-field";
 import { LessonHistory } from "@/components/lesson-history";
 import { Suspense } from "react";
 import PanelLoading from "../../loading";
@@ -31,7 +31,6 @@ import { getOrigin } from "@/lib/origin";
 import { requireUser } from "@/lib/supabase/server";
 import {
   addPackage,
-  addReposicao,
   deleteEvent,
   deletePackage,
   deleteStudent,
@@ -85,7 +84,7 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
     ? nextJoinableLesson(ledger.lessons, Date.parse(`${today}T${nowInTZ().time}:00-03:00`))
     : null;
   const classroomLink = classroomNext ? classroomHref(id, classroomNext) : null;
-  const replaced = new Set(lessons.map((l) => l.event?.source_event_id).filter(Boolean));
+  const replaced = new Set(ledger.lessons.map((l) => l.event?.source_event_id).filter(Boolean));
   const cancelled = ledger.lessons.filter(
     (l) => l.event?.kind === "desmarcada" && !replaced.has(l.event.id),
   );
@@ -131,54 +130,20 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
       <Balance ledger={ledger} />
       <StudentProfileTabs
         reposicoes={
-          <section className="card space-y-4">
-            <h2 className="h2">{t("Reposições")}</h2>
-            <p className="text-sm text-muted">
-              {t(
-                "Agende a reposição de uma aula desmarcada, mantendo o vínculo com a aula original.",
-              )}
-            </p>
-            <details className="mt-3">
-              <summary className="cursor-pointer text-sm text-accent">
-                {t("+ Lan\u00E7ar reposi\u00E7\u00E3o")}
-              </summary>
-              <ActionForm
-                action={addReposicao.bind(null, id)}
-                className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4"
-              >
-                <select
-                  className="input col-span-2"
-                  name="source_event_id"
-                  required
-                  defaultValue=""
-                >
-                  <option value="" disabled>
-                    {t("Selecione a aula desmarcada")}
-                  </option>
-                  {cancelled.map((l) => (
-                    <option key={l.event!.id} value={l.event!.id}>
-                      {formatDate(l.date, locale)} · {l.time}
-                    </option>
-                  ))}
-                </select>
-                <input className="input" name="date" type="date" required defaultValue={today} />
-                <TimeField id="reposicao-time" />
-                <input
-                  className="input"
-                  name="note"
-                  maxLength={4000}
-                  placeholder={t("observa\u00E7\u00E3o")}
-                />
-                <SubmitButton className="btn">{t("Adicionar")}</SubmitButton>
-              </ActionForm>
-            </details>
+          <ReplacementManager
+            studentId={id}
+            today={today}
+            cancelled={cancelled.map((l) => ({ id: l.event!.id, date: l.date, time: l.time }))}
+          >
             <LessonList
               lessons={ledger.lessons.filter((l) => l.status === "reposicao")}
               actions={Object.fromEntries(
-                lessons.map((l) => [`${l.date}-${l.time}-${l.status}`, lessonActions(l)]),
+                ledger.lessons
+                  .filter((l) => l.sourceKind === "makeup")
+                  .map((l) => [`${l.date}-${l.time}-${l.status}`, lessonActions(l)]),
               )}
             />
-          </section>
+          </ReplacementManager>
         }
         aulas={
           <div className="detail-grid profile-lessons-grid">
@@ -277,41 +242,46 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
           <section className="card space-y-3">
             <h2 className="h2">{t("Hor\u00E1rio fixo")}</h2>
             <ul className="divide-y divide-line text-sm">
-              {schedules.map((s) => (
-                <li key={s.id} className="flex flex-wrap items-center gap-3 py-2">
-                  <span className="font-medium">
-                    {s.monthly_day
-                      ? t("Dia {value0} de cada mês", { value0: s.monthly_day })
-                      : t(WEEKDAYS[s.weekday])}{" "}
-                    {s.time}
-                  </span>
-                  <span className="text-muted">
-                    {t(" desde ")}
-                    {formatDate(s.starts_on, locale)}
-                    {s.ends_on &&
-                      t(" at\u00E9 {value0}", { value0: formatDate(s.ends_on, locale) })}
-                  </span>
-                  <span className="ml-auto flex gap-1">
-                    {!s.ends_on && (
-                      <ActionForm action={endSchedule.bind(null, id, s.id)} className="flex gap-1">
-                        <input
-                          className="input py-1 text-xs"
-                          name="ends_on"
-                          type="date"
-                          required
-                          defaultValue={today}
-                        />
-                        <SubmitButton
-                          className="btn-xs"
-                          title={t("\u00DAltima aula nesse hor\u00E1rio")}
+              {schedules
+                .filter((s) => !s.ends_on || s.ends_on > today)
+                .map((s) => (
+                  <li key={s.id} className="flex flex-wrap items-center gap-3 py-2">
+                    <span className="font-medium">
+                      {s.monthly_day
+                        ? t("Dia {value0} de cada mês", { value0: s.monthly_day })
+                        : t(WEEKDAYS[s.weekday])}{" "}
+                      {s.time}
+                    </span>
+                    <span className="text-muted">
+                      {t(" desde ")}
+                      {formatDate(s.starts_on, locale)}
+                      {s.ends_on &&
+                        t(" at\u00E9 {value0}", { value0: formatDate(s.ends_on, locale) })}
+                    </span>
+                    <span className="ml-auto flex gap-1">
+                      {!s.ends_on && (
+                        <ActionForm
+                          action={endSchedule.bind(null, id, s.id)}
+                          className="flex gap-1"
                         >
-                          {t("encerrar")}
-                        </SubmitButton>
-                      </ActionForm>
-                    )}
-                  </span>
-                </li>
-              ))}
+                          <input
+                            className="input py-1 text-xs"
+                            name="ends_on"
+                            type="date"
+                            required
+                            defaultValue={today}
+                          />
+                          <SubmitButton
+                            className="btn-xs"
+                            title={t("\u00DAltima aula nesse hor\u00E1rio")}
+                          >
+                            {t("encerrar")}
+                          </SubmitButton>
+                        </ActionForm>
+                      )}
+                    </span>
+                  </li>
+                ))}
             </ul>
             <ScheduleForm
               key={`${plan?.id}-${plan?.frequency_period}-${plan?.scheduling_mode}-${plan?.frequency_count}`}

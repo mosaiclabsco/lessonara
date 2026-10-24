@@ -248,15 +248,21 @@ export async function endSchedule(studentId: string, scheduleId: string, f: Form
         .eq("id", scheduleId)
         .eq("student_id", studentId),
     );
-    after(async () => {
-      try {
-        await processCalendarJobs(userId);
-      } catch {
-        console.error("calendar_queue_failed");
-      }
-    });
+    let calendarPending = false;
+    try {
+      const sync = await processCalendarJobs(userId);
+      calendarPending = Boolean(sync?.failed);
+    } catch {
+      calendarPending = true;
+      console.error("calendar_queue_failed");
+    }
     revalidatePath(`/students/${studentId}`);
     revalidatePath("/", "layout");
+    if (calendarPending)
+      throw new FormValidationError(
+        "",
+        "Horário encerrado no Lessonara. Há pendências de sincronização com o Google; confira Integrações antes de reutilizar o horário.",
+      );
   });
 }
 

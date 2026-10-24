@@ -49,9 +49,9 @@ async function PageContent({ searchParams }: { searchParams: Search }) {
             {t("Seu perfil e os planos que fazem sentido para suas aulas.")}
           </p>
         </div>
-        {!onboarding.ready && <OnboardingGuide state={onboarding} />}
+        {!onboarding.complete && <OnboardingGuide state={onboarding} />}
         <ImportOnboarding state={onboarding} />
-        <SettingsTabs active={active}>
+        <SettingsTabs active={active} reviewed={onboarding.reviewedSettings.includes(active)}>
           <SettingsContent
             active={active}
             integration={params.integration}

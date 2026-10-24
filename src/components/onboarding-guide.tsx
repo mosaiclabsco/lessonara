@@ -4,43 +4,75 @@ import type { OnboardingState } from "@/lib/onboarding";
 import { Icon } from "./icon";
 export async function OnboardingGuide({ state }: { state: OnboardingState }) {
   const { t } = await getTranslator();
+  const steps = [
+    {
+      id: "general",
+      label: "Configure seu perfil",
+      icon: "settings" as const,
+      done: state.profileDone,
+      required: true,
+    },
+    {
+      id: "plans",
+      label: "Crie seu primeiro plano",
+      icon: "book" as const,
+      done: state.plansDone,
+      required: true,
+    },
+    ...[
+      { id: "integrations", label: "Conheça as integrações", icon: "calendar" as const },
+      { id: "holidays", label: "Revise os feriados", icon: "calendar" as const },
+      { id: "receivables", label: "Conheça os recebimentos por Pix", icon: "check" as const },
+      { id: "subscription", label: "Confira seu plano da empresa", icon: "book" as const },
+      { id: "support", label: "Saiba onde pedir ajuda", icon: "chat" as const },
+    ].map((step) => ({
+      ...step,
+      done: state.reviewedSettings?.includes(step.id) ?? false,
+      required: false,
+    })),
+  ];
   return (
     <section className="card onboarding-guide">
       <div className="section-heading">
         <div>
           <h2>{t("Prepare seu espaço de ensino")}</h2>
-          <p>{t("Dois passos rápidos para começar a cadastrar alunos.")}</p>
+          <p>{t("Configure o essencial e conheça as opções para sua rotina.")}</p>
         </div>
-        <span className="count-badge">{Number(state.profileDone) + Number(state.plansDone)}/2</span>
+        <span className="count-badge">
+          {steps.filter((s) => s.done).length}/{steps.length}
+        </span>
       </div>
       <ol className="onboarding-steps">
-        <li>
-          <Icon name={state.profileDone ? "check" : "settings"} className="h-5 w-5" />
-          <div>
-            <strong>{t("1. Configure seu perfil")}</strong>
-            <p>{t("Informe seu nome, escolha a duração da aula e salve.")}</p>
-          </div>
-          <a className="btn-ghost" href="/settings?tab=general#general">
-            {t(state.profileDone ? "Revisar" : "Configurar")}
-          </a>
-        </li>
-        <li>
-          <Icon name={state.plansDone ? "check" : "book"} className="h-5 w-5" />
-          <div>
-            <strong>{t("2. Ative seu primeiro plano")}</strong>
-            <p>{t("Crie um plano ou confirme uma sugestão de frequência e créditos.")}</p>
-          </div>
-          <a className="btn-ghost" href="/settings?tab=plans#plans">
-            {t(state.plansDone ? "Revisar" : "Configurar")}
-          </a>
-        </li>
+        {steps.map((step, index) => (
+          <li key={step.id}>
+            <Icon name={step.done ? "check" : step.icon} className="h-5 w-5" />
+            <div>
+              <strong>
+                {index + 1}. {t(step.label)}
+              </strong>
+              <p>
+                {t(
+                  step.required
+                    ? step.done
+                      ? "Configurado"
+                      : "Obrigatório para começar"
+                    : step.done
+                      ? "Revisado · configuração opcional"
+                      : "Opcional · acessar a tela já conclui esta etapa",
+                )}
+              </p>
+            </div>
+            <Link className="btn-ghost" href={`/settings?tab=${step.id}#${step.id}`}>
+              <Icon name="arrow" className="h-4 w-4" />
+              {t(step.done ? "Revisar" : "Acessar")}
+            </Link>
+          </li>
+        ))}
       </ol>
-      <p className="text-xs text-muted">
-        {t("Feriados e integração Google podem ser configurados depois.")}
-      </p>
     </section>
   );
 }
+
 export async function SetupNotice() {
   const { t } = await getTranslator();
   return (

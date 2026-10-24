@@ -25,12 +25,14 @@ export function authorizeClassroom({
   ref,
   config,
   now = Date.now(),
+  hasJoined = false,
 }: {
   participant: ClassroomParticipant;
   lesson: Lesson;
   ref: ClassroomRef;
   config: JitsiConfig;
   now?: number;
+  hasJoined?: boolean;
 }) {
   if (
     !classroomRefValid(ref) ||
@@ -42,13 +44,16 @@ export function authorizeClassroom({
     return { status: 404, body: { error: "Aula não disponível." } };
   }
   const window = lessonAccess(lesson, now);
-  if (window.state !== "open") {
+  if (window.state !== "open" || (now >= window.endsAt && !hasJoined)) {
     return {
       status: 423,
       body: {
-        error: "A sala está fora do horário de acesso.",
+        error:
+          now >= window.endsAt && !hasJoined
+            ? "A primeira entrada nesta aula já encerrou. O retorno está disponível apenas para quem já participou."
+            : "A sala está fora do horário de acesso.",
         opensAt: new Date(window.opensAt).toISOString(),
-        closesAt: new Date(window.closesAt).toISOString(),
+        closesAt: new Date(hasJoined ? window.closesAt : window.endsAt).toISOString(),
       },
     };
   }

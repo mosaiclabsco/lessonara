@@ -5281,3 +5281,63 @@ html:has(.app-shell) {
 .form-actions-start > :last-child {
   margin-left: 0;
 }
+
+/* Scheduling previews use clear groups instead of disabled-control opacity. */
+.mini-agenda-slots {
+  max-height: min(64vh, 680px);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr));
+  padding: 2px;
+}
+.mini-agenda-slot {
+  min-height: 62px;
+  font-size: 14px;
+}
+.mini-agenda-slot.mini-agenda-busy:disabled {
+  opacity: 1;
+  color: var(--fg);
+  background: color-mix(in srgb, hsl(var(--slot-hue, 140) 65% 80%) 38%, var(--surface));
+  border-color: color-mix(in srgb, hsl(var(--slot-hue, 140) 45% 50%) 50%, var(--line));
+  cursor: not-allowed;
+}
+.replacement-section {
+  display: grid;
+  gap: 28px;
+}
+.replacement-create {
+  text-align: center;
+  padding: 18px 0;
+}
+.replacement-list {
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+}
+.classroom-screen.board-presenting {
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 23%);
+}
+.classroom-board-scroll {
+  min-height: 0;
+  flex: 1;
+  align-items: stretch;
+}
+.classroom-board-page {
+  aspect-ratio: auto;
+  min-height: 100%;
+}
+.annotation-font-size {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.annotation-font-size select {
+  width: 110px;
+}
+@media (max-width: 760px) {
+  .classroom-screen.board-presenting {
+    grid-template-columns: 1fr;
+  }
+  .mini-agenda-slot {
+    font-size: 13px;
+  }
+}

@@ -253,17 +253,9 @@ export function computeLedger(input: {
   };
 }
 
-/** Aulas para exibir: todas as passadas e as futuras até 8 semanas ou até a primeira sem pacote. */
+/** Historical lessons remain visible; future projections follow paid/opening credits only. */
 export function visibleLessons(ledger: Ledger, today: string): Lesson[] {
-  const horizon = addDays(today, 8 * 7);
-  let shownUncovered = false;
-  return ledger.lessons.filter((l) => {
-    if (l.past) return true;
-    if (l.date <= horizon) return true;
-    if (l.counts && l.packageIndex === null && !shownUncovered) {
-      shownUncovered = true;
-      return true;
-    }
-    return l.packageIndex !== null;
-  });
+  return ledger.lessons.filter(
+    (lesson) => lesson.past || lesson.date < today || lesson.packageId !== null,
+  );
 }

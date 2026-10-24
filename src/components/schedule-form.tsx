@@ -145,6 +145,10 @@ export function ScheduleForm({
         </fieldset>
       </form>
       <AvailabilityPreview
+        key={
+          schedules.map((s) => `${s.id}/${s.starts_on}/${s.ends_on}/${s.time}`).join("|") +
+          appointments.map((a) => `${a.id}/${a.date}/${a.time}`).join("|")
+        }
         date={
           flexible ? startsOn || today : firstPlannedDate(startsOn || today, frequency.period, day)
         }

@@ -91,3 +91,12 @@ it("preserva cores permitidas e tempos individuais do laser sem aceitar estilos 
     validateMaterial({ ...state, strokes: [{ ...state.strokes[0], times: [10] }] }),
   ).toThrow("Tempos de traço inválidos");
 });
+
+it("validates and preserves text font sizes within the shared board", () => {
+  const text = { id: "text", page: 1, x: 0.2, y: 0.3, text: "Hello", fontSize: 40 };
+  expect(validateMaterial({ ...emptyMaterial(), texts: [text] }).texts[0].fontSize).toBe(40);
+  for (const fontSize of [0, 11, 73, Infinity, 24.5])
+    expect(() =>
+      validateMaterial({ ...emptyMaterial(), texts: [{ ...text, fontSize }] }),
+    ).toThrow();
+});

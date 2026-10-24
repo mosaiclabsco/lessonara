@@ -3,6 +3,8 @@ import { cache } from "react";
 import { requireUser } from "./supabase/server";
 export type OnboardingState = {
   importState: string;
+  reviewedSettings: string[];
+  complete: boolean;
   profileDone: boolean;
   plansDone: boolean;
   ready: boolean;
@@ -11,6 +13,7 @@ export type OnboardingState = {
 export function onboardingState(
   teacher: {
     import_onboarding?: string;
+    reviewed_settings?: string[];
     name?: string | null;
     lesson_minutes?: number | null;
     profile_completed_at?: string | null;
@@ -30,6 +33,13 @@ export function onboardingState(
   const platformPlan = resolvePlatformPlan(teacher.platform_plan);
   return {
     importState: teacher.import_onboarding ?? "pending",
+    reviewedSettings: teacher.reviewed_settings ?? [],
+    complete:
+      profileDone &&
+      plansDone &&
+      ["integrations", "holidays", "receivables", "subscription", "support"].every((tab) =>
+        teacher.reviewed_settings?.includes(tab),
+      ),
     profileDone,
     plansDone,
     ready: profileDone && plansDone,

@@ -174,6 +174,23 @@ export function Classroom({ joinUrl, backHref }: { joinUrl: string; backHref: st
           clearTimeout(timer);
           myId = id;
           setJoined(true);
+          void (async () => {
+            for (let attempt = 0; attempt < 3 && !controller.signal.aborted; attempt++) {
+              try {
+                const saved = await fetch(joinUrl, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ op: "joined" }),
+                  cache: "no-store",
+                  signal: controller.signal,
+                });
+                if (saved.ok || saved.status < 500) return;
+              } catch {
+                if (controller.signal.aborted) return;
+              }
+              await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));
+            }
+          })();
           api?.executeCommand("localSubject", data.lesson.title);
           materialMessage.current?.(JSON.stringify({ t: "lessonara-pdf-request" }));
           broadcast(JSON.stringify({ t: "lessonara-pdf-request" }));
@@ -225,6 +242,7 @@ export function Classroom({ joinUrl, backHref }: { joinUrl: string; backHref: st
       <DesktopCallControls joined={joined} teacher={role === "teacher"} onCompact={setCompact} />
       {state.active && (
         <ClassroomBoard
+          key={joinUrl}
           endpoint={joinUrl.replace(/\/join$/, "/material")}
           teacher={role === "teacher"}
           connected={materialConnected}
