@@ -61,3 +61,13 @@ Leitura do QR em app bancário, pagamento/confirmação com professor/aluno real
 ## Confirmação manual do Calendar — 21/10/2026
 
 Gabriel confirmou ter testado com sucesso a criação de evento/Meet, alteração/reagendamento e cancelamento após as mudanças de segurança. A tarefa e o checklist foram marcados como concluídos com base nesse relato. Nenhum novo teste automatizado ou consulta ao estado da aprovação OAuth é alegado por essa atualização.
+
+## Reinício dos dados de teste — 23/10/2026
+
+Por solicitação do proprietário, os dados de negócio de teste foram removidos do Supabase de produção. A conta original foi preservada com o mesmo login e senha, perfil pendente, importação em estado inicial e acesso Pro completo. Foram excluídas quatro contas extras e três arquivos privados de teste; alunos, pacotes, planos de aulas, agenda, atividades, documentos, conexões Google e filas foram zerados. As sessões anteriores foram encerradas.
+
+Uma cópia privada das 67 tabelas inventariadas e dos três arquivos foi verificada antes da limpeza. Isso é uma cópia pontual para esta operação, não comprovação de backup recorrente nem de restauração testada. As evidências históricas descritas nas seções anteriores não representam o estado atual das filas ou da conexão Google após este reinício. Não foram excluídos eventos no calendário externo.
+
+Esquema, políticas de acesso, funções, cron, operadores, segredos e controles de supressão de destinatários foram preservados. O administrador permanece em banco separado. O catálogo comercial do admin foi configurado com Essencial R$ 49, Plus R$ 79 e Pro R$ 99 mensais; a conta original de teste tem isenção explícita, sem geração de cobrança ou registro fictício de pagamento.
+
+O domínio administrativo é https://admin.mosaic-labs.co, com DNS e HTTPS validados. Acesso anônimo ao painel redireciona ao login; webhook sem assinatura retorna 401 e com assinatura válida retorna 200. O webhook Resend passou a usar o domínio próprio sem segredo de bypass na URL.

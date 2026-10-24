@@ -117,6 +117,14 @@ Um professor novo se cadastra, usa o período de teste sem intervenção, recebe
 
 ---
 
+## Requisitos antes de iniciar o piloto com a professora
+
+Decisão de 21/10/2026: os três itens abaixo são obrigatórios para iniciar o piloto. Permanecem abertos enquanto o trabalho segue no portal administrativo; não confundir implementação publicada com liberação do piloto.
+
+- [ ] **Confirmar backup e restauração** — dashboard consultado em 20/10 exibiu “Last backup: No backups”; verificar eventual backup externo e executar restore de teste antes de clientes reais.
+- [ ] **Jitsi sob a nova CSP com duas pessoas** — validar câmera, áudio, compartilhamento e WebSocket antes de liberar a sala aos alunos.
+- [ ] **Validar QR Code Pix em aplicativo bancário** — conferir leitura do QR/copia-e-cola, recebedor e valor antes do primeiro pagamento. Não exige realizar uma transferência.
+
 ## Roadmap de produto (análise out/2026)
 
 Priorização por ICE (pré-PMF, time mínimo, pouco dado). Itens com task detalhada acima estão marcados com ↑.
@@ -130,6 +138,8 @@ Priorização por ICE (pré-PMF, time mínimo, pouco dado). Itens com task detal
 - [ ] **Cadastro autônomo + trial de 7 dias + cobrança manual da assinatura** ↑ — implementar após comprovar o onboarding no piloto. Validar se sete dias permitem experimentar o valor; mostrar prazo e avisar antes do fim. Conta expirada preserva dados, informa restrições e permite reativação após pagamento. Medir conversão e motivos de não conversão.
 - [x] **Pix da professora + botão "Já paguei"** ↑ — implementado: Configurações → Recebimentos, QR/copia-e-cola com preço do aluno, aviso no portal e confirmação manual/idempotente em Pagamentos. Cobrança WhatsApp inclui instruções. [Fluxo e limites](docs/product-flows.md). Leitura em banco e ganho de tempo com o piloto ainda exigem QA/discovery.
 - [ ] **Painel do admin funcional** — papel admin verificado no backend/RLS. Mínimo: lista de professores (plano, status do trial, último acesso, nº de alunos), ativar/desativar conta, registrar pagamento manual da assinatura, ver falhas de email/cron e pedidos de importação de alunos.
+  - Em desenvolvimento no repositório `mosaic-labs-admin`: identidade Mosaic Labs, banco administrativo cloud separado e conector real ativos; cinco professores sincronizados por ID, vínculo único/imutável, RLS e quatro páginas autenticadas verificados. Migração `0026` de gestão aplicada no Lessonara após teste com rollback. Frontend ainda local; QA visual e operação humana completa de pagamento/plano/suspensão pendentes. Não marcar o painel inteiro concluído: falhas operacionais, pedidos de importação e demais campos mínimos ainda precisam ser conferidos.
+- [ ] **Acesso de suporte ao perfil do professor** — futuro: desenhar acesso temporário, explícito e auditável para suporte, com permissões limitadas, indicação visível, expiração e encerramento seguro. Nunca compartilhar a senha ou reutilizar a sessão original do professor. Ainda não implementado.
 - [ ] **Eventos do funil de ativação** — definir e gravar (tabela própria ou eventos customizados da Vercel), sem dados pessoais do aluno:
   - `teacher_signed_up` (início do trial)
   - `profile_completed` (nome + duração salvos)
@@ -188,7 +198,6 @@ Priorização por ICE (pré-PMF, time mínimo, pouco dado). Itens com task detal
 
 Pendências mantidas em TODO por solicitação de Gabriel em 20/10/2026. Não são bloqueadores da conclusão da auditoria de segurança; o QA da sala é necessário antes de liberar seu uso aos alunos.
 
-- [ ] **Jitsi sob a nova CSP com duas pessoas** — validar câmera, áudio, compartilhamento e WebSocket antes de liberar a sala aos alunos.
 - [ ] **C8 — ACAO `*` nas páginas HTML** — hardening de baixo risco, pós-lançamento.
 - [ ] **OTP real do aluno ponta a ponta** — recebimento e uso do código, com rejeição dos casos inválidos.
 - [ ] **Essencial × Pro** — validar permissões, limites e bloqueios no servidor com planos diferentes.
@@ -203,7 +212,6 @@ Consolidação da lista enviada em 20/10/2026. Os itens já descritos no roadmap
 
 ### Confiabilidade dos workers e das filas
 
-- [ ] **Confirmar backup e restauração** — dashboard consultado em 20/10 exibiu “Last backup: No backups”; verificar eventual backup externo e executar restore de teste antes de clientes reais.
 
 O histórico da sessão registra correção do `CRON_SECRET` em produção, respostas HTTP 200 dos dois workers e execução automática pelo Supabase Cron. Também registra uma pendência técnica de calendário processada. Isso não comprova, por si só, um novo lembrete preparado e enviado de ponta a ponta. Referências e evidências devem entrar na documentação operacional.
 
@@ -236,3 +244,36 @@ O histórico da sessão registra correção do `CRON_SECRET` em produção, resp
 ### Dependências e ordem de aprendizado
 
 Primeiro recrutar e acompanhar o piloto com onboarding e importação assistidos. Usar as observações para ajustar a ativação, testar renovação e validar preço. O cadastro autônomo vem depois de comprovar o onboarding; automação da assinatura e importação CSV dependem do custo e volume da operação. A rotina contínua de discovery, canal de feedback e coleta dos motivos de cancelamento permanecem no roadmap acima.
+
+## Módulos de aprendizado e evolução — propostas de roadmap
+
+Origem: solicitação de 23/10/2026. Escopo e critérios completos em [docs/learning-modules.md](docs/learning-modules.md). Não implementados. Prioridade indicada é da proposta; respeitar bloqueadores do piloto e a ordenação pessoal.
+
+- [ ] **CORE-01 — Reutilizar o domínio existente** — Alta / fundação. Requisitos e critérios de aceite: seção `CORE-01` da especificação.
+- [ ] **CORE-02 — Registrar o modelo mínimo de evidências** — Alta / fundação. Requisitos e critérios de aceite: seção `CORE-02` da especificação.
+- [ ] **CORE-03 — Definir privacidade, retenção e controle de acesso** — Alta / fundação. Requisitos e critérios de aceite: seção `CORE-03` da especificação.
+- [ ] **LG-01 — Catálogo de habilidades e conteúdos** — Alta / MVP. Requisitos e critérios de aceite: seção `LG-01` da especificação.
+- [ ] **SL-01 — Criar atividades de speaking** — Alta / MVP. Requisitos e critérios de aceite: seção `SL-01` da especificação.
+- [ ] **SL-02 — Gravar e enviar respostas em áudio** — Alta / MVP. Requisitos e critérios de aceite: seção `SL-02` da especificação.
+- [ ] **SL-03 — Avaliar respostas e manter histórico de tentativas** — Alta / MVP. Requisitos e critérios de aceite: seção `SL-03` da especificação.
+- [ ] **SL-04 — Proteger e armazenar áudios privados** — Alta / MVP. Requisitos e critérios de aceite: seção `SL-04` da especificação.
+- [ ] **LG-02 — Registrar desempenho por habilidade** — Alta / MVP. Requisitos e critérios de aceite: seção `LG-02` da especificação.
+- [ ] **LG-03 — Painel de evolução do aluno** — Média / MVP. Requisitos e critérios de aceite: seção `LG-03` da especificação.
+- [ ] **LG-04 — Sugerir revisões com evidências** — Média / pós-MVP inicial. Requisitos e critérios de aceite: seção `LG-04` da especificação.
+- [ ] **PL-01 — Gerar relatório individual em rascunho** — Alta / MVP. Requisitos e critérios de aceite: seção `PL-01` da especificação.
+- [ ] **PL-02 — Pré-visualizar e aprovar relatórios** — Alta / MVP. Requisitos e critérios de aceite: seção `PL-02` da especificação.
+- [ ] **PL-03 — Exportar PDF e compartilhar relatórios privados** — Alta / MVP. Requisitos e critérios de aceite: seção `PL-03` da especificação.
+- [ ] **SL-05 — Assistente de speaking com aprovação docente** — Baixa / pós-MVP. Requisitos e critérios de aceite: seção `SL-05` da especificação.
+- [ ] **LG-05 — Revisão espaçada por regras explícitas** — Baixa / futuro. Requisitos e critérios de aceite: seção `LG-05` da especificação.
+- [ ] **PL-04 — Comparar períodos com dados compatíveis** — Média / pós-MVP. Requisitos e critérios de aceite: seção `PL-04` da especificação.
+- [ ] **PL-05 — Assistente de relatórios fundamentados em registros** — Baixa / futuro. Requisitos e critérios de aceite: seção `PL-05` da especificação.
+
+## Revisão após os testes de agenda — 23/10/2026
+
+- [ ] **Revisão de agenda, onboarding, Google e sala — discutir antes de implementar** — lista completa `REV-01` a `REV-12` em [docs/review-agenda-sala-onboarding.md](docs/review-agenda-sala-onboarding.md). Inclui projeção de datas, checklist opcional, OAuth, encerramento/recriação, bloqueios/órfãos Google, liberação de horários, reposições, Excalidraw, entrada/reconexão/extensão, remarcação, identidade da sala e presença/persistência. Preservar as demais prioridades; nenhuma mudança funcional nesta rodada.
+
+### Encaminhamento da revisão de agenda e sala
+
+- [x] **Investigar o aviso OAuth e os bloqueios Google** — marca aprovada, acesso a dados ainda em análise; duas séries de teste antigas identificadas e futuras ocorrências removidas com autorização específica, preservando o passado. Aprovação final pelo Google continua externa e pendente.
+- [x] **Implementar os ajustes autorizados da revisão de agenda** — recorte de futuras aulas pelos créditos, checklist opcional, ocultação de horários encerrados sem excluir histórico, disponibilidade ampliada/agrupada, modal de reposição, quadro maior com fonte e registro para reconexão. Código e migração validados; ver [registro da revisão](docs/review-agenda-sala-onboarding.md) para publicação e limites de QA.
+- [ ] **Definir histórico de aulas diante de mudanças de plano e horário** — discutir antes de implementar: projeções futuras sob demanda e ocorrências passadas consolidadas com retrato dos dados. Considerar upgrade/downgrade, exclusão de origem, encerramento/recriação, correções e auditoria. Não reescrever retroativamente o histórico.
