@@ -87,3 +87,18 @@ Sem push, deploy, migrações ou alterações de provedores em produção nesta 
 - Escopo e decisões em [planos e permissões](plans.md) e [jobs e filas](workers.md). `doing.md` é limpo ao encerrar o trabalho local; publicação e QA real permanecem no backlog.
 
 Pendências de aplicação: migrações 0030/0031 e do admin, publicação conjunta, novo cron somente após rotas disponíveis, conferência do limite global de Storage e QA de Google/Resend/Storage reais. O teste local não é um novo pentest nem comprovação de entrega de emails ou upload de 100 MB em produção. Acompanhar também uso físico e reservas incompletas de Storage.
+
+
+## 24/10/2026 — publicação autorizada da revisão de dez itens
+
+- Lessonara: commit funcional `968233d`, deploy `dpl_ChSLpcGVTBTeaG8VMfuYXzinksTf`, READY, domínio `lessonara.mosaic-labs.co`.
+- Admin: commit funcional `c074058`, deploy `dpl_Gs6qbu6ygbXHGEE1vc6vE9MRqzPc`, READY, domínio `admin.mosaic-labs.co`.
+- Supabase Lessonara: migrações 0030/0031 validadas com rollback antes de aplicar; 0030/0031/0032 confirmadas via SQL e APIs. Supabase Admin: migração `20261024000006_job_monitoring.sql` aplicada e snapshot privado confirmado.
+- Cadeia de migrações: incluída no histórico Git a migração 0026 de administração que já estava aplicada; não foi reaplicada.
+- Limite global confirmado no dashboard: Supabase Free fixo em 50 MB. Proprietário escolheu manter sem custo adicional. Interface, servidor e SQL limitam Pro a 50 MB; 100 MB permanece no backlog. Não houve contratação ou upgrade.
+- Agendamentos ativos: renovação 08h/18h, retomada condicional a cada cinco minutos, emails/Calendar/lembretes a cada cinco minutos, limpeza 03h. As chamadas usam a referência existente no Vault; segredo não foi alterado nem incluído neste relatório.
+- Requests pg_net 2747–2751: cinco respostas HTTP 200, sem timeout. Renovação/lembretes verificaram um aluno e não geraram avisos elegíveis. Emails/Calendar/limpeza concluíram sem falhas. Isso comprova autenticação e execução dos workers, não entrega de email com fila vazia.
+- Snapshot posterior confirmou execução automática da janela 18h, além de emails, Calendar e lembretes. Filas: zero pendentes, zero em processamento, zero falhas, zero tentativas esgotadas.
+- Tela Pendências carregada pela sessão real do professor, sem erro de servidor. Financeiro mostrou CSV/XLSX/PDF e recibo individual; PDF autenticado baixado em produção e assinatura `%PDF-` confirmada. XLSX/CSV/PDF já haviam passado pela validação local documentada.
+- Login dos dois projetos retorna 200. O endpoint de jobs do admin redireciona o cliente anônimo ao login; a sessão do admin expirou e não foi contornada. A conferência visual autenticada do admin exige novo login do proprietário.
+- Permanecem separados: QA manual Jitsi/OTP real/matriz de planos/Google sob as regras novas, envio real elegível e entrega por Resend, upload real com interrupção e limites no Storage. Os testes locais não substituem esses cenários nem constituem novo pentest.

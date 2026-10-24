@@ -1,6 +1,6 @@
 # Planos, permissões e limites
 
-Estado: revisão local de 24/10/2026. Os itens desta rodada aguardam publicação conjunta e aplicação das migrações 0030/0031; “pronto localmente” não significa ativo em produção.
+Estado: publicado em 24/10/2026. Migrações 0030/0031/0032 aplicadas; deploys Lessonara/admin READY. O limite efetivo de arquivo segue o Supabase Free (50 MB), conforme escolha do proprietário. QA de fluxos externos continua separado da publicação.
 
 A assinatura é do professor. Pacotes pagos pelos alunos são outro domínio: trocar Essencial/Plus/Pro não altera créditos nem pagamentos de aulas.
 
@@ -16,23 +16,23 @@ A assinatura é do professor. Pacotes pagos pelos alunos são outro domínio: tr
 | Pix do professor e “Já paguei” | Sim | Sim | Sim | Sim | Créditos após confirmação do professor |
 | Cobrança manual pelo WhatsApp | Sim | Sim | Sim | Sim | Dados da própria conta |
 | Financeiro e recebimentos | Sim | Sim | Sim | Sim | Dados da própria conta |
-| Recibo individual em PDF | Sim | Sim | Sim | Sim, local | Professor responsável ou aluno dono do pagamento |
-| Exportação por período em CSV/XLSX/PDF | — | Sim | Sim | Sim, local | Endpoint verifica plano e tenant no servidor |
+| Recibo individual em PDF | Sim | Sim | Sim | Sim | Professor responsável ou aluno dono do pagamento |
+| Exportação por período em CSV/XLSX/PDF | — | Sim | Sim | Sim | Endpoint verifica plano e tenant no servidor |
 | Atividades e entrega de arquivos | Sim | Sim | Sim | Sim | Aluno associado; cota do professor |
 | Biblioteca e compartilhamento privado | Sim | Sim | Sim | Sim | Reserva, cota, autorização e validade |
 | Feriados e consumo de crédito | Sim | Sim | Sim | Sim | Regras por professor, preservando histórico |
-| Central “O que preciso resolver” | Sim | Sim | Sim | Sim, local | Categorias premium omitidas e não consultadas sem direito |
+| Central “O que preciso resolver” | Sim | Sim | Sim | Sim | Categorias premium omitidas e não consultadas sem direito |
 | Importação guiada e assistida | — | Sim | Sim | Sim | Aplicação e RPC privada de importação |
-| Google Calendar e links Meet | — | Sim | Sim | Sim, restrições locais | UI, OAuth, actions, leitura de tokens e worker |
-| Avisos de renovação por email | — | Sim | Sim | Sim, revisão local | Plano no enfileiramento e antes do envio; preferência do aluno |
-| Gestão de envios e falhas de email | — | Sim | Sim | Sim, revisão local | Navegação, página, actions e RLS |
-| Campanhas de email | — | Sim | Sim | Sim, revisão local | RPC, limites, supressão e opt-out promocional |
-| Lembretes de horário por email | — | — | Sim | Sim, local | Pro no servidor/SQL; aula atual revalidada e opt-out operacional |
+| Google Calendar e links Meet | — | Sim | Sim | Sim | UI, OAuth, actions, leitura de tokens e worker |
+| Avisos de renovação por email | — | Sim | Sim | Sim | Plano no enfileiramento e antes do envio; preferência do aluno |
+| Gestão de envios e falhas de email | — | Sim | Sim | Sim | Navegação, página, actions e RLS |
+| Campanhas de email | — | Sim | Sim | Sim | RPC, limites, supressão e opt-out promocional |
+| Lembretes de horário por email | — | — | Sim | Sim | Pro no servidor/SQL; aula atual revalidada e opt-out operacional |
 | Sala integrada no navegador e desktop | — | — | Sim | Sim | Autorização no servidor antes do token de sala |
 | Quadro e ferramentas de anotação | — | — | Sim | Sim | Acesso vinculado à sala autorizada |
-| Armazenamento total | 1 GB | 5 GB | 10 GB | Sim, novos limites locais | Reserva serializada no banco; documentos e entregas compartilham cota |
-| Tamanho máximo por arquivo | 20 MB | 50 MB | 50 MB¹ | Sim, novos limites locais | Cliente, servidor e banco; teto do bucket 100 MB |
-| Upload em partes com progresso e retomada | Sim | Sim | Sim | Sim, local | Token assinado para um caminho reservado; mesmos limites por plano |
+| Armazenamento total | 1 GB | 5 GB | 10 GB | Sim | Reserva serializada no banco; documentos e entregas compartilham cota |
+| Tamanho máximo por arquivo | 20 MB | 50 MB | 50 MB¹ | Sim | Cliente, servidor e banco; teto do bucket 100 MB |
+| Upload em partes com progresso e retomada | Sim | Sim | Sim | Sim | Token assinado para um caminho reservado; mesmos limites por plano |
 
 Exportação é uma conveniência de formato para dados que o professor já pode consultar. A restrição protege o endpoint; não tenta impedir alguém de copiar seus próprios dados manualmente.
 
@@ -89,7 +89,7 @@ Proposta de destino para os módulos pedagógicos e identidade: Pro. Ainda não 
 
 ## Entrega e validação
 
-Rodada mantida local por solicitação de Gabriel: sem push/deploy/aplicação no Supabase. Publicar somente depois da revisão conjunta dos dez itens. Migrações precisam preceder o código que depende delas; o novo agendamento vem depois das novas rotas estarem disponíveis. Verificar SQL 0030, SQL 0031 e migração do admin, depois os workers reais e cenários manuais já registrados.
+Publicação autorizada e concluída em 24/10/2026. Migrações 0030/0031/0032 e do admin foram aplicadas antes do código; os agendamentos foram ativados após os deploys READY. Foram confirmadas respostas 200 dos cinco workers pelo Vault/pg_net, execuções automáticas e download PDF autenticado. Os cenários externos elegíveis/QA manual continuam registrados no backlog.
 
 Testes locais não substituem um novo pentest ou testes reais com Google/Resend/Storage. As amostras dos arquivos e os testes de protocolo usam dados fictícios e servidor local, sem envio em produção.
 

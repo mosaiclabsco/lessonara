@@ -18,7 +18,7 @@ Gestão de aulas para professor particular que trabalha sozinho e vende pacotes.
 | Plus | 50 MB | 5 GB | Sim | Não | Sim |
 | Pro | 50 MB¹ | 10 GB | Sim | Sim | Sim |
 
-**Revisão local, ainda não publicada:** os limites da tabela e as permissões de email correspondem ao código preparado em 24/10. Produção continua com os limites anteriores até aplicar a entrega conjunta. A [matriz completa de planos](docs/plans.md) separa recursos implementados de propostas futuras. Recibos individuais em PDF, exportações Plus/Pro, central de pendências, lembretes de aula Pro e upload TUS estão nesta rodada local.
+**Publicado em 24/10/2026:** recibos PDF, exportações Plus/Pro, central de pendências, lembretes Pro, permissões por plano e upload TUS. Migrações 0030/0031/0032 aplicadas. A [matriz completa](docs/plans.md) separa recursos disponíveis e propostas futuras. O limite efetivo Pro é 50 MB, por decisão do proprietário e pelo teto do Supabase Free; 100 MB fica para uma ampliação futura do provedor.
 
 Limites de produto não ampliam a cota contratada no Supabase. Emails de acesso necessários à autenticação não são campanhas Pro.
 
@@ -51,9 +51,9 @@ Produção usa envelopes v3 com `EMAIL_ENCRYPTION_KEY_NEXT`, `SEAL_WRITE_VERSION
 
 ## Workers
 
-Em produção, os dois endpoints originais continuam ativos até a publicação conjunta. A revisão local separa renovação (`/api/cron/reminders`, 08h/18h), lembretes Pro (`/api/cron/lessons`, cinco minutos), envio (`/api/cron/emails`, cinco minutos), Calendar (`/api/cron/calendar`, cinco minutos) e limpeza (`/api/cron/cleanup`, 03h). Todas as rotas exigem Bearer secreto. Renovação mantém retomada condicional em lotes. O [procedimento de agendamento](supabase/operations/schedule-workers.sql) preserva o segredo no Vault; aplicar somente depois das migrações e das novas rotas publicadas. Veja [jobs e filas](docs/workers.md).
+A publicação de 24/10 separa renovação (`/api/cron/reminders`, 08h/18h), lembretes Pro (`/api/cron/lessons`, cinco minutos), envio (`/api/cron/emails`, cinco minutos), Calendar (`/api/cron/calendar`, cinco minutos) e limpeza (`/api/cron/cleanup`, 03h). Todas as rotas exigem Bearer secreto. Renovação mantém retomada condicional em lotes. O [procedimento de agendamento](supabase/operations/schedule-workers.sql) preserva o segredo no Vault; o procedimento foi aplicado após as migrações e publicação das rotas. Veja [jobs e filas](docs/workers.md).
 
-Há registro de autenticação manual/automática dos dois workers com HTTP 200. Entrega de email real, ausência de filas paradas e conclusão de cada execução precisam de observação própria; uma resposta 200 com fila vazia não comprova o fluxo completo. Monitoramento de interrupção, idade das filas e tentativas esgotadas foi preparado localmente no admin; ativação e validação real seguem pendentes no backlog.
+Há registro de autenticação manual/automática dos dois workers com HTTP 200. Entrega de email real, ausência de filas paradas e conclusão de cada execução precisam de observação própria; uma resposta 200 com fila vazia não comprova o fluxo completo. Monitoramento de interrupção, idade das filas e tentativas esgotadas está publicado no admin. Os cinco workers responderam 200 pelo Vault/pg_net e há execuções automáticas confirmadas; entrega real em cenário elegível segue como QA separado.
 
 ## Validação e segurança
 

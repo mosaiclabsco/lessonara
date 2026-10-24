@@ -1,8 +1,8 @@
 # Jobs e filas
 
-Estado em 24/10/2026: alterações implementadas localmente, aguardando conclusão dos dez itens para publicação. As migrações 0030/0031 e o novo SQL de agendamento ainda não foram aplicados em produção. Não interpretar a tabela abaixo como agendamento já ativo.
+Publicado em 24/10/2026: migrações 0030/0031/0032 e do admin aplicadas, novas rotas publicadas e agendamentos ativos. Os cinco workers responderam HTTP 200 pelo Vault/pg_net e registraram conclusão sem falhas. Emails/Calendar estavam com filas vazias; isso não equivale a confirmar entrega real de um novo email.
 
-## Agendamento preparado
+## Agendamento ativo
 
 Horários de Brasília (America/Sao_Paulo); pg_cron usa UTC.
 
@@ -45,13 +45,18 @@ As rotas cron exigem o segredo existente. Registros de execução e snapshots s�
 
 Fila pendente, em processamento, falhas, tentativas esgotadas, idade do item mais antigo e falhas de entrega conhecidas ficam visíveis. HTTP 200 do worker, sucesso do agendador, aceite do provedor e entrega ao destinatário são etapas diferentes.
 
-## Aplicação futura
+## Procedimento de aplicação
 
-Somente depois de concluir os dez itens e autorizar a publicação conjunta:
+Ordem seguida na publicação autorizada de 24/10/2026:
 
-1. Aplicar `supabase/migrations/0030_worker_operations.sql`, `0031_plan_features_notifications.sql` e a migração correspondente do admin.
+1. Aplicar `supabase/migrations/0030_worker_operations.sql`, `0031_plan_features_notifications.sql`, `0032_storage_provider_ceiling.sql` e a migração correspondente do admin.
 2. Publicar as rotas separadas e a tela administrativa.
 3. Aplicar `supabase/operations/schedule-workers.sql`, preservando a entrada existente do Vault.
 4. Confirmar os agendamentos e acompanhar execuções reais, diferenciando disparo HTTP de conclusão e entrega.
 
 Os testes locais usam PostgreSQL em memória e provedores simulados; não enviam emails e não comprovam a execução futura em produção.
+
+
+### Conferência em produção
+
+Requests pg_net 2747–2751: renovação, emails, Calendar, lembretes de aula e limpeza responderam 200, sem timeout. Os registros `job_runs` confirmaram sucesso de aplicação. A janela das 18h de Brasília concluiu automaticamente, assim como execuções periódicas de emails/Calendar/lembretes. Nenhum lembrete era elegível nesta conferência (`queued: 0`); as filas ficaram sem pendências/falhas. O disparo diário automático da limpeza será observado às 03h; sua execução manual de implantação já concluiu. O job diário do admin segue às 09h e não foi antecipado para evitar aplicar trocas de assinatura fora de sua rotina.
