@@ -1,5 +1,6 @@
 "use client";
 import { useI18n } from "@/components/browser-preferences-provider";
+import { ButtonLink } from "./button";
 import { usePlatformPlan } from "./platform-plan-provider";
 import { useState } from "react";
 import Link from "next/link";
@@ -405,14 +406,15 @@ export function FinanceDashboard({
         {plan.exports && (
           <div className="mb-5 flex flex-wrap gap-2" aria-label="Exportar recebimentos">
             {["csv", "xlsx", "pdf"].map((format) => (
-              <a
-                className="btn-outline"
+              <ButtonLink
+                download
+                prefetch={false}
+                icon="download"
                 key={format}
                 href={`/finance/export?period=${year}${receiptMonth === "all" ? "" : `-${String(receiptMonth + 1).padStart(2, "0")}`}&format=${format}`}
               >
-                <Icon name="download" className="h-4 w-4" />
                 {format.toUpperCase()}
-              </a>
+              </ButtonLink>
             ))}
           </div>
         )}

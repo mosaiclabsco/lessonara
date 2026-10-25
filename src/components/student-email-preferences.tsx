@@ -1,7 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 import { updateStudentEmailPreferences } from "@/app/student/email-preferences";
-import { Icon } from "./icon";
+import { Button } from "./button";
 import { Toast } from "./toast";
 export function StudentEmailPreferences({
   studentId,
@@ -37,8 +37,9 @@ export function StudentEmailPreferences({
           />
           Comunicados e campanhas do professor
         </label>
-        <button
-          className="btn-outline"
+        <Button
+          icon="save"
+          pending={pending}
           onClick={() =>
             start(async () => {
               const result = await updateStudentEmailPreferences(studentId, values);
@@ -46,9 +47,8 @@ export function StudentEmailPreferences({
             })
           }
         >
-          <Icon name="save" className="h-4 w-4" />
           {pending ? "Salvando…" : "Salvar preferências"}
-        </button>
+        </Button>
       </fieldset>
       {message && <Toast message={message} />}
     </section>

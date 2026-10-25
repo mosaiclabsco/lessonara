@@ -17,7 +17,7 @@ function stylesheets(directory) {
 
 // Prerendered HTML locations differ across local builds and the Vercel adapter.
 // Check the emitted stylesheet itself, independent of the HTML output layout.
-const expected = [".login-art", ".login-form-side", ".sidebar", ".calendar-cell"];
+const expected = [".login-art", ".login-form-side", ".sidebar", ".calendar-cell", ".btn-ghost"];
 const directory = [join(root, ".vercel/output/static"), join(root, ".next/static")].find(
   existsSync,
 );

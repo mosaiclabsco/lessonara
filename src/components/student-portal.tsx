@@ -1,4 +1,5 @@
 "use client";
+import { ButtonLink } from "./button";
 import { StudentEmailPreferences } from "./student-email-preferences";
 import { StudentRenewalCard } from "./student-renewal";
 import type { StudentRenewal } from "@/lib/renewals";
@@ -345,13 +346,15 @@ export function StudentPortal({
                           </p>
                         </div>
                         {pack.paid_on <= today && pack.amount >= 0 && (
-                          <a
-                            className="btn-outline ml-auto"
+                          <ButtonLink
+                            download
+                            prefetch={false}
+                            icon="download"
+                            className="ml-auto"
                             href={`/student/portal/${slug}/receipts/${pack.id}`}
                           >
-                            <Icon name="download" className="h-4 w-4" />
                             Recibo PDF
-                          </a>
+                          </ButtonLink>
                         )}
                       </li>
                     ))}

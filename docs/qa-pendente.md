@@ -1,6 +1,6 @@
 # QA e hardening pendentes
 
-Status atualizado em 21/10/2026. Itens desmarcados permanecem em TODO; conclusões identificam a origem da validação. Este checklist não representa achados críticos de segurança abertos.
+Status revisado em 25/10/2026; conclusões anteriores preservam suas datas. Itens desmarcados permanecem em TODO; conclusões identificam a origem da validação. Este checklist não representa achados críticos de segurança abertos.
 
 ## Requisitos obrigatórios para iniciar o piloto com a professora
 
@@ -14,7 +14,7 @@ Estes três requisitos foram definidos por Gabriel em 21/10/2026. Permanecem abe
 ## QA manual
 
 - [ ] **OTP real do aluno.** Solicitar código para um email real autorizado, confirmar recebimento e acesso; verificar rejeição de código incorreto, expirado e reutilizado. Não registrar códigos nem credenciais nas evidências.
-- [ ] **Matriz Essencial × Pro.** Usar professores com planos diferentes para confirmar liberação e bloqueio de Emails e sala, inclusive por acesso direto às rotas e operações do servidor; conferir limites de documentos e isolamento entre contas. A matriz anterior com duas contas Pro não cobre essa diferença.
+- [ ] **Matriz Essencial × Plus × Pro.** Usar professores com planos diferentes para confirmar Emails/Google/exportação no Plus e Pro e sala/lembretes de aula no Pro, inclusive por acesso direto às rotas e operações do servidor; conferir limites efetivos de documentos (20/50/50 MB enquanto o Supabase for Free) e isolamento entre contas. A matriz anterior com duas contas Pro não cobre essa diferença.
 - [x] **Google Calendar ponta a ponta.** Gabriel confirmou em 21/10/2026 a execução manual bem-sucedida de criação de evento/Meet, alteração/reagendamento e cancelamento após as mudanças de segurança. Encerrado com base na validação informada pelo usuário, sem alegar uma nova execução automatizada.
 
 ## Pós-lançamento
@@ -36,4 +36,5 @@ Registrar data, ambiente/versão, cenário, resultado esperado e observado e ref
 - [ ] Em duas sessões, entrar antes do término, cair e reconectar na tolerância de 30 minutos; primeira entrada após o término deve ser recusada.
 - [ ] Manter uma chamada ativa além do fim previsto e verificar continuidade no Jitsi; depois da tolerância, nova admissão deve ser recusada.
 - [ ] Abrir quadros em duas ocorrências distintas e verificar isolamento, fonte e área útil em desktop e celular.
-- [ ] Discutir e definir consolidação do histórico diante de upgrade/downgrade e remoção/recriação de horários, antes de alterar o modelo financeiro.
+- [x] Definido e implementado histórico persistente de aulas, com data, horário e vínculo ao pacote; publicado antes da rodada de 24/10. Ver [histórico de aulas](lesson-history.md).
+- [ ] Conferir manualmente que aulas dadas preservam data e pacote ao trocar plano ou remover/recriar horários; validar uma renovação completa durante o piloto.
