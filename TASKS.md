@@ -119,11 +119,14 @@ Um professor novo se cadastra, usa o período de teste sem intervenção, recebe
 
 ## Requisitos antes de iniciar o piloto com a professora
 
-Decisão de 21/10/2026: os três itens abaixo são obrigatórios para iniciar o piloto. Permanecem abertos enquanto o trabalho segue no portal administrativo; não confundir implementação publicada com liberação do piloto.
+Requisitos definidos em 21/10/2026. Atualização de 25/10: Pix validado por Gabriel; teste da sala com duas pessoas adiado para o backlog. Backup e restauração continuam pendentes antes de clientes reais.
 
 - [ ] **Confirmar backup e restauração** — dashboard consultado em 20/10 exibiu “Last backup: No backups”; verificar eventual backup externo e executar restore de teste antes de clientes reais.
-- [ ] **Jitsi sob a nova CSP com duas pessoas** — validar câmera, áudio, compartilhamento e WebSocket antes de liberar a sala aos alunos.
-- [ ] **Validar QR Code Pix em aplicativo bancário** — conferir leitura do QR/copia-e-cola, recebedor e valor antes do primeiro pagamento. Não exige realizar uma transferência.
+- [x] **Validar QR Code Pix em aplicativo bancário** — Gabriel confirmou o teste em 25/10/2026. Não implica transferência ou validação de uma renovação completa.
+
+## QA adiado para o backlog
+
+- [ ] **Jitsi sob a nova CSP com duas pessoas** — validar câmera, áudio, compartilhamento e WebSocket antes de liberar a sala aos alunos. Adiado por Gabriel em 25/10/2026; continua sem validação. Registrar ambiente, versão e resultado conforme [checklist de QA](docs/qa-pendente.md).
 
 ## Roadmap de produto (análise out/2026)
 
@@ -136,7 +139,7 @@ Priorização por ICE (pré-PMF, time mínimo, pouco dado). Itens com task detal
 - [x] **Atualizar README e documentação** — README atualizado e guias centralizados em [docs/README.md](docs/README.md); entradas antigas apontam aos documentos canônicos e `FUTURE_FEATURES.md` não mantém backlog duplicado.
 - [ ] **Landing page do Lessonara** — evoluir `/about` para uma página de venda: proposta de valor (controle de aulas e pacotes, cobrança, portal do aluno), prints, planos com preço, FAQ, contato e caminho claro para solicitar participação no piloto. Adicionar o CTA "Testar 7 dias grátis" quando o cadastro autônomo e o trial estiverem prontos. Permitir indexação das páginas comerciais, preservando a privacidade das páginas internas.
 - [ ] **Cadastro autônomo + trial de 7 dias + cobrança manual da assinatura** ↑ — implementar após comprovar o onboarding no piloto. Validar se sete dias permitem experimentar o valor; mostrar prazo e avisar antes do fim. Conta expirada preserva dados, informa restrições e permite reativação após pagamento. Medir conversão e motivos de não conversão.
-- [x] **Pix da professora + botão "Já paguei"** ↑ — implementado: Configurações → Recebimentos, QR/copia-e-cola com preço do aluno, aviso no portal e confirmação manual/idempotente em Pagamentos. Cobrança WhatsApp inclui instruções. [Fluxo e limites](docs/product-flows.md). Leitura em banco e ganho de tempo com o piloto ainda exigem QA/discovery.
+- [x] **Pix da professora + botão "Já paguei"** ↑ — implementado: Configurações → Recebimentos, QR/copia-e-cola com preço do aluno, aviso no portal e confirmação manual/idempotente em Pagamentos. Cobrança WhatsApp inclui instruções. [Fluxo e limites](docs/product-flows.md). Leitura em banco validada por Gabriel em 25/10/2026; o ciclo completo e o ganho de tempo com o piloto ainda exigem QA/discovery.
 - [ ] **Painel do admin funcional** — papel admin verificado no backend/RLS. Mínimo: lista de professores (plano, status do trial, último acesso, nº de alunos), ativar/desativar conta, registrar pagamento manual da assinatura, ver falhas de email/cron e pedidos de importação de alunos.
   - Em desenvolvimento no repositório `mosaic-labs-admin`: identidade Mosaic Labs, banco administrativo cloud separado e conector real ativos; cinco professores sincronizados por ID, vínculo único/imutável, RLS e quatro páginas autenticadas verificados. Migração `0026` de gestão aplicada no Lessonara após teste com rollback. Frontend ainda local; QA visual e operação humana completa de pagamento/plano/suspensão pendentes. Não marcar o painel inteiro concluído: falhas operacionais, pedidos de importação e demais campos mínimos ainda precisam ser conferidos.
 - [ ] **Acesso de suporte ao perfil do professor** — futuro: desenhar acesso temporário, explícito e auditável para suporte, com permissões limitadas, indicação visível, expiração e encerramento seguro. Nunca compartilhar a senha ou reutilizar a sessão original do professor. Ainda não implementado.

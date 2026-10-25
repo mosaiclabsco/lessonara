@@ -4,14 +4,14 @@ Status revisado em 25/10/2026; conclusões anteriores preservam suas datas. Iten
 
 ## Requisitos obrigatórios para iniciar o piloto com a professora
 
-- [ ] **Jitsi sob a nova CSP, com duas pessoas.** Entrar como professor e aluno em sessões distintas; confirmar áudio e câmera nos dois sentidos, conexão da sala e compartilhamento de janela e tela. Conferir erros de CSP e conexões WebSocket no navegador. Registrar ambiente, versão, data e resultado. A sala só deve ser liberada aos alunos após essa validação.
-
 - [ ] **Backup e restore.** Confirmar o mecanismo de backup, retenção e local seguro e executar uma restauração de teste. O dashboard consultado em 20/10 exibiu “Last backup: No backups”; backup externo não foi verificado.
-- [ ] **QR Code Pix no aplicativo bancário.** Conferir leitura do QR/copia-e-cola, recebedor e valor antes do primeiro pagamento; não exige transferência real.
+- [x] **QR Code Pix no aplicativo bancário.** Gabriel confirmou a validação em 25/10/2026. Encerrado com base no teste informado pelo usuário; não implica transferência ou validação de uma renovação completa.
 
-Estes três requisitos foram definidos por Gabriel em 21/10/2026. Permanecem abertos enquanto o trabalho segue no portal administrativo.
+Os três requisitos originais foram definidos por Gabriel em 21/10/2026. Em 25/10, Gabriel confirmou o Pix e adiou o teste da sala com duas pessoas para o backlog. Backup e restauração continuam pendentes antes de clientes reais.
 
 ## QA manual
+
+- [ ] **Jitsi sob a nova CSP, com duas pessoas.** Entrar como professor e aluno em sessões distintas; confirmar áudio e câmera nos dois sentidos, conexão da sala e compartilhamento de janela e tela. Conferir erros de CSP e conexões WebSocket no navegador. Registrar ambiente, versão, data e resultado. Adiado para o backlog por Gabriel em 25/10/2026; ainda não validado. Executar antes de usar a sala integrada com alunos.
 
 - [ ] **OTP real do aluno.** Solicitar código para um email real autorizado, confirmar recebimento e acesso; verificar rejeição de código incorreto, expirado e reutilizado. Não registrar códigos nem credenciais nas evidências.
 - [ ] **Matriz Essencial × Plus × Pro.** Usar professores com planos diferentes para confirmar Emails/Google/exportação no Plus e Pro e sala/lembretes de aula no Pro, inclusive por acesso direto às rotas e operações do servidor; conferir limites efetivos de documentos (20/50/50 MB enquanto o Supabase for Free) e isolamento entre contas. A matriz anterior com duas contas Pro não cobre essa diferença.
