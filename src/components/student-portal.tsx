@@ -154,7 +154,7 @@ export function StudentPortal({
         </div>
         {tab === "resumo" && (
           <div id="panel-resumo" role="tabpanel" aria-labelledby="tab-resumo" className="space-y-6">
-            <StudentRenewalCard studentId={slug} data={renewal} />
+            {ledger.remaining <= 1 && <StudentRenewalCard studentId={slug} data={renewal} />}
             {ledger.remaining <= 1 && (
               <div className="portal-renew" role="status">
                 <Icon name="book" className="h-5 w-5 shrink-0" />
@@ -311,58 +311,61 @@ export function StudentPortal({
             id="panel-historico"
             role="tabpanel"
             aria-labelledby="tab-historico"
-            className="portal-history-grid"
+            className="space-y-6"
           >
-            <section className="card">
-              <h2 className="h2">{t("Aulas por mês e pacote")}</h2>
-              <LessonHistory
-                openingCredits={ledger.openingCredits}
-                lessons={displayedLessons}
-                today={today}
-                packages={packages}
-              />
-            </section>
+            <StudentRenewalCard studentId={slug} data={renewal} />
+            <div className="portal-history-grid">
+              <section className="card">
+                <h2 className="h2">{t("Aulas por mês e pacote")}</h2>
+                <LessonHistory
+                  openingCredits={ledger.openingCredits}
+                  lessons={displayedLessons}
+                  today={today}
+                  packages={packages}
+                />
+              </section>
 
-            <section className="card">
-              <h2 className="h2">{t("Meus pacotes")}</h2>
-              {packages.length ? (
-                <ul className="portal-packages">
-                  {packages
-                    .slice()
-                    .sort((a, b) => b.paid_on.localeCompare(a.paid_on))
-                    .map((pack) => (
-                      <li key={pack.id}>
-                        <span className="stat-icon">
-                          <Icon name="book" className="h-4 w-4" />
-                        </span>
-                        <div>
-                          <p className="font-semibold">
-                            {pack.lessons}
-                            {t(" aulas")}
-                          </p>
-                          <p className="mt-1 text-xs text-muted">
-                            {t("Pagamento registrado em ")}
-                            {formatDate(pack.paid_on, locale)}
-                          </p>
-                        </div>
-                        {pack.paid_on <= today && pack.amount >= 0 && (
-                          <ButtonLink
-                            download
-                            prefetch={false}
-                            icon="download"
-                            className="ml-auto"
-                            href={`/student/portal/${slug}/receipts/${pack.id}`}
-                          >
-                            Recibo PDF
-                          </ButtonLink>
-                        )}
-                      </li>
-                    ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-muted">{t("Nenhum pacote registrado ainda.")}</p>
-              )}
-            </section>
+              <section className="card">
+                <h2 className="h2">{t("Meus pacotes")}</h2>
+                {packages.length ? (
+                  <ul className="portal-packages">
+                    {packages
+                      .slice()
+                      .sort((a, b) => b.paid_on.localeCompare(a.paid_on))
+                      .map((pack) => (
+                        <li key={pack.id}>
+                          <span className="stat-icon">
+                            <Icon name="book" className="h-4 w-4" />
+                          </span>
+                          <div>
+                            <p className="font-semibold">
+                              {pack.lessons}
+                              {t(" aulas")}
+                            </p>
+                            <p className="mt-1 text-xs text-muted">
+                              {t("Pagamento registrado em ")}
+                              {formatDate(pack.paid_on, locale)}
+                            </p>
+                          </div>
+                          {pack.paid_on <= today && pack.amount >= 0 && (
+                            <ButtonLink
+                              download
+                              prefetch={false}
+                              icon="download"
+                              className="ml-auto"
+                              href={`/student/portal/${slug}/receipts/${pack.id}`}
+                            >
+                              Recibo PDF
+                            </ButtonLink>
+                          )}
+                        </li>
+                      ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted">{t("Nenhum pacote registrado ainda.")}</p>
+                )}
+              </section>
+            </div>
           </div>
         )}
         {tab === "preferencias" && (

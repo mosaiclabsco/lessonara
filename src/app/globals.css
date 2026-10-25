@@ -487,6 +487,18 @@ input[type="checkbox"] {
   font-size: 10px;
   font-weight: 500;
 }
+.pending-card-active {
+  border-color: color-mix(in srgb, var(--warn) 45%, var(--line));
+  background: color-mix(in srgb, var(--warn) 5%, var(--surface));
+}
+.count-badge-active {
+  min-width: 32px;
+  height: 32px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 14px;
+  font-weight: 700;
+}
 .student-tools {
   display: flex;
   justify-content: space-between;

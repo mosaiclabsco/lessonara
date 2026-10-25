@@ -103,10 +103,18 @@ async function PendingData() {
       )}
       <div className="grid gap-5 md:grid-cols-2">
         {groups.map((g) => (
-          <section key={g.title} className="card flex flex-col items-start">
+          <section
+            key={g.title}
+            className={`card flex flex-col items-start ${g.count > 0 ? "pending-card-active" : ""}`}
+          >
             <div className="flex w-full items-center justify-between gap-4">
               <h2 className="h2 mb-0">{g.title}</h2>
-              <span className="count-badge">{g.count}</span>
+              <span
+                className={`count-badge ${g.count > 0 ? "count-badge-active" : ""}`}
+                aria-label={`${g.count} pendências`}
+              >
+                {g.count}
+              </span>
             </div>
             <p className="mt-3 text-sm text-muted">{g.description}</p>
             <div className="mt-auto pt-6">

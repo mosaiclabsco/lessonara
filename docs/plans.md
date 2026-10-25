@@ -95,3 +95,7 @@ Testes locais não substituem um novo pentest ou testes reais com Google/Resend/
 
 
 ¹ **Limite efetivo confirmado no provedor em 24/10/2026:** Supabase Free fixa o limite global em 50 MB. O direito de produto Pro permanece planejado em 100 MB, mas interface, servidor e SQL usam 50 MB enquanto o provedor não for ampliado. Migração `0032_storage_provider_ceiling.sql`. Nenhuma assinatura paga foi contratada nesta publicação. Elevar para 100 MB exige primeiro ampliar o limite real do provedor e então atualizar o teto efetivo da aplicação/SQL.
+
+### Renovação no portal do aluno
+
+Pix permanece disponível nos três planos, com autenticação e autorização no servidor. O resumo oferece renovação quando o saldo chega a uma aula ou menos. A antecipação fica em Histórico e pacotes, independentemente do saldo. Preparação, QR Code, copia-e-cola e aviso de pagamento ficam em modal; fechar o modal preserva a solicitação. Nenhum crédito é liberado sem confirmação do professor.
