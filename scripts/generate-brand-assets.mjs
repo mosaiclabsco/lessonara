@@ -15,7 +15,7 @@ const png = await sharp(full, { density: 288 }).png().toBuffer();
 await writeFile(new URL("public/brand/complete-logo.png", root), png);
 await writeFile(
   new URL("src/lib/brand-image.json", root),
-  JSON.stringify({ fullLogoPng: png.toString("base64") }) + "\n",
+  JSON.stringify({ fullLogoPng: png.toString("base64") }, null, 2) + "\n",
 );
 const icons = await Promise.all(
   [16, 32, 48].map((size) => sharp(mark).resize(size, size).png().toBuffer()),
