@@ -21,3 +21,9 @@ Testes automatizados cobrem validação de senha, vínculo de professor, token i
 Validação desta implementação: 452 testes do Lessonara aprovados, build e lint dos arquivos alterados aprovados; publicação conferida na Vercel e tela inspecionada no navegador. O email real de teste foi aceito pelo provedor e teve acompanhamento e auditoria registrados. O plano existente permaneceu Essential. Entrega na caixa de entrada e submissão da senha pelo destinatário continuam aguardando confirmação; a chave de envio não permite consultar a entrega no provedor.
 
 O limite de OTP de recuperação configurado no provedor é 600 segundos. Use o link de recuperação em até 10 minutos do envio. O cookie de repetição de até 15 minutos somente existe depois de um token válido ser resgatado; ele não prolonga a validade do link ainda não utilizado.
+
+## Emails únicos
+
+A migração `0034_unique_identity_emails.sql` garante email único de professor em todo o Lessonara e email único de aluno por professor, incluindo alunos inativos. Caixa e espaços nas extremidades não distinguem identidades. Um aluno pode usar seu email com professores diferentes. Cadastro, edição e importação validam no servidor; índices únicos são a proteção final contra requisições diretas e cadastros simultâneos. Corrija duplicatas existentes antes da migração; ela não escolhe nem apaga cadastros automaticamente.
+
+O envio para uma conta já existente é recuperação/reenvio, preservando a identidade; não cria outro professor. O banco do Mosaic Admin também impede conta comercial repetida por email dentro da mesma plataforma.

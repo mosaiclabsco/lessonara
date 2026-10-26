@@ -103,3 +103,5 @@ Pix permanece disponível nos três planos, com autenticação e autorização n
 ### Convite e definição de senha do professor
 
 Disponíveis no Essencial, Plus e Pro como parte da autenticação. Criação e reenvio exigem administrador no backend. O plano inicial vem do cadastro comercial validado no servidor e é aplicado pelo fluxo administrativo autoritativo. Reenvio/recuperação de conta existente preservam plano, dados e cobrança. O destinatário escolhe a senha; links são temporários e de uso único. O recurso não habilita emails promocionais ou lembretes nos planos sem esses benefícios.
+
+A unicidade de emails é regra de identidade comum a todos os planos: professor único no produto; aluno único por professor, incluindo inativos. Ela não restringe o mesmo aluno a um único professor.

@@ -20,9 +20,11 @@ function fail(error: { message: string; code?: string } | null) {
   if (error)
     throw new FormValidationError(
       "",
-      error.code === "P0001"
-        ? error.message
-        : "Não foi possível concluir a importação. Revise os dados e tente novamente.",
+      error.code === "23505" && error.message.includes("students_teacher_email_unique")
+        ? "Já existe um aluno com este email. Revise também os cadastros inativos antes de importar."
+        : error.code === "P0001"
+          ? error.message
+          : "Não foi possível concluir a importação. Revise os dados e tente novamente.",
     );
 }
 export async function uploadImport(form: FormData) {

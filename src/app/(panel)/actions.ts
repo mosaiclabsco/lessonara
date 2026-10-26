@@ -28,6 +28,11 @@ const str = (f: FormData, k: string) => formText(f, k) || null;
 function check<T extends { error: unknown }>(r: T): T {
   if (r.error) {
     const error = r.error as { code?: string; message?: string };
+    if (error.code === "23505" && error.message?.includes("students_teacher_email_unique"))
+      throw new FormValidationError(
+        "email",
+        "Você já tem um aluno com este email. Confira também os cadastros inativos.",
+      );
     const messages: Record<string, string> = {
       "23505": "Este registro já existe. Atualize a página.",
       "23503": "Este registro está vinculado a outro dado. Confira antes de remover.",
@@ -65,10 +70,27 @@ function studentFields(f: FormData) {
   };
 }
 
+async function checkStudentEmail(
+  supabase: Awaited<ReturnType<typeof requireUser>>["supabase"],
+  teacherId: string,
+  email: string,
+  studentId?: string,
+) {
+  let query = supabase.from("students").select("id").eq("teacher_id", teacherId).eq("email", email);
+  if (studentId) query = query.neq("id", studentId);
+  const { data } = check(await query.maybeSingle());
+  if (data)
+    throw new FormValidationError(
+      "email",
+      "Você já tem um aluno com este email. Confira também os cadastros inativos.",
+    );
+}
+
 export async function createStudent(f: FormData) {
   return validatedAction(async () => {
     const { supabase, userId } = await requireConfiguredTeacher();
     const fields = studentFields(f);
+    await checkStudentEmail(supabase, userId, fields.email);
     const planId = fields.plan_id;
     const plan = check(
       await supabase
@@ -104,12 +126,15 @@ export async function createStudent(f: FormData) {
 
 export async function updateStudent(id: string, f: FormData) {
   return validatedAction(async () => {
-    const { supabase } = await requireUser();
+    const { supabase, userId } = await requireUser();
+    const fields = studentFields(f);
+    await checkStudentEmail(supabase, userId, fields.email, id);
     check(
       await supabase
         .from("students")
-        .update({ ...studentFields(f), active: f.get("active") === "on" })
-        .eq("id", id),
+        .update({ ...fields, active: f.get("active") === "on" })
+        .eq("id", id)
+        .eq("teacher_id", userId),
     );
     after(async () => {
       try {
