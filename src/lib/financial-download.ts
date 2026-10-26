@@ -35,17 +35,16 @@ export async function readPayments(
         );
     if (studentId) q = q.eq("student_id", studentId);
     if (paymentId) q = q.eq("id", paymentId);
-    const result =
-      await q.returns<
-        {
-          id: string;
-          student_id: string;
-          paid_on: string;
-          amount: number;
-          lessons: number;
-          students: { name: string; teacher_id: string };
-        }[]
-      >();
+    const result = await q.returns<
+      {
+        id: string;
+        student_id: string;
+        paid_on: string;
+        amount: number;
+        lessons: number;
+        students: { name: string; teacher_id: string };
+      }[]
+    >();
     if (result.error) throw new Error("Não foi possível consultar os pagamentos.");
     for (const p of result.data ?? []) {
       output.push({

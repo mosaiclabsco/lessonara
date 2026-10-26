@@ -53,3 +53,6 @@ next-env.d.ts
 
 # Local-only tooling state
 /.local/
+
+# Python cache from the backup tools
+/scripts/backup/__pycache__/

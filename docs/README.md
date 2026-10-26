@@ -22,3 +22,5 @@
 | [Guia de estilo](../STYLE_GUIDE.md) | Componentes e padrões compartilhados |
 
 Código implementado, migração aplicada, deploy publicado e teste real concluído são estados distintos. Manter essa separação nos relatos e no backlog; não marcar validação por inferência.
+
+- [Backup e recuperação](backups.md): cobertura, criptografia, retenção, operação e evidências de restauração.

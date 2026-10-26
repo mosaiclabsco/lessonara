@@ -1,0 +1,58 @@
+name: Private daily backup
+on:
+  schedule:
+    - cron: "17 6 * * *" # 03:17 America/Sao_Paulo; GitHub schedules can be delayed.
+    - cron: "47 12 * * *" # Independent check, without downloading production again.
+  workflow_dispatch:
+    inputs:
+      operation:
+        type: choice
+        options: [backup, health]
+        default: backup
+permissions:
+  contents: read
+concurrency:
+  group: lessonara-production-backup
+  cancel-in-progress: false
+jobs:
+  backup:
+    if: github.repository == 'mosaiclabsco/lessonara' && github.ref == 'refs/heads/main'
+    environment: production-backup
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      GOMAXPROCS: "2"
+      RESTIC_REPOSITORY: ${{ secrets.RESTIC_REPOSITORY }}
+      RESTIC_PASSWORD: ${{ secrets.RESTIC_PASSWORD }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: auto
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install backup clients
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq restic postgresql-client-17 python3-venv
+          python3 -m venv "$RUNNER_TEMP/backup-python"
+          "$RUNNER_TEMP/backup-python/bin/pip" install --disable-pip-version-check -r scripts/backup/requirements.txt
+          echo "$RUNNER_TEMP/backup-python/bin" >> "$GITHUB_PATH"
+          echo '/usr/lib/postgresql/17/bin' >> "$GITHUB_PATH"
+      - name: Export, encrypt, verify and retain snapshots
+        if: github.event.schedule != '47 12 * * *' && inputs.operation != 'health'
+        env:
+          PGHOST: ${{ secrets.BACKUP_PGHOST }}
+          PGPORT: "5432"
+          PGDATABASE: postgres
+          PGUSER: ${{ secrets.BACKUP_PGUSER }}
+          PGPASSWORD: ${{ secrets.BACKUP_PGPASSWORD }}
+          PGSSLMODE: verify-full
+          PGSSLROOTCERT: ${{ github.workspace }}/scripts/backup/supabase-ca.crt
+          PGCONNECT_TIMEOUT: "30"
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: python scripts/backup/backup.py backup
+      - name: Detect missing snapshots
+        if: github.event.schedule == '47 12 * * *' || inputs.operation == 'health'
+        run: python scripts/backup/backup.py health
