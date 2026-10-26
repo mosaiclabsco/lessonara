@@ -99,3 +99,7 @@ Testes locais não substituem um novo pentest ou testes reais com Google/Resend/
 ### Renovação no portal do aluno
 
 Pix permanece disponível nos três planos, com autenticação e autorização no servidor. O resumo oferece renovação quando o saldo chega a uma aula ou menos. A antecipação fica em Histórico e pacotes, independentemente do saldo. Preparação, QR Code, copia-e-cola e aviso de pagamento ficam em modal; fechar o modal preserva a solicitação. Nenhum crédito é liberado sem confirmação do professor.
+
+### Convite e definição de senha do professor
+
+Disponíveis no Essencial, Plus e Pro como parte da autenticação. Criação e reenvio exigem administrador no backend. O plano inicial vem do cadastro comercial validado no servidor e é aplicado pelo fluxo administrativo autoritativo. Reenvio/recuperação de conta existente preservam plano, dados e cobrança. O destinatário escolhe a senha; links são temporários e de uso único. O recurso não habilita emails promocionais ou lembretes nos planos sem esses benefícios.

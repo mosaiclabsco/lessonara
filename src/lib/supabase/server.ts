@@ -1,3 +1,4 @@
+import { isIP } from "node:net";
 import { redirect } from "next/navigation";
 import { teacherSessionValid } from "../teacher-session";
 import { measure, measuredFetch } from "../performance";
@@ -37,10 +38,13 @@ export const createClient = cache(async function createClient() {
 });
 
 /** Cliente com a secret key: ignora RLS. Usar somente após autorização explícita no servidor e no cron. */
-export function createAdminClient() {
+export function createAdminClient(forwardedIp?: string) {
   assertDataEnvironment();
   return createSupabaseClient(url, process.env.SUPABASE_SECRET_KEY!, {
     auth: { persistSession: false, autoRefreshToken: false },
+    global: {
+      headers: forwardedIp && isIP(forwardedIp) ? { "sb-forwarded-for": forwardedIp } : {},
+    },
   });
 }
 

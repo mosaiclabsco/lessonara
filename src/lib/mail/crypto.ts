@@ -8,6 +8,7 @@ import {
 } from "node:crypto";
 
 export type SealPurpose =
+  | "teacher-password"
   | "otp"
   | "mail-delivery"
   | "campaign"
