@@ -22,17 +22,15 @@ jobs:
     timeout-minutes: 90
     env:
       GOMAXPROCS: "2"
-      RESTIC_REPOSITORY: ${{ secrets.RESTIC_REPOSITORY }}
-      RESTIC_PASSWORD: ${{ secrets.RESTIC_PASSWORD }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: auto
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
       - name: Install backup clients
         run: |
+          curl --fail --silent --show-error https://www.postgresql.org/media/keys/ACCC4CF8.asc -o "$RUNNER_TEMP/postgresql.asc"
+          sudo install -m 644 "$RUNNER_TEMP/postgresql.asc" /usr/share/keyrings/lessonara-postgresql.asc
+          echo 'deb [signed-by=/usr/share/keyrings/lessonara-postgresql.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main' | sudo tee /etc/apt/sources.list.d/lessonara-postgresql.list > /dev/null
           sudo apt-get update -qq
           sudo apt-get install -y -qq restic postgresql-client-17 python3-venv
           python3 -m venv "$RUNNER_TEMP/backup-python"
@@ -42,6 +40,11 @@ jobs:
       - name: Export, encrypt, verify and retain snapshots
         if: github.event.schedule != '47 12 * * *' && inputs.operation != 'health'
         env:
+          RESTIC_REPOSITORY: ${{ secrets.RESTIC_REPOSITORY }}
+          RESTIC_PASSWORD: ${{ secrets.RESTIC_PASSWORD }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
           PGHOST: ${{ secrets.BACKUP_PGHOST }}
           PGPORT: "5432"
           PGDATABASE: postgres
@@ -55,4 +58,10 @@ jobs:
         run: python scripts/backup/backup.py backup
       - name: Detect missing snapshots
         if: github.event.schedule == '47 12 * * *' || inputs.operation == 'health'
+        env:
+          RESTIC_REPOSITORY: ${{ secrets.RESTIC_REPOSITORY }}
+          RESTIC_PASSWORD: ${{ secrets.RESTIC_PASSWORD }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
         run: python scripts/backup/backup.py health
