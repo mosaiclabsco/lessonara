@@ -102,3 +102,9 @@ Pendências de aplicação: migrações 0030/0031 e do admin, publicação conju
 - Tela Pendências carregada pela sessão real do professor, sem erro de servidor. Financeiro mostrou CSV/XLSX/PDF e recibo individual; PDF autenticado baixado em produção e assinatura `%PDF-` confirmada. XLSX/CSV/PDF já haviam passado pela validação local documentada.
 - Login dos dois projetos retorna 200. O endpoint de jobs do admin redireciona o cliente anônimo ao login; a sessão do admin expirou e não foi contornada. A conferência visual autenticada do admin exige novo login do proprietário.
 - Permanecem separados: QA manual Jitsi/OTP real/matriz de planos/Google sob as regras novas, envio real elegível e entrega por Resend, upload real com interrupção e limites no Storage. Os testes locais não substituem esses cenários nem constituem novo pentest.
+
+## Backup externo e restauração — rodada de 25–26/10/2026
+
+Workflow diário publicado e execução real [40249812435](https://github.com/mosaiclabsco/lessonara/actions/runs/40249812435) concluída com exportação, criptografia, upload R2, leitura de volta e retenção. O primeiro teste de runner falhou por ausência do cliente PostgreSQL 17 e foi corrigido com o repositório oficial, sem acessar o banco naquela falha.
+
+Restore em ambiente local isolado recuperou 67 tabelas, 1.133 registros e um arquivo de 689 bytes. Também verificou o segredo do Vault e a descriptografia de um envelope Google, sem chamar o provedor. O ambiente de teste e suas cópias em claro foram removidos. Isto encerra a antiga pendência de backup/restore; detalhes de cobertura, limites e recuperação em [backups](backups.md). Não representa um novo pentest nem uma restauração completa do aplicativo em outro projeto de produção.

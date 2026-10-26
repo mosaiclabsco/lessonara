@@ -1,13 +1,13 @@
 # QA e hardening pendentes
 
-Status revisado em 25/10/2026; conclusões anteriores preservam suas datas. Itens desmarcados permanecem em TODO; conclusões identificam a origem da validação. Este checklist não representa achados críticos de segurança abertos.
+Status revisado em 26/10/2026; conclusões anteriores preservam suas datas. Itens desmarcados permanecem em TODO; conclusões identificam a origem da validação. Este checklist não representa achados críticos de segurança abertos.
 
 ## Requisitos obrigatórios para iniciar o piloto com a professora
 
-- [ ] **Backup e restore.** Confirmar o mecanismo de backup, retenção e local seguro e executar uma restauração de teste. O dashboard consultado em 20/10 exibiu “Last backup: No backups”; backup externo não foi verificado.
+- [x] **Backup e restore.** Backup diário externo no R2, criptografia, retenção de 14 cópias verificadas e acompanhamento no admin. O workflow GitHub Actions concluiu o ciclo de exportação e leitura de volta. Restore isolado validou 67 tabelas, 1.133 registros, arquivo, Vault e chave de aplicação. [Evidências, operação e limites](backups.md).
 - [x] **QR Code Pix no aplicativo bancário.** Gabriel confirmou a validação em 25/10/2026. Encerrado com base no teste informado pelo usuário; não implica transferência ou validação de uma renovação completa.
 
-Os três requisitos originais foram definidos por Gabriel em 21/10/2026. Em 25/10, Gabriel confirmou o Pix e adiou o teste da sala com duas pessoas para o backlog. Backup e restauração continuam pendentes antes de clientes reais.
+Os três requisitos originais foram definidos por Gabriel em 21/10/2026. Em 25/10, Gabriel confirmou o Pix e adiou o teste da sala com duas pessoas para o backlog. Backup e restauração de teste foram concluídos nesta rodada. O teste da sala segue no backlog, sem ser marcado como validado.
 
 ## QA manual
 

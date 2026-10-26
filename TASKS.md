@@ -119,12 +119,14 @@ Um professor novo se cadastra, usa o período de teste sem intervenção, recebe
 
 ## Requisitos antes de iniciar o piloto com a professora
 
-Requisitos definidos em 21/10/2026. Atualização de 25/10: Pix validado por Gabriel; teste da sala com duas pessoas adiado para o backlog. Backup e restauração continuam pendentes antes de clientes reais.
+Requisitos definidos em 21/10/2026. Atualização de 25/10: Pix validado por Gabriel; teste da sala com duas pessoas adiado para o backlog. Backup externo e restauração de teste foram validados nesta rodada; ver [operação e evidências](docs/backups.md).
 
-- [ ] **Confirmar backup e restauração** — dashboard consultado em 20/10 exibiu “Last backup: No backups”; verificar eventual backup externo e executar restore de teste antes de clientes reais.
+- [x] **Confirmar backup e restauração** — backup diário criptografado no R2, retenção das últimas 14 cópias verificadas e acompanhamento no admin. Execução pelo GitHub Actions concluída; restore isolado conferiu 67 tabelas, 1.133 registros, arquivo e recuperação das chaves. [Evidências e limites](docs/backups.md).
 - [x] **Validar QR Code Pix em aplicativo bancário** — Gabriel confirmou o teste em 25/10/2026. Não implica transferência ou validação de uma renovação completa.
 
 ## QA adiado para o backlog
+
+- [ ] **Observar a primeira execução agendada do backup** — workflow ativo, backup e checagem de atraso já validados por disparo manual. Confirmar no GitHub Actions uma execução com evento `schedule`, às 03h17 de Brasília, e registrar o resultado; não confundir o teste manual com o disparo natural.
 
 - [ ] **Jitsi sob a nova CSP com duas pessoas** — validar câmera, áudio, compartilhamento e WebSocket antes de liberar a sala aos alunos. Adiado por Gabriel em 25/10/2026; continua sem validação. Registrar ambiente, versão e resultado conforme [checklist de QA](docs/qa-pendente.md).
 

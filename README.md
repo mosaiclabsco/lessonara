@@ -66,7 +66,7 @@ pnpm build
 
 Executar as verificações sequencialmente para preservar os recursos da máquina. As regras de formulário são aplicadas no servidor, com limites no banco quando cabíveis; ver [inventário](docs/form-validation.md).
 
-O [relatório consolidado de segurança](docs/security-review.md) registra o parecer recebido, correções e limitações. O resultado histórico do pentest não certifica mudanças posteriores. QA manual pendente: Jitsi com duas pessoas, OTP real e Essencial × Pro; C8 é hardening pós-lançamento. Backup e restore ainda precisam de confirmação operacional.
+O [relatório consolidado de segurança](docs/security-review.md) registra o parecer recebido, correções e limitações. O resultado histórico do pentest não certifica mudanças posteriores. QA manual pendente: Jitsi com duas pessoas, OTP real e Essencial × Plus × Pro; C8 é hardening pós-lançamento. Backup diário externo criptografado e restauração de teste foram validados; [operação, recuperação e limites](docs/backups.md).
 
 ## Documentação e prioridades
 
