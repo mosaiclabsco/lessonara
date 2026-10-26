@@ -17,3 +17,5 @@ Convite e recuperação são autenticação básica em todos os planos. A emiss�
 ## Verificação
 
 Testes automatizados cobrem validação de senha, vínculo de professor, token inválido ou reutilizado, limites de tentativas, cookie de repetição e proibição de alterar outra conta ou plano. O teste real solicitado usa somente a conta já existente do responsável pelo produto. O recebimento do email e a escolha da senha precisam ser confirmados pelo destinatário antes de convidar a professora do piloto.
+
+Validação desta implementação: 452 testes do Lessonara aprovados, build e lint dos arquivos alterados aprovados; publicação conferida na Vercel e tela inspecionada no navegador. O email real de teste foi aceito pelo provedor e teve acompanhamento e auditoria registrados. O plano existente permaneceu Essential. Entrega na caixa de entrada e submissão da senha pelo destinatário continuam aguardando confirmação; a chave de envio não permite consultar a entrega no provedor.
