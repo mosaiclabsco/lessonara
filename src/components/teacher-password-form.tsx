@@ -55,7 +55,7 @@ export function TeacherPasswordForm({ hasSetup, email }: { hasSetup: boolean; em
       <input type="hidden" name="type" value={link?.type ?? ""} />
       <div>
         <label className="label" htmlFor="password">
-          Sua nova senha *
+          Sua nova senha
         </label>
         <input
           className="input"
@@ -74,7 +74,7 @@ export function TeacherPasswordForm({ hasSetup, email }: { hasSetup: boolean; em
       </div>
       <div>
         <label className="label" htmlFor="confirmation">
-          Confirme sua senha *
+          Confirme sua senha
         </label>
         <input
           className="input"
