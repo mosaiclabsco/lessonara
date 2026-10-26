@@ -1,14 +1,13 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { LogoMark } from "@/components/logo";
+import { Logo } from "@/components/logo";
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
     <div className="public-site">
       <header className="public-header">
         <Link href="/about" className="public-brand">
-          <LogoMark className="h-8 w-8 text-accent" />
-          Lessonara
+          <Logo />
         </Link>
         <Link href="/login" className="btn-ghost">
           Entrar
@@ -16,7 +15,10 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
       </header>
       <main className="public-main">{children}</main>
       <footer className="public-footer">
-        <span>Lessonara · Mosaic Labs</span>
+        <div className="flex items-center gap-3">
+          <Logo className="h-6 w-auto" />
+          <span>· Mosaic Labs</span>
+        </div>
         <nav aria-label="Informações públicas">
           <Link href="/about">Sobre</Link>
           <Link href="/privacy">Privacidade</Link>

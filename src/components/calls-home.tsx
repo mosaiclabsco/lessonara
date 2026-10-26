@@ -9,7 +9,7 @@ import { formatDateLong, nowInTZ } from "@/lib/dates";
 import { ActionForm, SubmitButton } from "./action-form";
 import { Button } from "./button";
 import { Icon } from "./icon";
-import { LogoMark } from "./logo";
+import { Logo } from "./logo";
 
 type Call = {
   id: string;
@@ -119,9 +119,9 @@ export function CallsHome({
     <main className="calls-home">
       <header>
         <div className="flex items-center gap-3">
-          <LogoMark className="h-9 w-9 text-accent" />
+          <Logo />
           <div>
-            <strong>Lessonara · Chamadas</strong>
+            <strong>Chamadas</strong>
             <p>{name}</p>
           </div>
         </div>

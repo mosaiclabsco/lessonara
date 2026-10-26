@@ -1,16 +1,25 @@
+// Keep the supplied SVG artwork intact; these local images do not need raster optimization.
+/* eslint-disable @next/next/no-img-element */
+export function Logo({ className = "h-9 w-auto" }: { className?: string }) {
+  return (
+    <img
+      src="/brand/complete-logo.svg"
+      width={162}
+      height={36}
+      alt="Lessonara"
+      className={`lessonara-logo ${className}`}
+    />
+  );
+}
 export function LogoMark({ className = "h-8 w-8" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" className={className} aria-hidden>
-      <rect width="32" height="32" rx="8" fill="currentColor" />
-      <path
-        d="M10 8v16h12"
-        stroke="var(--bg)"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <circle cx="21" cy="11" r="2.5" fill="var(--bg)" />
-    </svg>
+    <img
+      src="/brand/logo.svg"
+      width={36}
+      height={36}
+      alt=""
+      aria-hidden="true"
+      className={className}
+    />
   );
 }

@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { Suspense } from "react";
-import { LogoMark } from "@/components/logo";
+import { Logo } from "@/components/logo";
 import { TeacherPasswordForm } from "@/components/teacher-password-form";
 import { PASSWORD_SETUP_COOKIE, readPasswordSetup } from "@/lib/teacher-password";
 export const metadata = {
@@ -17,8 +17,7 @@ export default function PasswordPage() {
     <main className="min-h-dvh flex items-center justify-center bg-bg p-6">
       <section className="card w-full max-w-md space-y-6">
         <div className="brand">
-          <LogoMark className="h-8 w-8 text-accent" />
-          <span>lessonara.</span>
+          <Logo />
         </div>
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Defina sua senha</h1>

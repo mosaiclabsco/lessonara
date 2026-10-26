@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { LocaleFrame } from "@/components/locale-frame";
-import { LogoMark } from "@/components/logo";
+import { Logo } from "@/components/logo";
 import { SiteAnalytics } from "@/components/site-analytics";
 import "./globals.css";
 
@@ -39,8 +39,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Suspense
           fallback={
             <div className="preferences-loading" role="status">
-              <LogoMark className="h-9 w-9 text-accent" />
-              <span>Lessonara…</span>
+              <Logo />
+              <span className="sr-only">Carregando Lessonara…</span>
             </div>
           }
         >

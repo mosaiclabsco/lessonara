@@ -14,7 +14,7 @@ import { StudentActivities, type StudentActivity } from "./student-activities";
 import { StudentMaterials } from "./student-materials";
 import type { Material } from "@/lib/documents";
 import { LessonHistory } from "./lesson-history";
-import { LogoMark } from "./logo";
+import { Logo } from "./logo";
 import { Icon } from "./icon";
 import { Balance } from "./balance";
 import { LessonList } from "./lesson-list";
@@ -104,11 +104,7 @@ export function StudentPortal({
     <div className="student-portal">
       <header className="portal-header">
         <div className="brand">
-          <LogoMark className="h-8 w-8 text-accent" />
-          <span>
-            {t("lessonara")}
-            <span className="brand-dot">{t(".")}</span>
-          </span>
+          <Logo />
         </div>
         <PortalPreferences />
       </header>

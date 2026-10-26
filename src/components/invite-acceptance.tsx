@@ -3,7 +3,7 @@ import { Toast } from "./toast";
 import { useActionState } from "react";
 import { useI18n } from "./browser-preferences-provider";
 import { acceptInvite } from "@/app/student/invite/[token]/actions";
-import { LogoMark } from "./logo";
+import { Logo } from "./logo";
 import { BusyContent } from "./busy-content";
 import { Icon } from "./icon";
 export function InviteAcceptance({
@@ -21,8 +21,7 @@ export function InviteAcceptance({
     <main className="min-h-screen flex items-center justify-center p-6">
       <section className="card w-full max-w-md">
         <div className="brand mb-8">
-          <LogoMark className="h-9 w-9 text-accent" />
-          <span>lessonara.</span>
+          <Logo />
         </div>
         <h1 className="h2">{t(valid ? "Seu espaço está pronto!" : "Entre no seu espaço")}</h1>
         <p className="mt-4 text-sm text-muted">

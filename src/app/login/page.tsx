@@ -3,7 +3,7 @@ import { AccessChallenge } from "@/components/access-challenge";
 import { BusyContent } from "@/components/busy-content";
 import { useI18n } from "@/components/browser-preferences-provider";
 import { useActionState } from "react";
-import { LogoMark } from "@/components/logo";
+import { Logo } from "@/components/logo";
 import { Icon } from "@/components/icon";
 import { signIn } from "./actions";
 export default function LoginPage() {
@@ -13,11 +13,7 @@ export default function LoginPage() {
     <main className="login-screen grid lg:grid-cols-2">
       <section className="login-art max-lg:hidden">
         <div className="brand">
-          <LogoMark className="h-9 w-9 text-accent" />
-          <span>
-            {t("lessonara")}
-            <span className="brand-dot">{t(".")}</span>
-          </span>
+          <Logo />
         </div>
         <div className="login-story">
           <p className="eyebrow">{t("SEU ESPA\u00C7O PARA ENSINAR")}</p>
@@ -72,11 +68,7 @@ export default function LoginPage() {
       <section className="login-form-side">
         <div className="login-form-wrap">
           <div className="brand mb-12 lg:hidden">
-            <LogoMark className="h-9 w-9 text-accent" />
-            <span>
-              {t("lessonara")}
-              <span className="brand-dot">{t(".")}</span>
-            </span>
+            <Logo />
           </div>
           <p className="eyebrow">{t("BEM-VINDA AO SEU ESPA\u00C7O")}</p>
           <h2>{t("Que bom ter voc\u00EA aqui.")}</h2>

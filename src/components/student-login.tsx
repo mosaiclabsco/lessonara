@@ -2,7 +2,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { useI18n } from "./browser-preferences-provider";
 import { BusyContent } from "./busy-content";
-import { LogoMark } from "./logo";
+import { Logo } from "./logo";
 import { Icon } from "./icon";
 import {
   requestStudentCode,
@@ -46,10 +46,7 @@ export function StudentLogin({
     <main className="min-h-screen flex items-center justify-center p-6">
       <section className="card w-full max-w-md">
         <div className="brand mb-8">
-          <LogoMark className="h-9 w-9 text-accent" />
-          <span>
-            lessonara<span className="brand-dot">.</span>
-          </span>
+          <Logo />
         </div>
         <p className="eyebrow">{t("SEU ESPAÇO DE APRENDIZAGEM")}</p>
         <h1 className="text-2xl font-semibold">{t("Entre para acompanhar suas aulas.")}</h1>

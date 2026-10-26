@@ -3,14 +3,14 @@ import { AccessChallenge } from "./access-challenge";
 import { useActionState } from "react";
 import { signIn } from "@/app/login/actions";
 import { BusyContent } from "./busy-content";
-import { LogoMark } from "./logo";
+import { Logo } from "./logo";
 export function CallLogin() {
   const [state, action, pending] = useActionState(signIn, null);
   return (
     <main className="calls-login">
       <section className="card">
-        <LogoMark className="h-9 w-9 text-accent" />
-        <h1>Lessonara · Chamadas</h1>
+        <Logo />
+        <h1>Chamadas</h1>
         <p>Entre com sua conta de professor para acessar suas aulas.</p>
         <form action={action} className="space-y-5 mt-6">
           <input type="hidden" name="destination" value="calls" />

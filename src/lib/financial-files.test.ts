@@ -29,6 +29,11 @@ it("XLSX tem células numéricas, estilos e texto inline sem fórmulas executáv
   expect(sheet).toContain("<v>300.25</v>");
   expect(sheet).toContain('t="inlineStr"');
   expect(sheet).not.toContain("<f>");
+  expect(zip["xl/media/lessonara.png"].slice(0, 8)).toEqual(
+    new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]),
+  );
+  expect(sheet).toContain('<drawing r:id="rId1"/>');
+  expect(strFromU8(zip["xl/drawings/_rels/drawing1.xml.rels"])).toContain("../media/lessonara.png");
   expect(strFromU8(zip["xl/styles.xml"])).toContain("FF3D7264");
 });
 it("PDF individual é válido e relatório pagina sem perder pagamentos", async () => {

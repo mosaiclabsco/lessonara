@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import Link from "next/link";
-import { LogoMark } from "./logo";
+import { Logo } from "./logo";
 import { Icon } from "./icon";
 import { Button } from "./button";
 import { ActionForm, SubmitButton } from "./action-form";
@@ -82,10 +82,7 @@ export function WorkspaceShell({
             aria-hidden={collapsed}
             tabIndex={collapsed ? -1 : undefined}
           >
-            <LogoMark className="h-8 w-8 text-accent" />
-            <span className="brand-word">
-              lessonara<span className="brand-dot">.</span>
-            </span>
+            <Logo className="brand-word h-7 w-auto" />
           </Link>
           <Button
             icon="menu"
@@ -138,7 +135,7 @@ export function WorkspaceShell({
           {children}
         </div>
         <footer className="workspace-footer">
-          <span>lessonara.</span>
+          <Logo className="h-5 w-auto" />
         </footer>
       </div>
     </div>

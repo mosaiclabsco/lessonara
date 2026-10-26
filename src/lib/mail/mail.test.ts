@@ -20,7 +20,9 @@ it("não expõe IP/email nos contadores", () => {
 });
 it("templates escapam nomes e nenhum convite contém segredo do aluno", () => {
   const welcome = welcomeEmail('<img src=x onerror="alert(1)">', "Prof <script>");
-  expect(welcome.html).not.toContain("<img");
+  expect(welcome.html).not.toContain("<img src=x");
+  expect(welcome.html.match(/<img\b/g)).toHaveLength(1);
+  expect(welcome.html).toContain('src="https://lessonara.example/brand/complete-logo.png"');
   expect(welcome.html).toContain("&lt;img");
   expect(welcome.html).toContain("https://lessonara.example/student");
   expect(welcome.html).not.toContain("/a/");
