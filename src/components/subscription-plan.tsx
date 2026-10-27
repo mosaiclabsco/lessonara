@@ -1,12 +1,12 @@
 import { getTranslator } from "@/lib/i18n/server";
-import { PLATFORM_PLANS, type PlatformPlan } from "@/lib/platform-plans";
+import { PLATFORM_PLANS, platformPlan, type PlatformPlan } from "@/lib/platform-plans";
 import { formatFileSize } from "@/lib/document-rules";
 import { Icon } from "./icon";
 export async function SubscriptionPlan({ active }: { active: PlatformPlan }) {
   const { t } = await getTranslator();
   return (
     <section className="card">
-      <h2 className="h2">{t("Plano da empresa")}</h2>
+      <h2 className="h2">{t("Plano do Lessonara")}</h2>
       <p className="mt-3 text-sm text-muted">
         {t(
           "A assinatura do Lessonara define recursos e espaço de arquivos. Os pacotes de aulas dos alunos são configurados separadamente.",
@@ -31,7 +31,7 @@ export async function SubscriptionPlan({ active }: { active: PlatformPlan }) {
               </li>
               <li>
                 <Icon name="check" className="h-4 w-4" />
-                {formatFileSize(plan.maxFileBytes)} {t("por arquivo")}
+                {formatFileSize(platformPlan(plan.id).maxFileBytes)} {t("por arquivo")}
               </li>
               <li>
                 <Icon name="check" className="h-4 w-4" />

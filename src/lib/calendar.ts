@@ -11,6 +11,8 @@ export type CalendarLesson = {
   href?: string;
   classroomHref?: string;
   note?: string | null;
+  holidayName?: string | null;
+  counts?: boolean;
 };
 
 export const LESSON_STATUS: Record<LessonStatus, string> = {
@@ -62,4 +64,10 @@ export function halfHourTime(value: string | null) {
   if (!value || !/^(?:[01]\d|2[0-3]):(?:00|30)$/.test(value))
     throw new Error("Escolha uma hora com minutos 00 ou 30.");
   return value;
+}
+
+export function calendarLessonLabel(lesson: Pick<CalendarLesson, "status" | "counts">) {
+  if (lesson.status === "feriado" && lesson.counts !== undefined)
+    return lesson.counts ? "Feriado · consome 1 crédito" : "Feriado · mantém o crédito";
+  return LESSON_STATUS[lesson.status];
 }

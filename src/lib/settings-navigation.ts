@@ -2,9 +2,9 @@ export const settingsTabs = [
   { id: "general", label: "Geral", icon: "settings" },
   { id: "integrations", label: "Integrações", icon: "calendar" },
   { id: "holidays", label: "Feriados", icon: "calendar" },
-  { id: "receivables", label: "Recebimentos", icon: "check" },
+  { id: "receivables", label: "Recebimentos", icon: "card" },
   { id: "plans", label: "Planos", icon: "book" },
-  { id: "subscription", label: "Plano da empresa", icon: "book" },
+  { id: "subscription", label: "Plano do Lessonara", icon: "book" },
   { id: "support", label: "Ajuda e contato", icon: "chat" },
 ] as const;
 export type SettingsTab = (typeof settingsTabs)[number]["id"];

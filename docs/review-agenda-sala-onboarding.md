@@ -130,3 +130,15 @@ Gabriel propôs registrar a confirmação de entrada na sala, identificar cada a
 ## REV-12 — Implementação autorizada em 24/10/2026
 
 A proposta foi autorizada e implementada: ocorrências persistidas, retratos de plano/pacote, proteção antes de mudanças na agenda e captura idempotente na entrada técnica. Aba Histórico adicionada ao perfil do aluno. As projeções futuras continuam sob demanda; a regra de realização presumida pelo horário permanece explícita. As notas anteriores de decisão pendente são o registro da discussão, substituído por este encaminhamento. Regras, permissões e limites da consolidação inicial em [histórico de aulas](lesson-history.md).
+
+## Revisão visual das configurações — 27/10/2026
+
+Disponível a todos os professores; a etapa de integrações aparece somente no Plus/Pro. A assinatura do Lessonara permanece em Configurações, mas não é etapa de preparação.
+
+- Etapas concluídas têm círculo verde e texto explícito; o botão Acessar aparece somente nas pendentes.
+- O guia permanece com x/x após concluir. O professor usa Fechar guia para dispensá-lo; a migração 0035 registra a escolha por professor e a função valida sessão, perfil, plano de aulas ativo e revisões necessárias. Dispensar o guia não concede acesso a recursos. Uma configuração novamente incompleta reapresenta o guia.
+- Planos mostram Editar/Excluir diretamente. O código é uma informação gerada, e a frequência usa Aulas por semana/mês, separada do Total de aulas no pacote.
+- Feriados sobre aulas aparecem na célula do calendário e nos detalhes/listas com a consequência no crédito. O cálculo mantém a política financeira já existente e o histórico capturado.
+- Cidade do recebedor continua obrigatória pelo padrão do QR Pix. A apresentação dos limites da assinatura usa o limite efetivo do provedor (atualmente até 50 MB por arquivo).
+
+Validação: lint e build Node 24; testes de onboarding, permissões no banco, ledger e calendário; QA local com dados fictícios. Migração 0035 aplicada em produção antes da publicação. Nenhum convite/email real foi disparado no QA.

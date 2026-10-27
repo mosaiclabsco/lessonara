@@ -27,3 +27,32 @@ it("finishes optional setup by reviewing tabs without requiring external configu
   });
   expect(onboardingState(teacher, 0).complete).toBe(false);
 });
+
+it("não exige revisar a assinatura e só oculta o guia após fechamento explícito", () => {
+  const teacher = {
+    name: "Teacher",
+    lesson_minutes: 60,
+    profile_completed_at: "2026-10-27",
+    reviewed_settings: ["holidays", "receivables", "support"],
+  };
+  expect(onboardingState(teacher, 1)).toMatchObject({ complete: true, dismissed: false });
+  expect(onboardingState({ ...teacher, onboarding_dismissed_at: "2026-10-27" }, 1)).toMatchObject({
+    complete: true,
+    dismissed: true,
+  });
+  expect(onboardingState({ ...teacher, onboarding_dismissed_at: "2026-10-27" }, 0)).toMatchObject({
+    complete: false,
+    dismissed: false,
+  });
+  expect(onboardingState({ ...teacher, platform_plan: "pro" }, 1).complete).toBe(false);
+  expect(
+    onboardingState(
+      {
+        ...teacher,
+        platform_plan: "pro",
+        reviewed_settings: [...teacher.reviewed_settings, "integrations"],
+      },
+      1,
+    ).complete,
+  ).toBe(true);
+});

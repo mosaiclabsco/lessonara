@@ -9,7 +9,6 @@ import { notify } from "./toast";
 import { formatBRL } from "@/lib/dates";
 import { frequencyName, planFrequency } from "@/lib/plan-frequency";
 import { SortableList } from "./sortable-list";
-import { DropdownMenu } from "./dropdown-menu";
 import { useI18n } from "./browser-preferences-provider";
 import type { Plan } from "@/lib/data";
 export function PlanManager({ plans }: { plans: Plan[] }) {
@@ -97,23 +96,20 @@ export function PlanManager({ plans }: { plans: Plan[] }) {
                 )}
               </div>
               <strong className="saved-plan-price">{formatBRL(plan.price, locale)}</strong>
-              <DropdownMenu
-                label={t("Ações do plano")}
-                disabled={blocked}
-                items={[
-                  {
-                    label: t(plan.is_active ? "Editar" : "Ativar plano"),
-                    icon: "edit",
-                    onSelect: () => setEditor(plan),
-                  },
-                  {
-                    label: t("Excluir"),
-                    icon: "trash",
-                    danger: true,
-                    onSelect: () => setRemoval(plan),
-                  },
-                ]}
-              />
+              <div className="saved-plan-actions">
+                <Button icon="edit" disabled={blocked} onClick={() => setEditor(plan)}>
+                  {t(plan.is_active ? "Editar" : "Ativar plano")}
+                </Button>
+                <Button
+                  icon="trash"
+                  variant="menu"
+                  className="plan-delete-action"
+                  disabled={blocked}
+                  onClick={() => setRemoval(plan)}
+                >
+                  {t("Excluir")}
+                </Button>
+              </div>
             </article>
           );
         }}

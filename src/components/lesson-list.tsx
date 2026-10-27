@@ -47,8 +47,8 @@ export function LessonList({
                 <span className={`lesson-status ${s.className}`}>
                   {l.status === "feriado"
                     ? l.counts
-                      ? t("Feriado \u00B7 conta")
-                      : t("Feriado \u00B7 cr\u00E9dito mantido")
+                      ? t("Feriado · consome 1 crédito")
+                      : t("Feriado · mantém o crédito")
                     : t(s.label)}
                 </span>
                 {l.historyId && l.status === "dada" && l.statusSource === "presumed" && (

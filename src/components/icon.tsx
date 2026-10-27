@@ -1,6 +1,8 @@
 import type { SVGProps } from "react";
 
 export type IconName =
+  | "info"
+  | "card"
   | "refresh"
   | "pointer"
   | "laser"
@@ -41,6 +43,8 @@ export type IconName =
   | "save"
   | "video";
 const paths: Record<IconName, string> = {
+  info: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M12 11v6 M12 7h.01",
+  card: "M2 5h20v14H2z M2 10h20 M6 15h4",
   refresh: "M20 7v5h-5 M4 17v-5h5 M6 7a7 7 0 0 1 12-2l2 7 M4 12l2 7a7 7 0 0 0 12-2",
   pointer: "M5 3l14 9-7 1-3 7z",
   laser: "M3 21l8-8 M12 4v3 M20 12h-3 M18 6l-3 3 M6 6l3 3 M16 17l2 2",

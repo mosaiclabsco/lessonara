@@ -102,6 +102,8 @@ export async function loadTeacherOverview(view: OverviewView = "directory") {
               time: lesson.time,
               durationMinutes: lesson.durationMinutes,
               status: lesson.status,
+              holidayName: lesson.holidayName,
+              counts: lesson.counts,
               name: student.name,
               href: `/students/${student.id}`,
               classroomHref: classroomsEnabled

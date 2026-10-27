@@ -8,6 +8,7 @@ import { Icon } from "./icon";
 import { formatDate, WEEKDAYS } from "@/lib/dates";
 import {
   LESSON_STATUS,
+  calendarLessonLabel,
   lessonTiming,
   monthCells,
   shiftMonth,
@@ -115,6 +116,17 @@ export function LessonCalendar({
                   {Number(date.slice(8))}
                 </span>
                 <span className="calendar-events">
+                  {entries.some((entry) => entry.status === "feriado") && (
+                    <span
+                      className="calendar-holiday-label"
+                      title={
+                        entries.find((entry) => entry.status === "feriado")?.holidayName ??
+                        undefined
+                      }
+                    >
+                      {t("Feriado")}
+                    </span>
+                  )}
                   {entries.slice(0, 2).map((entry) => (
                     <span key={entry.id} className={`calendar-event event-${entry.status}`}>
                       <span className="font-semibold">{entry.time}</span>
@@ -183,7 +195,7 @@ export function LessonCalendar({
                         ? t("Ocorrendo agora")
                         : timing === "completed"
                           ? t("J\u00E1 aconteceu")
-                          : t(LESSON_STATUS[lesson.status])}
+                          : t(calendarLessonLabel(lesson))}
                     </span>
                     {lesson.classroomHref ? (
                       <ClassroomEntry

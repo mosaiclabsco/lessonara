@@ -1,6 +1,7 @@
 "use client";
 import { useState, useId } from "react";
 import { useI18n } from "./browser-preferences-provider";
+import { Icon } from "./icon";
 import { MoneyField } from "./money-field";
 import {
   frequencyName,
@@ -36,16 +37,17 @@ export function PlanFields({ plan }: { plan?: Plan }) {
         />
       </div>
       <div>
-        <label className="label" htmlFor={`${id}-code`}>
+        <p className="label" id={`${id}-code-label`}>
           {t("Código do plano")}
-        </label>
-        <input
+        </p>
+        <output
           id={`${id}-code`}
-          className="input"
-          readOnly
-          value={plan?.code ? `#${plan.code}` : t("Gerado ao salvar")}
+          className="input generated-plan-code"
+          aria-labelledby={`${id}-code-label`}
           aria-describedby={`${id}-code-help`}
-        />
+        >
+          {plan?.code ? `#${plan.code}` : t("Gerado automaticamente ao salvar")}
+        </output>
         <p id={`${id}-code-help`} className="mt-2 text-sm text-muted">
           {t("Use este código no CSV. Ele não muda ao editar o plano.")}
         </p>
@@ -74,11 +76,12 @@ export function PlanFields({ plan }: { plan?: Plan }) {
       </div>
       <div>
         <label className="label" htmlFor={`${id}-count`}>
-          {t("Quantidade de aulas")}
+          {t(period === "week" ? "Aulas por semana" : "Aulas por mês")}
         </label>
         <select
           id={`${id}-count`}
           name="frequency_count"
+          aria-describedby={`${id}-count-help`}
           className="input"
           required
           value={count}
@@ -94,6 +97,14 @@ export function PlanFields({ plan }: { plan?: Plan }) {
             </option>
           ))}
         </select>
+        <p id={`${id}-count-help`} className="field-explanation">
+          <Icon name="info" className="h-4 w-4" />
+          {t(
+            period === "week"
+              ? "Quantas aulas acontecem a cada semana. O total comprado fica no campo de aulas do pacote."
+              : "Quantas aulas acontecem a cada mês. O total comprado fica no campo de aulas do pacote.",
+          )}
+        </p>
       </div>
       <div>
         <label className="label" htmlFor={`${id}-mode`}>
@@ -128,7 +139,7 @@ export function PlanFields({ plan }: { plan?: Plan }) {
       </div>
       <div>
         <label className="label" htmlFor={`${id}-lessons`}>
-          {t("Aulas no pacote")}
+          {t("Total de aulas no pacote")}
         </label>
         <input
           id={`${id}-lessons`}

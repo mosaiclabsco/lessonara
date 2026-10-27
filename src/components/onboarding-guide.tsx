@@ -2,6 +2,8 @@ import { hasPlatformFeature } from "@/lib/platform-plans";
 import Link from "next/link";
 import { getTranslator } from "@/lib/i18n/server";
 import type { OnboardingState } from "@/lib/onboarding";
+import { ActionForm, SubmitButton } from "./action-form";
+import { dismissOnboarding } from "@/app/settings-review-actions";
 import { Icon } from "./icon";
 export async function OnboardingGuide({ state }: { state: OnboardingState }) {
   const { t } = await getTranslator();
@@ -23,8 +25,7 @@ export async function OnboardingGuide({ state }: { state: OnboardingState }) {
     ...[
       { id: "integrations", label: "Conheça as integrações", icon: "calendar" as const },
       { id: "holidays", label: "Revise os feriados", icon: "calendar" as const },
-      { id: "receivables", label: "Conheça os recebimentos por Pix", icon: "check" as const },
-      { id: "subscription", label: "Confira seu plano da empresa", icon: "book" as const },
+      { id: "receivables", label: "Conheça os recebimentos por Pix", icon: "card" as const },
       { id: "support", label: "Saiba onde pedir ajuda", icon: "chat" as const },
     ]
       .filter(
@@ -43,19 +44,22 @@ export async function OnboardingGuide({ state }: { state: OnboardingState }) {
           <h2>{t("Prepare seu espaço de ensino")}</h2>
           <p>{t("Configure o essencial e conheça as opções para sua rotina.")}</p>
         </div>
-        <span className="count-badge">
+        <span className={`count-badge ${state.complete ? "onboarding-complete-count" : ""}`}>
           {steps.filter((s) => s.done).length}/{steps.length}
         </span>
       </div>
       <ol className="onboarding-steps">
         {steps.map((step, index) => (
-          <li key={step.id}>
-            <Icon name={step.done ? "check" : step.icon} className="h-5 w-5" />
+          <li key={step.id} className={step.done ? "onboarding-step-complete" : ""}>
+            <span className={`onboarding-step-icon ${step.done ? "onboarding-step-done" : ""}`}>
+              <Icon name={step.done ? "check" : step.icon} className="h-5 w-5" />
+            </span>
             <div>
               <strong>
                 {index + 1}. {t(step.label)}
               </strong>
               <p>
+                {step.done && <span className="onboarding-done-label">{t("Concluído")} · </span>}
                 {t(
                   step.required
                     ? step.done
@@ -67,13 +71,25 @@ export async function OnboardingGuide({ state }: { state: OnboardingState }) {
                 )}
               </p>
             </div>
-            <Link className="btn-ghost" href={`/settings?tab=${step.id}#${step.id}`}>
-              <Icon name="arrow" className="h-4 w-4" />
-              {t(step.done ? "Revisar" : "Acessar")}
-            </Link>
+            {!step.done && (
+              <Link className="btn-ghost" href={`/settings?tab=${step.id}#${step.id}`}>
+                <Icon name="arrow" className="h-4 w-4" />
+                {t("Acessar")}
+              </Link>
+            )}
           </li>
         ))}
       </ol>
+      {state.complete && (
+        <div className="onboarding-completion">
+          <p>{t("Tudo pronto! Você pode revisar estas opções nas abas de Configurações.")}</p>
+          <ActionForm action={dismissOnboarding}>
+            <SubmitButton icon="close" className="btn-ghost">
+              {t("Fechar guia")}
+            </SubmitButton>
+          </ActionForm>
+        </div>
+      )}
     </section>
   );
 }

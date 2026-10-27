@@ -77,6 +77,9 @@ export function PixSettingsForm({ settings }: { settings: PixSettings | null }) 
               maxLength={15}
               defaultValue={settings?.receiver_city}
             />
+            <p className="mt-2 text-xs text-muted">
+              Cidade do recebedor, obrigatória no padrão do QR Code Pix.
+            </p>
           </div>
         </div>
         <p className="text-sm text-muted">

@@ -5,6 +5,7 @@ export type OnboardingState = {
   importState: string;
   reviewedSettings: string[];
   complete: boolean;
+  dismissed: boolean;
   profileDone: boolean;
   plansDone: boolean;
   ready: boolean;
@@ -13,6 +14,7 @@ export type OnboardingState = {
 export function onboardingState(
   teacher: {
     import_onboarding?: string;
+    onboarding_dismissed_at?: string | null;
     reviewed_settings?: string[];
     name?: string | null;
     lesson_minutes?: number | null;
@@ -31,15 +33,17 @@ export function onboardingState(
   );
   const plansDone = planCount > 0;
   const platformPlan = resolvePlatformPlan(teacher.platform_plan);
+  const complete =
+    profileDone &&
+    plansDone &&
+    ["integrations", "holidays", "receivables", "support"]
+      .filter((tab) => tab !== "integrations" || hasPlatformFeature(platformPlan, "google"))
+      .every((tab) => teacher.reviewed_settings?.includes(tab));
   return {
     importState: teacher.import_onboarding ?? "pending",
     reviewedSettings: teacher.reviewed_settings ?? [],
-    complete:
-      profileDone &&
-      plansDone &&
-      ["integrations", "holidays", "receivables", "subscription", "support"]
-        .filter((tab) => tab !== "integrations" || hasPlatformFeature(platformPlan, "google"))
-        .every((tab) => teacher.reviewed_settings?.includes(tab)),
+    complete,
+    dismissed: complete && Boolean(teacher.onboarding_dismissed_at),
     profileDone,
     plansDone,
     ready: profileDone && plansDone,

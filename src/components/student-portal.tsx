@@ -284,6 +284,8 @@ export function StudentPortal({
                   time: lesson.time,
                   durationMinutes: lesson.durationMinutes,
                   status: lesson.status,
+                  holidayName: lesson.holidayName,
+                  counts: lesson.counts,
                   name: teacherName ? `Aula com ${teacherName}` : "Sua aula",
                   note: lesson.holidayName
                     ? `${lesson.holidayName} · ${lesson.counts ? "conta no pacote" : "crédito mantido"}`
