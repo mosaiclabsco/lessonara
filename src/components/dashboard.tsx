@@ -2,6 +2,7 @@
 import { Pagination } from "./pagination";
 import { useI18n } from "@/components/browser-preferences-provider";
 import { localeTag } from "@/lib/i18n/core";
+import { usePlatformPlan } from "./platform-plan-provider";
 import { useState } from "react";
 import Link from "next/link";
 import { Icon } from "./icon";
@@ -67,6 +68,7 @@ export function Dashboard({
   setupReady?: boolean;
 }) {
   const { t, locale } = useI18n();
+  const plan = usePlatformPlan();
   const [query, setQuery] = useState("");
   const [pageByFilter, setPageByFilter] = useState<Record<string, number>>({});
   const [filter, setFilter] = useState<Filter>(initialFilter);
@@ -117,12 +119,17 @@ export function Dashboard({
           </p>
         </div>
         {directoryOnly && (
-          <div className="flex flex-wrap gap-3">
-            <Link href="/students/import" className="btn-ghost">
-              <Icon name="download" className="h-4 w-4" />
-              Importar dados
-            </Link>
-            <Link href={setupReady ? "/students/new" : "/settings"} className="btn">
+          <div className="student-directory-actions">
+            {plan.imports && (
+              <Link href="/students/import" className="btn-ghost directory-import">
+                <Icon name="download" className="h-4 w-4" />
+                Importar lista
+              </Link>
+            )}
+            <Link
+              href={setupReady ? "/students/new" : "/settings"}
+              className="btn directory-create"
+            >
               <Icon name="plus" className="h-4 w-4" />
               {t(setupReady ? "Novo aluno" : "Configurar espaço")}
             </Link>

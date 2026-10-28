@@ -9,22 +9,21 @@ export function ImportOnboarding({ state }: { state: OnboardingState }) {
   if (!state.ready || state.importState !== "pending" || !platformPlan(state.platformPlan).imports)
     return null;
   return (
-    <section className="card space-y-3">
-      <h2 className="h2">Já tem alunos? Importe seus dados</h2>
+    <section className="card import-onboarding space-y-3">
+      <h2 className="h2">Como você quer começar?</h2>
       <p className="text-sm text-muted">
-        Etapa opcional: use o modelo CSV ou peça ajuda à equipe. Você poderá importar depois pelo
-        botão em Alunos.
+        Cadastre seus alunos individualmente ou importe uma lista que você já usa. A importação é
+        opcional e continua disponível depois, na tela Alunos.
       </p>
-      <FormActions>
-        <ActionForm action={skipImport}>
-          <SubmitButton icon="arrow" className="btn-ghost">
-            Pular por enquanto
-          </SubmitButton>
-        </ActionForm>
-        <Link href="/students/import" className="btn">
+      <FormActions className="import-onboarding-actions">
+        <Link href="/students/import" className="btn-ghost">
           <Icon name="download" className="h-4 w-4" />
-          Importar dados
+          Importar lista de alunos
         </Link>
+        <ActionForm action={skipImport}>
+          <input type="hidden" name="next" value="student" />
+          <SubmitButton icon="plus">Cadastrar meu primeiro aluno</SubmitButton>
+        </ActionForm>
       </FormActions>
     </section>
   );

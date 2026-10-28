@@ -152,10 +152,11 @@ export async function cancelImport(id: string) {
     revalidatePath("/", "layout");
   });
 }
-export async function skipImport() {
+export async function skipImport(form?: FormData) {
   return validatedAction(async () => {
     const { supabase } = await requireUser();
     fail((await supabase.rpc("skip_student_import")).error);
     revalidatePath("/", "layout");
+    if (form?.get("next") === "student") redirect("/students/new");
   });
 }

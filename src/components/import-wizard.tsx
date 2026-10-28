@@ -106,7 +106,11 @@ export function ImportWizard({
               id="import-file"
               name="file"
               required
-              accept={mode === "guided" ? ".csv" : ".csv,.xlsx"}
+              accept={
+                mode === "guided"
+                  ? ".csv,text/csv,text/plain"
+                  : ".csv,text/csv,text/plain,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              }
             />
           </div>
           <p className="text-xs text-muted">

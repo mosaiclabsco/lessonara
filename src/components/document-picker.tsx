@@ -44,30 +44,6 @@ export function DocumentPicker({
   return (
     <div className="document-picker">
       <input type="hidden" name={name} value={chosenFile ? "" : value} />
-      {fileName && (
-        <input
-          ref={input}
-          type="file"
-          name={fileName}
-          accept={DOCUMENT_ACCEPT}
-          disabled={disabled}
-          className="sr-only"
-          tabIndex={-1}
-          onChange={(event) => {
-            const file = event.target.files?.[0];
-            if (!file) return;
-            try {
-              validateDocumentFile(file.name, file.size, plan.maxFileBytes);
-              setChosenFile(file.name);
-              setValue("");
-              close();
-            } catch (error) {
-              event.target.value = "";
-              notify(t(error instanceof Error ? error.message : "Arquivo inválido."));
-            }
-          }}
-        />
-      )}
       <button
         type="button"
         className="document-picker-trigger"
@@ -103,6 +79,30 @@ export function DocumentPicker({
         aria-labelledby={id}
         onCancel={() => setOpen(false)}
       >
+        {fileName && (
+          <input
+            ref={input}
+            type="file"
+            name={fileName}
+            accept={DOCUMENT_ACCEPT}
+            disabled={disabled}
+            className="sr-only"
+            tabIndex={-1}
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (!file) return;
+              try {
+                validateDocumentFile(file.name, file.size, plan.maxFileBytes);
+                setChosenFile(file.name);
+                setValue("");
+                close();
+              } catch (error) {
+                event.target.value = "";
+                notify(t(error instanceof Error ? error.message : "Arquivo inválido."));
+              }
+            }}
+          />
+        )}
         <div className="section-heading">
           <h3 id={id}>{t("Escolher arquivo")}</h3>
           <button type="button" className="btn-xs" onClick={close}>

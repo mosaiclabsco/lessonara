@@ -198,6 +198,7 @@ export function StudentPortal({
                           </a>
                         ) : (
                           <LessonUnavailable
+                            now={roomNow}
                             opensAt={access.opensAt}
                             closed={access.state === "closed" || afterEnd}
                           />
@@ -316,6 +317,7 @@ export function StudentPortal({
               <section className="card">
                 <h2 className="h2">{t("Histórico de aulas")}</h2>
                 <LessonHistory
+                  studentView
                   openingCredits={ledger.openingCredits}
                   lessons={displayedLessons}
                   today={today}

@@ -131,3 +131,7 @@ Validação: backup privado #11 (2026-10-28), testes de retroatividade/idempotê
 
 ### Endereços curtos dos alunos
 Em todos os planos, o portal permanente abre diretamente em `/a/<slug>`; slug globalmente único apenas identifica o cadastro e não substitui sessão/vínculo. O servidor resolve o professor, valida aluno ativo e a autorização continua vinculada ao aluno e à versão de acesso. Links antigos com professor validam a combinação antes de redirecionar ao endereço curto. Convites de primeiro acesso usam `/i/<token>`, preservando a validade de 24 horas, uso único e ativação por POST; após ativar, o destino é o portal curto. Emails, copiar link, mensagens de cobrança e retorno da sala usam o endereço permanente. Nenhum encurtador externo ou redução de entropia de tokens.
+
+### Ajustes móveis e feedback de downloads — 28/10/2026
+
+Onboarding manual, menu móvel, encerramento de horário em modal, seletores de arquivo e disponibilidade com dia/data respeitam os planos e vínculos existentes. Importação e exportação continuam exclusivas de Plus/Pro; recibos e apresentação clara de emails estão em todos os planos. Downloads CSV/XLSX/PDF exibem preparação e pausa de 10 segundos após sucesso; respostas 429 usam o prazo real de Retry-After. Verificações autoritativas de sessão, plano e tenant continuam nas rotas existentes. Mudanças apenas de apresentação não alteram permissões, cobrança ou registros de aulas.

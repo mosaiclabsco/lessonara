@@ -103,7 +103,7 @@ export function CallsHome({
           </span>
         </div>
         {clock < lesson.opensAt ? (
-          <LessonUnavailable opensAt={lesson.opensAt} />
+          <LessonUnavailable opensAt={lesson.opensAt} now={clock} />
         ) : lesson.closesAt > clock ? (
           <a className={finished ? "btn-ghost" : "btn"} href={lesson.href}>
             <Icon name="video" className="h-4 w-4" />

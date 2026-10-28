@@ -14,6 +14,7 @@ function Groups({
   openingCredits = 0,
   today,
   pastOnly = false,
+  studentView = false,
 }: {
   lessons: Lesson[];
   packages: Package[];
@@ -22,6 +23,7 @@ function Groups({
   grouping: "month" | "package";
   today: string;
   pastOnly?: boolean;
+  studentView?: boolean;
 }) {
   const { t, locale } = useI18n();
   const groups = new Map<string, Lesson[]>();
@@ -54,7 +56,7 @@ function Groups({
               : b.localeCompare(a);
   const entries =
     grouping === "month"
-      ? [...groups].sort(([a], [b]) => monthOrder(a, b))
+      ? [...groups].sort(([a], [b]) => (studentView ? b.localeCompare(a) : monthOrder(a, b)))
       : [...groups].sort(([a], [b]) =>
           b === "uncovered"
             ? -1
@@ -70,11 +72,13 @@ function Groups({
           const pack = ordered.find((pack) => pack.id === key);
           const title =
             grouping === "month"
-              ? new Intl.DateTimeFormat(localeTag(locale), {
-                  month: "long",
-                  year: "numeric",
-                  timeZone: "UTC",
-                }).format(new Date(`${key}-01T12:00:00Z`))
+              ? studentView
+                ? `${new Intl.DateTimeFormat(localeTag(locale), { month: "short", timeZone: "UTC" }).format(new Date(`${key}-01T12:00:00Z`)).replace(/\.$/, "")}/${key.slice(0, 4)}`
+                : new Intl.DateTimeFormat(localeTag(locale), {
+                    month: "long",
+                    year: "numeric",
+                    timeZone: "UTC",
+                  }).format(new Date(`${key}-01T12:00:00Z`))
               : pack
                 ? `Pacote de ${pack.lessons} aulas · ${formatDate(pack.paid_on, locale)}`
                 : key === "opening"
@@ -89,7 +93,7 @@ function Groups({
           const used = previous.filter((l) => l.counts).length;
           return (
             <details className="history-group" key={`${grouping}-${key}`} open={index === 0}>
-              <summary>
+              <summary style={studentView ? { textTransform: "none" } : undefined}>
                 <span>{title}</span>
                 <span className="count-badge">{items.length}</span>
               </summary>
@@ -108,13 +112,21 @@ function Groups({
                   {t("créditos restantes")}
                 </p>
               )}
-              {next.length > 0 && (
+              {studentView && (
+                <LessonList
+                  lessons={[...items].sort(
+                    (a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time),
+                  )}
+                  actions={actions}
+                />
+              )}
+              {!studentView && next.length > 0 && (
                 <>
                   <h3 className="text-xs font-semibold mt-4 mb-2">{t("Próximas aulas")}</h3>
                   <LessonList lessons={next} actions={actions} />
                 </>
               )}
-              {previous.length > 0 && (
+              {!studentView && previous.length > 0 && (
                 <>
                   <h3 className="text-xs font-semibold mt-4 mb-2">{t("Aulas anteriores")}</h3>
                   <LessonList lessons={previous} actions={actions} />
@@ -148,6 +160,7 @@ export function LessonHistory({
   openingCredits = 0,
   today = "",
   pastOnly = false,
+  studentView = false,
 }: {
   lessons: Lesson[];
   packages: Package[];
@@ -155,7 +168,21 @@ export function LessonHistory({
   openingCredits?: number;
   today?: string;
   pastOnly?: boolean;
+  studentView?: boolean;
 }) {
+  if (studentView)
+    return (
+      <Groups
+        lessons={lessons}
+        packages={packages}
+        actions={actions}
+        openingCredits={openingCredits}
+        today={today}
+        pastOnly={pastOnly}
+        grouping="month"
+        studentView
+      />
+    );
   return (
     <HistoryTabs
       monthContent={

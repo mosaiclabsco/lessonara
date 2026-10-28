@@ -5687,3 +5687,197 @@ html:has(.app-shell) {
     transform: translateX(-100%);
   }
 }
+
+.import-onboarding-actions {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  gap: 16px;
+}
+.student-directory-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.lesson-unavailable {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.4;
+}
+.end-schedule-trigger {
+  min-height: 40px;
+  white-space: normal;
+}
+.file-control {
+  display: flex;
+  position: relative;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  min-width: 0;
+  overflow: hidden;
+}
+.file-control-button {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--accent);
+  font-size: 12px;
+}
+.file-control-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 12px;
+}
+.file-control .file-control-native {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 16px;
+}
+.file-control:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+.file-control:has(input:disabled) {
+  opacity: 0.55;
+}
+@media (max-width: 767px) {
+  .student-directory-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  .student-directory-actions .directory-create {
+    grid-row: 1;
+  }
+  .student-directory-actions > a {
+    width: 100%;
+    justify-content: center;
+  }
+  .import-onboarding-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .import-onboarding-actions > a,
+  .import-onboarding-actions > form,
+  .import-onboarding-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+  .lesson-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-self: end;
+    width: min(100%, 144px);
+    gap: 8px;
+  }
+  .lesson-actions > form,
+  .lesson-actions button.btn-xs {
+    width: 100%;
+  }
+  .lesson-actions .btn-xs {
+    min-height: 44px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .lesson-row-with-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lesson-unavailable {
+    min-height: 44px;
+    font-size: 13px;
+  }
+  .app-shell {
+    --mobile-menu-width: min(280px, calc(100vw - 56px));
+  }
+  .app-shell .sidebar,
+  .app-shell.menu-collapsed .sidebar {
+    width: var(--mobile-menu-width);
+    padding: 20px;
+    height: 100dvh;
+    top: 0;
+    bottom: 0;
+    background: var(--surface);
+    isolation: isolate;
+    backface-visibility: hidden;
+    will-change: transform;
+  }
+  .app-shell .sidebar {
+    transition:
+      transform 220ms ease,
+      visibility 0s;
+  }
+  .app-shell.menu-collapsed .sidebar {
+    transition:
+      transform 220ms ease,
+      visibility 0s linear 220ms;
+  }
+  .app-shell .sidebar-head,
+  .app-shell.menu-collapsed .sidebar-head {
+    justify-content: flex-start;
+    gap: 8px;
+  }
+  .app-shell .sidebar-head .brand,
+  .app-shell.menu-collapsed .sidebar-head .brand {
+    width: auto;
+    flex: 1;
+    padding: 0;
+    opacity: 1;
+  }
+  .app-shell .sidebar-head .brand-word,
+  .app-shell.menu-collapsed .sidebar-head .brand-word {
+    max-width: 150px;
+    opacity: 1;
+    transition: none;
+  }
+  .app-shell .sidebar .nav-link,
+  .app-shell.menu-collapsed .sidebar .nav-link {
+    justify-content: flex-start;
+    gap: 13px;
+    padding: 12px;
+    min-height: 44px;
+    transition: background 150ms ease;
+  }
+  .app-shell .sidebar .nav-link > span,
+  .app-shell.menu-collapsed .sidebar .nav-link > span {
+    max-width: 180px;
+    opacity: 1;
+    transition: none;
+  }
+  .workspace-menu-backdrop {
+    inset: 0;
+    pointer-events: none;
+  }
+  .workspace-menu-dismiss {
+    position: fixed;
+    inset: 0 0 0 var(--mobile-menu-width);
+    z-index: 39;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+}
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  .app-shell .sidebar,
+  .app-shell.menu-collapsed .sidebar {
+    transition: none;
+  }
+}
+
+.download-control {
+  min-width: 112px;
+}
+.download-control.receipt-download {
+  min-width: 148px;
+}

@@ -128,13 +128,16 @@ export function WorkspaceShell({
         {t("Pular para o conteúdo")}
       </a>
       {mobile && !collapsed && (
-        <button
-          type="button"
-          className="workspace-menu-backdrop"
-          aria-label={t("Fechar menu")}
-          tabIndex={-1}
-          onClick={closeMobile}
-        />
+        <>
+          <div className="workspace-menu-backdrop" aria-hidden="true" />
+          <button
+            type="button"
+            className="workspace-menu-dismiss"
+            aria-label={t("Fechar menu")}
+            tabIndex={-1}
+            onClick={closeMobile}
+          />
+        </>
       )}
       <aside
         ref={sidebar}

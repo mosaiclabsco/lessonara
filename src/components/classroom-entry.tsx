@@ -39,6 +39,7 @@ export function ClassroomEntry({
   if (access.state !== "open" || (afterEnd && !canRejoin))
     return (
       <LessonUnavailable
+        now={clock}
         opensAt={access.opensAt}
         closed={access.state === "closed" || afterEnd}
         compact={compact}

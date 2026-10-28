@@ -41,3 +41,15 @@ it("boas-vindas e lembretes usam o link do professor e do aluno, sem segredo de 
     "/a/random-student",
   );
 });
+
+it("emails declare a light presentation independently of the portal theme", () => {
+  for (const email of [
+    otpEmail("123456"),
+    welcomeEmail("Aluno", "Prof"),
+    reminderEmail("Aluno", "Prof", "Renovação"),
+  ]) {
+    expect(email.html).toContain('name="color-scheme" content="light only"');
+    expect(email.html).toContain('bgcolor="#ffffff"');
+    expect(email.html).not.toContain("complete-logo-dark");
+  }
+});

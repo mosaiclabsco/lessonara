@@ -1,3 +1,4 @@
+import { EndScheduleButton } from "@/components/end-schedule-button";
 import { studentPortalPath } from "@/lib/student-links";
 import { ImportedHistoryManager } from "@/components/imported-history-manager";
 import { PaidPackages } from "@/components/paid-packages";
@@ -34,7 +35,6 @@ import { requireUser } from "@/lib/supabase/server";
 import {
   deleteEvent,
   deleteStudent,
-  endSchedule,
   markLesson,
   regenerateLink,
   updateStudent,
@@ -229,24 +229,12 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
                     </span>
                     <span className="ml-auto flex gap-1">
                       {!s.ends_on && (
-                        <ActionForm
-                          action={endSchedule.bind(null, id, s.id)}
-                          className="flex gap-1"
-                        >
-                          <input
-                            className="input py-1 text-xs"
-                            name="ends_on"
-                            type="date"
-                            required
-                            defaultValue={today}
-                          />
-                          <SubmitButton
-                            className="btn-xs"
-                            title={t("\u00DAltima aula nesse hor\u00E1rio")}
-                          >
-                            {t("encerrar")}
-                          </SubmitButton>
-                        </ActionForm>
+                        <EndScheduleButton
+                          studentId={id}
+                          scheduleId={s.id}
+                          today={today}
+                          startsOn={s.starts_on}
+                        />
                       )}
                     </span>
                   </li>
