@@ -67,9 +67,11 @@ export async function StudentContent({
     <PlatformPlanProvider plan={plan.id}>
       <StudentPortal
         emailPreferences={{
-          operational: !Boolean(
-            (student as Student & { operational_email_opt_out?: boolean })
-              .operational_email_opt_out,
+          lesson: !Boolean(
+            (student as Student & { lesson_email_opt_out?: boolean }).lesson_email_opt_out,
+          ),
+          renewal: !Boolean(
+            (student as Student & { renewal_email_opt_out?: boolean }).renewal_email_opt_out,
           ),
           promotional: !Boolean(
             (student as Student & { promotional_email_opt_out?: boolean })

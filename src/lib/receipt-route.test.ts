@@ -1,3 +1,5 @@
+import { downloadLimit } from "./download-limit";
+vi.mock("./download-limit", () => ({ downloadLimit: vi.fn().mockResolvedValue(null) }));
 import { beforeEach, expect, it, vi } from "vitest";
 const m = vi.hoisted(() => ({
   access: vi.fn(),
@@ -44,4 +46,16 @@ it("aluno não acessa pagamento de outro aluno do mesmo professor", async () => 
   m.admin.mockReturnValue(db);
   expect((await paymentReceipt(id, "student-a")).status).toBe(404);
   expect(m.read).toHaveBeenCalledWith(db, "teacher", "", "student-a", id);
+});
+
+it("nega download em excesso antes de consultar pagamentos ou gerar PDF", async () => {
+  m.user.mockResolvedValue({ supabase: "scoped-db", userId: "teacher", teacher: { name: "Prof" } });
+  vi.mocked(downloadLimit).mockResolvedValueOnce(
+    new Response("Aguarde", { status: 429, headers: { "Retry-After": "10" } }),
+  );
+  const result = await paymentReceipt(id);
+  expect(result.status).toBe(429);
+  expect(result.headers.get("Retry-After")).toBe("10");
+  expect(m.pdf).not.toHaveBeenCalled();
+  expect(m.read).not.toHaveBeenCalled();
 });

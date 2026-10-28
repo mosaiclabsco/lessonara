@@ -1,3 +1,4 @@
+import { downloadLimit } from "./download-limit";
 import { createAdminClient, requireUser } from "./supabase/server";
 import { ACTIVITY_BUCKET } from "./activities";
 import { DOCUMENT_BUCKET } from "./document-rules";
@@ -69,6 +70,12 @@ export async function activityDownload(
     name = submission.data.file_name;
     bucket = ACTIVITY_BUCKET;
   }
+  const blocked = await downloadLimit(
+    user ? `teacher/${user.userId}` : `student/${activity.student_id}`,
+    path,
+    "file",
+  );
+  if (blocked) return blocked;
   const signed = await supabase.storage.from(bucket).createSignedUrl(path, 60, { download: name });
   if (signed.error || !signed.data)
     return new Response("Não foi possível abrir o arquivo.", { status: 503, headers });

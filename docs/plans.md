@@ -105,3 +105,17 @@ Pix permanece disponível nos três planos, com autenticação e autorização n
 Disponíveis no Essencial, Plus e Pro como parte da autenticação. Criação e reenvio exigem administrador no backend. O plano inicial vem do cadastro comercial validado no servidor e é aplicado pelo fluxo administrativo autoritativo. Reenvio/recuperação de conta existente preservam plano, dados e cobrança. O destinatário escolhe a senha; links são temporários e de uso único. O recurso não habilita emails promocionais ou lembretes nos planos sem esses benefícios.
 
 A unicidade de emails é regra de identidade comum a todos os planos: professor único no produto; aluno único por professor, incluindo inativos. Ela não restringe o mesmo aluno a um único professor.
+
+## Preferências de email e proteção de downloads
+
+Todos os alunos podem configurar separadamente lembretes de aula, avisos de renovação e campanhas; isso não concede funcionalidades ao professor. Aula continua exclusiva Pro; renovação/campanhas seguem Plus/Pro. A migração 0036 copia a opção operacional anterior para as duas opções novas. Preparação SQL/worker e envio revalidam o tipo de preferência, o plano e o vínculo do aluno, inclusive em retry. O lembrete é preparado na janela de uma hora antes da aula; a renovação depende do saldo do pacote, não de dias fixos.
+
+Recibos básicos continuam em todos os planos e somente para o próprio tenant/aluno. Exportações financeiras continuam Plus/Pro. A migração 0037 acrescenta um contador persistente exclusivo do servidor para impedir geração/emissão repetitiva. As rotas retornam 429 e Retry-After com o tempo real de espera, ou 503 se o contador estiver indisponível; a autorização é mantida antes de emitir arquivos.
+
+- Recibo: mesmo recibo a cada 10 s; até 10/min e 60/h por identidade. Botão mostra preparação e pausa de 10 s após sucesso; recarregar/trocar URL não elimina o limite do servidor.
+- Exportação CSV/XLSX/PDF: mesma combinação período/formato a cada 10 s; até 6/min e 30/h por professor.
+- Documentos, materiais, arquivos de atividade/feedback e arquivo original de importação: mesma chave a cada 3 s; até 30/min e 300/h por identidade. A emissão dos links é limitada; URLs assinadas já emitidas continuam válidas por sua curta duração, e arquivos já salvos pertencem ao usuário. O visualizador da sala usa seu fluxo próprio de material e não recebe limitação de chunks de PDF.
+
+Login já possui limites persistentes por conta/IP/par: professor 20 por conta, 60 por IP e 10 por par a cada 15 min; solicitação do código do aluno 5/h por email e espera de 5 min, 20/h por IP e limite global 100/h. A verificação limita a cinco tentativas por código. Esses controles foram preservados; não há alteração de sessões ou planos.
+
+Validação de 28/10/2026: suíte com 476 testes, lint, formatação e build aprovados. QA visual local conferiu calendário claro/escuro, tooltips, alinhamento, escolhas independentes e botão com pausa/reativação. Migrações 0036/0037 aplicadas; contador de produção validado com chave sintética removida após a checagem, sem afetar cota real; acesso anônimo negado. Nenhum email real foi disparado no QA.

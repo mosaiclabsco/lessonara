@@ -1,4 +1,5 @@
 "use server";
+import { TEACHER_PASSWORD_MIN_LENGTH } from "@/lib/password-policy";
 import { cookies, headers } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/server";
 import { fingerprint } from "@/lib/mail/crypto";
@@ -111,7 +112,7 @@ async function performPasswordChange(form: FormData): Promise<PasswordState> {
       error:
         changed.error.code === "same_password"
           ? "Escolha uma senha diferente da atual."
-          : "A senha não foi aceita. Use uma senha forte com pelo menos 12 caracteres e tente novamente.",
+          : `A senha não foi aceita. Use uma senha forte com pelo menos ${TEACHER_PASSWORD_MIN_LENGTH} caracteres e tente novamente.`,
     };
   // Only server-owned metadata records completion; it grants no product entitlements.
   const recorded = await db.auth.admin.updateUserById(user.id, {

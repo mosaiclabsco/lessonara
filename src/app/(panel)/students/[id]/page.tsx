@@ -1,4 +1,4 @@
-import { Icon } from "@/components/icon";
+import { ReceiptDownload } from "@/components/receipt-download";
 import { ReplacementManager } from "@/components/replacement-manager";
 import { FormActions } from "@/components/button";
 import { needsSchedule } from "@/lib/student-setup";
@@ -207,10 +207,7 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
                     </span>
                     <span className="text-muted">{formatBRL(p.amount, locale)}</span>
                     {p.paid_on <= today && p.amount >= 0 && (
-                      <a className="btn-ghost" href={`/payments/${p.id}/receipt`}>
-                        <Icon name="download" className="h-4 w-4" />
-                        Recibo PDF
-                      </a>
+                      <ReceiptDownload href={`/payments/${p.id}/receipt`} />
                     )}
                     <ActionForm action={deletePackage.bind(null, id, p.id)} className="ml-auto">
                       <ConfirmButton message={t("Remover esse pagamento?")}>

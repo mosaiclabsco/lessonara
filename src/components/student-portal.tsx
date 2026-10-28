@@ -1,5 +1,5 @@
 "use client";
-import { ButtonLink } from "./button";
+import { ReceiptDownload } from "./receipt-download";
 import { StudentEmailPreferences } from "./student-email-preferences";
 import { StudentRenewalCard } from "./student-renewal";
 import type { StudentRenewal } from "@/lib/renewals";
@@ -48,7 +48,7 @@ export function StudentPortal({
   renewal: StudentRenewal;
   classroomEnabled?: boolean;
   meetEnabled?: boolean;
-  emailPreferences?: { operational: boolean; promotional: boolean };
+  emailPreferences?: { lesson: boolean; renewal: boolean; promotional: boolean };
   name: string;
   teacherName: string;
   ledger: Ledger;
@@ -314,7 +314,7 @@ export function StudentPortal({
             <StudentRenewalCard studentId={slug} data={renewal} />
             <div className="portal-history-grid">
               <section className="card">
-                <h2 className="h2">{t("Aulas por mês e pacote")}</h2>
+                <h2 className="h2">{t("Histórico de aulas")}</h2>
                 <LessonHistory
                   openingCredits={ledger.openingCredits}
                   lessons={displayedLessons}
@@ -346,15 +346,10 @@ export function StudentPortal({
                             </p>
                           </div>
                           {pack.paid_on <= today && pack.amount >= 0 && (
-                            <ButtonLink
-                              download
-                              prefetch={false}
-                              icon="download"
+                            <ReceiptDownload
                               className="ml-auto"
                               href={`/student/portal/${slug}/receipts/${pack.id}`}
-                            >
-                              Recibo PDF
-                            </ButtonLink>
+                            />
                           )}
                         </li>
                       ))}

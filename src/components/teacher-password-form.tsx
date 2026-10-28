@@ -1,6 +1,7 @@
 "use client";
 import { useActionState, useEffect, useState, useSyncExternalStore } from "react";
 import { defineTeacherPassword } from "@/app/login/password/actions";
+import { TEACHER_PASSWORD_MIN_LENGTH } from "@/lib/password-policy";
 import { passwordLinkInput } from "@/lib/teacher-password-input";
 import { ButtonLink } from "./button";
 import { BusyContent } from "./busy-content";
@@ -62,14 +63,15 @@ export function TeacherPasswordForm({ hasSetup, email }: { hasSetup: boolean; em
           id="password"
           name="password"
           type="password"
-          minLength={12}
+          minLength={TEACHER_PASSWORD_MIN_LENGTH}
           maxLength={128}
           required
           autoComplete="new-password"
           disabled={pending}
         />
         <p className="mt-2 text-xs text-muted">
-          Use pelo menos 12 caracteres. Prefira uma frase longa e exclusiva.
+          Use pelo menos {TEACHER_PASSWORD_MIN_LENGTH} caracteres. Prefira uma frase longa e
+          exclusiva.
         </p>
       </div>
       <div>
@@ -81,7 +83,7 @@ export function TeacherPasswordForm({ hasSetup, email }: { hasSetup: boolean; em
           id="confirmation"
           name="confirmation"
           type="password"
-          minLength={12}
+          minLength={TEACHER_PASSWORD_MIN_LENGTH}
           maxLength={128}
           required
           autoComplete="new-password"

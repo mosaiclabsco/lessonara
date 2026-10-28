@@ -1,3 +1,4 @@
+import { TEACHER_PASSWORD_MIN_LENGTH, TEACHER_PASSWORD_MAX_LENGTH } from "./password-policy";
 export { passwordLinkInput } from "./teacher-password-input";
 import { seal, unseal } from "./mail/crypto";
 export const PASSWORD_SETUP_COOKIE = "lessonara-password-setup";
@@ -13,8 +14,14 @@ export type PasswordSetup = {
 export function newTeacherPassword(form: FormData) {
   const password = form.get("password"),
     confirmation = form.get("confirmation");
-  if (typeof password !== "string" || Array.from(password).length < 12 || password.length > 128)
-    throw new Error("Use uma senha com pelo menos 12 caracteres e no máximo 128.");
+  if (
+    typeof password !== "string" ||
+    Array.from(password).length < TEACHER_PASSWORD_MIN_LENGTH ||
+    password.length > TEACHER_PASSWORD_MAX_LENGTH
+  )
+    throw new Error(
+      `Use uma senha com pelo menos ${TEACHER_PASSWORD_MIN_LENGTH} caracteres e no máximo ${TEACHER_PASSWORD_MAX_LENGTH}.`,
+    );
   if (password !== confirmation) throw new Error("As senhas não conferem.");
   return password;
 }

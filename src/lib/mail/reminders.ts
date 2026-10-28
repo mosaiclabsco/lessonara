@@ -25,7 +25,7 @@ export async function prepareReminderBatch(db: SupabaseClient, pageSize = 100) {
         "id,teacher_id,email,opening_credits,teachers!students_teacher_id_fkey!inner(platform_plan)",
       )
       .eq("active", true)
-      .eq("operational_email_opt_out", false)
+      .eq("renewal_email_opt_out", false)
       .not("email", "is", null)
       .in("teachers.platform_plan", ["plus", "pro"])
       .order("id")

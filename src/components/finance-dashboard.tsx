@@ -1,4 +1,5 @@
 "use client";
+import { ReceiptDownload } from "./receipt-download";
 import { useI18n } from "@/components/browser-preferences-provider";
 import { ButtonLink } from "./button";
 import { usePlatformPlan } from "./platform-plan-provider";
@@ -443,12 +444,10 @@ export function FinanceDashboard({
                       </td>
                       <td className="finance-amount">
                         {formatBRL(payment.amount, locale)}
-                        <a
-                          className="ml-3 text-accent underline"
+                        <ReceiptDownload
+                          className="ml-3"
                           href={`/payments/${payment.id}/receipt`}
-                        >
-                          Recibo PDF
-                        </a>
+                        />
                       </td>
                     </tr>
                   ))}

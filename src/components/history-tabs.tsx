@@ -13,7 +13,7 @@ export function HistoryTabs({
   return (
     <div>
       <div className="history-controls">
-        <span className="text-xs text-muted">{t("Agrupar aulas por")}</span>
+        <span className="text-xs text-muted">{t("Organizar histórico por")}</span>
         <div className="filter-tabs">
           <button
             type="button"
@@ -21,7 +21,7 @@ export function HistoryTabs({
             className={grouping === "month" ? "filter-active" : ""}
             onClick={() => setGrouping("month")}
           >
-            {t("M\u00EAs")}
+            {t("Por mês")}
           </button>
           <button
             type="button"
@@ -29,7 +29,7 @@ export function HistoryTabs({
             className={grouping === "package" ? "filter-active" : ""}
             onClick={() => setGrouping("package")}
           >
-            {t("Pacote")}
+            {t("Por pacote")}
           </button>
         </div>
       </div>

@@ -24,7 +24,8 @@ type MailStudent = {
   email: string;
   active: boolean;
   promotional_email_opt_out: boolean;
-  operational_email_opt_out: boolean;
+  lesson_email_opt_out: boolean;
+  renewal_email_opt_out: boolean;
   teachers: { name: string; email: string };
 };
 type Job = {
@@ -144,7 +145,7 @@ export async function processEmails(id?: string) {
         const row = await db
           .from("students")
           .select(
-            "id,access_version,teacher_id,slug,name,email,active,promotional_email_opt_out,operational_email_opt_out,teachers!students_teacher_id_fkey(name,email)",
+            "id,access_version,teacher_id,slug,name,email,active,promotional_email_opt_out,lesson_email_opt_out,renewal_email_opt_out,teachers!students_teacher_id_fkey(name,email)",
           )
           .eq("id", job.student_id)
           .maybeSingle<MailStudent>();
@@ -154,8 +155,8 @@ export async function processEmails(id?: string) {
           !student ||
           !student.active ||
           (job.template === "campaign" && student.promotional_email_opt_out) ||
-          (["reminder", "lesson_notice"].includes(job.template) &&
-            student.operational_email_opt_out) ||
+          (job.template === "reminder" && student.renewal_email_opt_out) ||
+          (job.template === "lesson_notice" && student.lesson_email_opt_out) ||
           student.email?.trim().toLowerCase() !== job.recipient
         ) {
           await finish({ status: "cancelled", payload: {}, delivery: null });

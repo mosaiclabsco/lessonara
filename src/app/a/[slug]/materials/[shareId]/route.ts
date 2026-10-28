@@ -1,3 +1,4 @@
+import { downloadLimit } from "@/lib/download-limit";
 import { authorizedStudent } from "@/lib/student-access";
 import { createAdminClient } from "@/lib/supabase/server";
 import { DOCUMENT_BUCKET, downloadLifetime } from "@/lib/document-rules";
@@ -35,6 +36,12 @@ export async function GET(
   const lifetime = downloadLifetime(share.data.expires_on, today, time, now.getUTCSeconds());
   if (!lifetime)
     return new Response("O prazo de acesso a este material terminou.", { status: 403, headers });
+  const blocked = await downloadLimit(
+    `student/${access.id}`,
+    share.data.documents.storage_path,
+    "file",
+  );
+  if (blocked) return blocked;
   const signed = await supabase.storage
     .from(DOCUMENT_BUCKET)
     .createSignedUrl(share.data.documents.storage_path, lifetime, {

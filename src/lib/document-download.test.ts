@@ -1,3 +1,4 @@
+vi.mock("@/lib/download-limit", () => ({ downloadLimit: vi.fn().mockResolvedValue(null) }));
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({

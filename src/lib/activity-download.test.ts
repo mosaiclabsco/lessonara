@@ -1,3 +1,4 @@
+vi.mock("./download-limit", () => ({ downloadLimit: vi.fn().mockResolvedValue(null) }));
 import { beforeEach, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   admin: vi.fn(),

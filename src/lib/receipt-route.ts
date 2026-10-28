@@ -1,3 +1,4 @@
+import { downloadLimit } from "./download-limit";
 import { authorizedStudent } from "./student-access";
 import { requireUser, createAdminClient } from "./supabase/server";
 import { readPayments, binaryDownload, downloadHeaders } from "./financial-download";
@@ -6,12 +7,14 @@ import { nowInTZ } from "./dates";
 export async function paymentReceipt(paymentId: string, studentId?: string) {
   if (!/^[a-f\d-]{36}$/i.test(paymentId))
     return new Response("Recibo não encontrado.", { status: 404, headers: downloadHeaders });
-  let teacherId: string, teacherName: string, db;
+  let teacherId: string, teacherName: string, actor: string, db;
   if (studentId) {
     const access = await authorizedStudent(studentId);
     if (!access)
       return new Response("Recibo não encontrado.", { status: 404, headers: downloadHeaders });
     teacherId = access.teacher_id;
+    actor = `student/${access.id}`;
+    studentId = access.id;
     db = createAdminClient();
     const teacher = await db.from("teachers").select("name").eq("id", teacherId).single();
     if (teacher.error) throw new Error("Não foi possível consultar o professor.");
@@ -20,8 +23,11 @@ export async function paymentReceipt(paymentId: string, studentId?: string) {
     const account = await requireUser();
     db = account.supabase;
     teacherId = account.userId;
+    actor = `teacher/${account.userId}`;
     teacherName = account.teacher.name ?? "Professor";
   }
+  const blocked = await downloadLimit(actor, paymentId, "receipt");
+  if (blocked) return blocked;
   const payments = await readPayments(db, teacherId, "", studentId, paymentId);
   const payment = payments[0];
   if (!payment || payment.paidOn > nowInTZ().today || payment.amount < 0)

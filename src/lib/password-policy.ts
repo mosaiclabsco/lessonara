@@ -1,0 +1,2 @@
+export const TEACHER_PASSWORD_MIN_LENGTH = 8;
+export const TEACHER_PASSWORD_MAX_LENGTH = 128;

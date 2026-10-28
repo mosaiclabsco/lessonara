@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { beforeAll, beforeEach, afterAll, expect, it } from "vitest";
 import { PLATFORM_PLANS, platformPlan } from "../../src/lib/platform-plans";
 let db: PGlite;
+let previousChoicesPreserved = false;
 const teacher = "00000000-0000-4000-8000-000000000001",
   student = "00000000-0000-4000-8000-000000000002";
 async function scalar<T = unknown>(sql: string) {
@@ -44,6 +45,17 @@ beforeAll(async () => {
       "utf8",
     ),
   );
+  await db.exec(`insert into students(id,operational_email_opt_out) values('${student}',true)`);
+  await db.exec(
+    await readFile(
+      new URL("../migrations/0036_split_email_preferences.sql", import.meta.url),
+      "utf8",
+    ),
+  );
+  previousChoicesPreserved = await scalar<boolean>(
+    "select lesson_email_opt_out and renewal_email_opt_out from students",
+  );
+  await db.exec("delete from students");
   const entitlementSql = await readFile(
     new URL("../migrations/0016_platform_entitlements.sql", import.meta.url),
     "utf8",
@@ -133,7 +145,7 @@ it("SQL deduplica lembrete e revalida Pro e preferência do aluno", async () => 
   await db.exec(`delete from email_outbox;update teachers set platform_plan='plus'`);
   expect(await queue()).toBe(0);
   await db.exec(
-    `update teachers set platform_plan='pro';update students set operational_email_opt_out=true`,
+    `update teachers set platform_plan='pro';update students set lesson_email_opt_out=true`,
   );
   expect(await queue()).toBe(0);
 });
@@ -206,4 +218,30 @@ it("gatilho real bloqueia arquivo acima do plano e cota combinada entre document
       `insert into documents values(gen_random_uuid(),'${teacher}',1,'owner/overflow.pdf','application/pdf','ready')`,
     ),
   ).rejects.toThrow(/armazenamento/);
+});
+
+it("a migração preserva a escolha anterior nos dois tipos de aviso", () => {
+  expect(previousChoicesPreserved).toBe(true);
+});
+it("SQL de renovação usa somente a preferência de renovação e mantém o controle por plano", async () => {
+  await db.exec(
+    "truncate private.renewal_runs,reminders;update students set lesson_email_opt_out=true,renewal_email_opt_out=false",
+  );
+  const queue = async () => {
+    await db.exec(
+      "truncate private.renewal_runs;insert into private.renewal_runs(scheduled_for,status,lease_id,locked_until) values(now(),'running','00000000-0000-4000-8000-000000000005',now()+interval '2 minutes')",
+    );
+    return scalar(
+      `select finish_renewal_batch((select scheduled_for from private.renewal_runs),'00000000-0000-4000-8000-000000000005',null,true,'[{"student_id":"${student}","teacher_id":"${teacher}","email":"fixture@example.com","credits":8,"message":"Última aula"}]',1)`,
+    );
+  };
+  expect(await queue()).toBe(1);
+  await db.exec(
+    "delete from email_outbox;delete from reminders;update students set renewal_email_opt_out=true,lesson_email_opt_out=false",
+  );
+  expect(await queue()).toBe(0);
+  await db.exec(
+    "update students set renewal_email_opt_out=false;update teachers set platform_plan='essential'",
+  );
+  expect(await queue()).toBe(0);
 });

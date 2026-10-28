@@ -2,7 +2,7 @@
 
 O administrador convida professores em **Lessonara → Contas → Convidar professor**. Nome, email e plano inicial são validados no servidor. O plano selecionado pertence à plataforma e precisa estar ativo; o acesso efetivo é aplicado pelo mecanismo autoritativo do Lessonara. Contas novas começam em avaliação no cadastro comercial, sem registrar pagamento ou liberar créditos de aulas.
 
-O professor recebe um email com **Definir minha senha** e escolhe sua própria senha, com no mínimo 12 caracteres. Não há senha provisória enviada por email. Depois de salvar, entra normalmente pelo login do Lessonara.
+O professor recebe um email com **Definir minha senha** e escolhe sua própria senha, com no mínimo 8 caracteres. Não há senha provisória enviada por email. Depois de salvar, entra normalmente pelo login do Lessonara.
 
 Para uma conta de professor existente, o envio prepara um link de recuperação: preserva o cadastro, os dados, o plano e a assinatura. Selecionar um plano diferente durante o convite é recusado; alterações comerciais usam o fluxo próprio de troca de plano. O acesso ao Mosaic Admin é independente.
 

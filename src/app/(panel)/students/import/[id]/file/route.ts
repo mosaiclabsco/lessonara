@@ -1,3 +1,4 @@
+import { downloadLimit } from "@/lib/download-limit";
 import { requireUser, createAdminClient } from "@/lib/supabase/server";
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -17,6 +18,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     )
   )
     return new Response("Not found", { status: 404 });
+  const blocked = await downloadLimit(`teacher/${userId}`, row.data.object_path, "file");
+  if (blocked) return blocked;
   const file = await createAdminClient()
     .storage.from("lessonara-imports")
     .download(row.data.object_path);

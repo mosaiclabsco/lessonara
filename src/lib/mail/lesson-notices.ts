@@ -13,7 +13,7 @@ export async function prepareLessonNotices(db: SupabaseClient) {
       "id,teacher_id,email,opening_credits,teachers!students_teacher_id_fkey!inner(platform_plan)",
     )
     .eq("active", true)
-    .eq("operational_email_opt_out", false)
+    .eq("lesson_email_opt_out", false)
     .eq("teachers.platform_plan", "pro")
     .not("email", "is", null)
     .order("id")

@@ -1,3 +1,4 @@
+import { downloadLimit } from "@/lib/download-limit";
 import { requireUser } from "@/lib/supabase/server";
 import { hasPlatformFeature } from "@/lib/platform-plans";
 import { reportCsv, reportXlsx, financialPdf, reportPeriod } from "@/lib/financial-files";
@@ -20,6 +21,8 @@ export async function GET(request: Request) {
   const format = url.searchParams.get("format");
   if (!["csv", "xlsx", "pdf"].includes(format ?? ""))
     return new Response("Formato inválido.", { status: 400, headers: downloadHeaders });
+  const blocked = await downloadLimit(`teacher/${userId}`, `${period}/${format}`, "export");
+  if (blocked) return blocked;
   const payments = (await readPayments(supabase, userId, period)).filter(
     (p) => p.paidOn <= nowInTZ().today && p.amount >= 0,
   );

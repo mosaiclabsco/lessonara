@@ -44,3 +44,15 @@ it("contexto temporário é autenticado e expira, inclusive após adulteração"
 it("recusa contexto maior que um cookie seguro", () => {
   expect(() => encodePasswordSetup({ ...setup(), accessToken: "x".repeat(6000) })).toThrow();
 });
+
+it("aceita 8 caracteres e recusa 7 ou confirmação divergente", () => {
+  const f = new FormData();
+  f.set("password", "Teste#83");
+  f.set("confirmation", "Teste#83");
+  expect(newTeacherPassword(f)).toBe("Teste#83");
+  f.set("password", "Teste#8");
+  f.set("confirmation", "Teste#8");
+  expect(() => newTeacherPassword(f)).toThrow(/8 caracteres/);
+  f.set("password", "Teste#83");
+  expect(() => newTeacherPassword(f)).toThrow(/não conferem/);
+});

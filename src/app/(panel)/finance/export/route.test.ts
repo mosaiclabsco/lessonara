@@ -1,3 +1,4 @@
+vi.mock("@/lib/download-limit", () => ({ downloadLimit: vi.fn().mockResolvedValue(null) }));
 import { beforeEach, expect, it, vi } from "vitest";
 const m = vi.hoisted(() => ({ user: vi.fn(), read: vi.fn() }));
 vi.mock("@/lib/supabase/server", () => ({ requireUser: m.user }));

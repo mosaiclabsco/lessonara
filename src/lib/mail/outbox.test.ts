@@ -267,14 +267,14 @@ it("convite de acesso continua disponível no Essencial", async () => {
   expect((await processEmails()).sent).toBe(1);
 });
 
-it("preferência operacional cancela renovação antes do envio", async () => {
+it("preferência de renovação cancela renovação antes do envio", async () => {
   mocks.claim.mockResolvedValue({
     data: [{ ...base, template: "reminder", payload: { message: "Renovação" } }],
     error: null,
   });
   const student = await mocks.student();
   mocks.student.mockResolvedValue({
-    data: { ...student.data, operational_email_opt_out: true },
+    data: { ...student.data, renewal_email_opt_out: true },
     error: null,
   });
   expect((await processEmails()).cancelled).toBe(1);
@@ -342,4 +342,28 @@ it("Pro envia lembrete elegível com horário e chave de idempotência", async (
     expect.objectContaining({ subject: "Sua aula começa às 09:30" }),
     "lessonara/job",
   );
+});
+
+it("recusa lembrete de aula quando somente esse tipo foi desativado, inclusive em retry", async () => {
+  mocks.plan.mockResolvedValue({ id: "pro", emails: true, lessonReminders: true });
+  mocks.claim.mockResolvedValue({ data: [{ ...base, template: "lesson_notice" }], error: null });
+  const student = await mocks.student();
+  mocks.student.mockResolvedValue({
+    data: { ...student.data, lesson_email_opt_out: true, renewal_email_opt_out: false },
+    error: null,
+  });
+  expect((await processEmails()).cancelled).toBe(1);
+  expect(mocks.send).not.toHaveBeenCalled();
+});
+it("desativar lembretes de aula não bloqueia aviso de renovação", async () => {
+  mocks.claim.mockResolvedValue({
+    data: [{ ...base, template: "reminder", payload: { message: "Renovação" } }],
+    error: null,
+  });
+  const student = await mocks.student();
+  mocks.student.mockResolvedValue({
+    data: { ...student.data, lesson_email_opt_out: true, renewal_email_opt_out: false },
+    error: null,
+  });
+  expect((await processEmails()).sent).toBe(1);
 });

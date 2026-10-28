@@ -1230,7 +1230,8 @@ input[type="checkbox"] {
   min-width: 0;
   min-height: 133px;
   padding: 12px 10px;
-  background: white;
+  background: var(--surface);
+  color: var(--fg);
   text-align: left;
   position: relative;
 }
@@ -5473,4 +5474,42 @@ html:has(.app-shell) {
   font-weight: 600;
   color: var(--extra);
   text-align: left;
+}
+
+.email-preference-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.info-tooltip {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.info-tooltip > button {
+  display: grid;
+  place-items: center;
+  min-width: 32px;
+  min-height: 32px;
+  color: var(--muted);
+  border-radius: 8px;
+}
+.info-tooltip > [role="tooltip"] {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  right: 0;
+  width: min(290px, calc(100vw - 72px));
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--fg);
+  font-size: 12px;
+  line-height: 1.6;
+  box-shadow: 0 6px 20px #0002;
+}
+
+.receipt-download {
+  min-width: 148px;
 }
