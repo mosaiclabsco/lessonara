@@ -1,4 +1,9 @@
-type Claims = { sub?: unknown; session_id?: unknown; session_expires_at?: unknown };
+type Claims = {
+  sub?: unknown;
+  session_id?: unknown;
+  support_actor?: unknown;
+  session_expires_at?: unknown;
+};
 type Client = {
   rpc: (name: "teacher_session_valid") => PromiseLike<{ data: unknown; error: unknown }>;
 };
@@ -10,6 +15,14 @@ export async function teacherSessionValid(
   now = Date.now(),
 ) {
   if (!claims?.sub || !claims.session_id) return false;
+  if (claims.support_actor !== undefined) {
+    try {
+      const result = await client.rpc("teacher_session_valid");
+      if (result.error || result.data !== true) return false;
+    } catch {
+      return false;
+    }
+  }
   if (claims.session_expires_at !== undefined) {
     return (
       typeof claims.session_expires_at === "number" &&

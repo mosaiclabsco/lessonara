@@ -1,3 +1,4 @@
+import { SupportBanner } from "@/components/support-banner";
 import { resolvePlatformPlan } from "@/lib/platform-plans";
 import { PlatformPlanProvider } from "@/components/platform-plan-provider";
 import PanelLoading from "./loading";
@@ -6,7 +7,7 @@ import { PanelNav, PanelNavFallback } from "@/components/panel-nav";
 import { WorkspaceShell } from "@/components/workspace-shell";
 import { requireUser } from "@/lib/supabase/server";
 async function Workspace({ children }: LayoutProps<"/">) {
-  const { teacher } = await requireUser();
+  const { teacher, claims } = await requireUser();
   const plan = resolvePlatformPlan(teacher.platform_plan);
   return (
     <PlatformPlanProvider plan={plan}>
@@ -18,6 +19,14 @@ async function Workspace({ children }: LayoutProps<"/">) {
           </Suspense>
         }
       >
+        {typeof claims.support_actor === "string" &&
+          typeof claims.session_expires_at === "number" && (
+            <SupportBanner
+              actor={claims.support_actor}
+              name={teacher.name}
+              expiresAt={claims.session_expires_at}
+            />
+          )}
         {children}
       </WorkspaceShell>
     </PlatformPlanProvider>

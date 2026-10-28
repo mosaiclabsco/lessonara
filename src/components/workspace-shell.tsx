@@ -18,7 +18,11 @@ const subscribeMenu = (callback: () => void) => {
     window.removeEventListener("resize", callback);
   };
 };
+let mobileCollapsed = true;
+const subscribeReady = () => () => {};
+const readMobile = () => window.matchMedia("(max-width: 767px)").matches;
 const readMenu = () => {
+  if (readMobile()) return mobileCollapsed;
   try {
     const stored = localStorage.getItem(collapseKey);
     return stored === null ? window.matchMedia("(max-width: 767px)").matches : stored === "true";
@@ -36,7 +40,14 @@ export function WorkspaceShell({
   children: ReactNode;
 }) {
   const { t } = useI18n();
+  const ready = useSyncExternalStore(
+    subscribeReady,
+    () => true,
+    () => false,
+  );
   const collapsed = useSyncExternalStore(subscribeMenu, readMenu, () => false);
+  const mobile = useSyncExternalStore(subscribeMenu, readMobile, () => false);
+  const sidebar = useRef<HTMLElement>(null);
   const [menu, setMenu] = useState(false);
   const profile = useRef<HTMLDivElement>(null);
 
@@ -54,6 +65,44 @@ export function WorkspaceShell({
       document.removeEventListener("keydown", escape);
     };
   }, []);
+  function closeMobile() {
+    if (!readMobile()) return;
+    mobileCollapsed = true;
+    window.dispatchEvent(new Event("lessonara:menu"));
+    document.getElementById("workspace-menu-opener")?.focus();
+  }
+  useEffect(() => {
+    if (!mobile || collapsed) return;
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    sidebar.current?.querySelector<HTMLButtonElement>("button")?.focus();
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        mobileCollapsed = true;
+        window.dispatchEvent(new Event("lessonara:menu"));
+        previous?.focus();
+      }
+      if (event.key === "Tab") {
+        const items = sidebar.current?.querySelectorAll<HTMLElement>(
+          "a[href],button:not(:disabled)",
+        );
+        if (!items?.length) return;
+        const first = items[0],
+          last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("keydown", escape);
+      previous?.focus();
+    };
+  }, [mobile, collapsed]);
   const initials =
     name
       .trim()
@@ -63,17 +112,42 @@ export function WorkspaceShell({
       .join("")
       .toUpperCase() || "P";
   function toggle() {
+    if (readMobile()) {
+      mobileCollapsed = !collapsed;
+      window.dispatchEvent(new Event("lessonara:menu"));
+      return;
+    }
     try {
       localStorage.setItem(collapseKey, String(!collapsed));
     } catch {}
     window.dispatchEvent(new Event("lessonara:menu"));
   }
   return (
-    <div className={`app-shell ${collapsed ? "menu-collapsed" : ""}`}>
+    <div data-menu-ready={ready} className={`app-shell ${collapsed ? "menu-collapsed" : ""}`}>
       <a href="#content" className="skip-link">
         {t("Pular para o conteúdo")}
       </a>
-      <aside id="workspace-menu" className="sidebar" aria-label={t("Menu principal")}>
+      {mobile && !collapsed && (
+        <button
+          type="button"
+          className="workspace-menu-backdrop"
+          aria-label={t("Fechar menu")}
+          tabIndex={-1}
+          onClick={closeMobile}
+        />
+      )}
+      <aside
+        ref={sidebar}
+        id="workspace-menu"
+        className="sidebar"
+        aria-label={t("Menu principal")}
+        role={mobile && !collapsed ? "dialog" : undefined}
+        aria-modal={mobile && !collapsed ? true : undefined}
+        inert={mobile && collapsed ? true : undefined}
+        onClick={(event) => {
+          if ((event.target as HTMLElement).closest("a[href]")) closeMobile();
+        }}
+      >
         <div className="sidebar-head">
           <Link
             href="/"
@@ -85,10 +159,10 @@ export function WorkspaceShell({
             <Logo className="brand-word h-7 w-auto" />
           </Link>
           <Button
-            icon="menu"
+            icon={mobile ? "close" : "menu"}
             variant="menu"
             className="icon-button sidebar-toggle"
-            aria-label={t(collapsed ? "Expandir menu" : "Recolher menu")}
+            aria-label={t(mobile ? "Fechar menu" : collapsed ? "Expandir menu" : "Recolher menu")}
             aria-controls="workspace-menu"
             aria-expanded={!collapsed}
             onClick={toggle}
@@ -96,9 +170,10 @@ export function WorkspaceShell({
         </div>
         {nav}
       </aside>
-      <div className="workspace">
+      <div className="workspace" inert={mobile && !collapsed ? true : undefined}>
         <header className="workspace-header">
           <Button
+            id="workspace-menu-opener"
             icon="menu"
             variant="menu"
             className="icon-button mobile-menu-toggle"

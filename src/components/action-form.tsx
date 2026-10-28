@@ -111,7 +111,7 @@ export function ActionForm({
       )
         throw cause;
       setError(
-        cause instanceof Error
+        cause instanceof Error && !("digest" in cause)
           ? cause.message
           : "Não foi possível concluir a ação. Tente novamente.",
       );
@@ -138,7 +138,7 @@ export function ActionForm({
       >
         {children}
       </FormContents>
-      {error && <Toast message={t(error)} />}
+      {error && <Toast message={t(error)} kind="error" />}
     </form>
   );
 }

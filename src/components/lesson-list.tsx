@@ -52,7 +52,20 @@ export function LessonList({
                     : t(s.label)}
                 </span>
                 {l.historyId && l.status === "dada" && l.statusSource === "presumed" && (
-                  <span className="text-xs text-muted">{t("Presumida pelo horário")}</span>
+                  <span className="text-xs text-muted">
+                    {t(
+                      l.provenance === "retroactive"
+                        ? "Retroativa/importada · presumida"
+                        : l.provenance === "manual"
+                          ? "Importada manualmente · presumida"
+                          : "Presumida pelo horário",
+                    )}
+                  </span>
+                )}
+                {l.provenance && l.provenance !== "schedule" && l.statusSource !== "presumed" && (
+                  <span className="text-xs text-muted">
+                    {t("Importada · corrigida pelo professor")}
+                  </span>
                 )}
                 {l.planName && <span className="text-xs text-muted">{l.planName}</span>}
                 {l.packagePosition && l.packageLessons && (

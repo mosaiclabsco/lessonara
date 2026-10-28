@@ -10,6 +10,7 @@ const PUBLIC_PATHS = [
   "/api/preferences",
 ];
 const PUBLIC_PAGES = [
+  "/support/access",
   "/api/webhooks/resend",
   "/calls",
   "/desktop",

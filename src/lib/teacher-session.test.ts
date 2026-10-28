@@ -29,3 +29,29 @@ it("uses the database policy for old claims and fails closed", async () => {
   expect(await teacherSessionValid({ rpc: vi.fn() }, undefined, now)).toBe(false);
   expect(await teacherSessionValid({ rpc: vi.fn() }, { sub: "teacher" }, now)).toBe(false);
 });
+
+it("checks support revocation in the database even for signed claims", async () => {
+  const claims = {
+    sub: "teacher",
+    session_id: "session",
+    session_expires_at: now / 1000 + 900,
+    support_actor: "operator@example.test",
+  };
+  expect(
+    await teacherSessionValid(
+      { rpc: vi.fn().mockResolvedValue({ data: false, error: null }) },
+      claims,
+      now,
+    ),
+  ).toBe(false);
+  expect(
+    await teacherSessionValid({ rpc: vi.fn().mockRejectedValue(new Error()) }, claims, now),
+  ).toBe(false);
+  expect(
+    await teacherSessionValid(
+      { rpc: vi.fn().mockResolvedValue({ data: true, error: null }) },
+      claims,
+      now,
+    ),
+  ).toBe(true);
+});

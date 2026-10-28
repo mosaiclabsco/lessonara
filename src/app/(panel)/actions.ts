@@ -309,12 +309,13 @@ export async function addPackage(studentId: string, f: FormData) {
   return validatedAction(async () => {
     const { supabase } = await requireUser();
     check(
-      await supabase.from("packages").insert({
-        student_id: studentId,
-        paid_on: isoDate(formText(f, "paid_on", 10, true), "paid_on"),
-        lessons: integerValue(f.get("lessons"), "lessons", 1, 1000),
-        amount: fieldValue("amount", () => parseMoney(formText(f, "amount", 24, true))),
-        notes: formText(f, "notes", 4000, false, true) || null,
+      await supabase.rpc("register_paid_package", {
+        p_student_id: uuidValue(studentId, "student"),
+        p_paid_on: isoDate(formText(f, "paid_on", 10, true), "paid_on"),
+        p_lessons: integerValue(f.get("lessons"), "lessons", 1, 1000),
+        p_amount: fieldValue("amount", () => parseMoney(formText(f, "amount", 24, true))),
+        p_notes: formText(f, "notes", 4000, false, true) || null,
+        p_reconstruct: f.get("reconstruct") === "on",
       }),
     );
     revalidatePath(`/students/${studentId}`);
@@ -323,10 +324,64 @@ export async function addPackage(studentId: string, f: FormData) {
 }
 
 export async function deletePackage(studentId: string, packageId: string) {
-  const { supabase } = await requireUser();
-  check(await supabase.from("packages").delete().eq("id", packageId).eq("student_id", studentId));
-  revalidatePath(`/students/${studentId}`);
-  revalidatePath("/", "layout");
+  return validatedAction(async () => {
+    const { supabase } = await requireUser();
+    check(
+      await supabase.rpc("remove_paid_package", {
+        p_student_id: uuidValue(studentId, "student"),
+        p_package_id: uuidValue(packageId, "package"),
+      }),
+    );
+    revalidatePath(`/students/${studentId}`);
+    revalidatePath("/", "layout");
+  });
+}
+
+export async function reconstructHistory(studentId: string, form: FormData) {
+  return validatedAction(async () => {
+    const { supabase } = await requireUser();
+    check(
+      await supabase.rpc("reconstruct_lesson_history", {
+        p_student_id: uuidValue(studentId, "student"),
+        p_starts_on: isoDate(form.get("starts_on"), "starts_on"),
+      }),
+    );
+    revalidatePath("/", "layout");
+  });
+}
+export async function addImportedLesson(studentId: string, form: FormData) {
+  return validatedAction(async () => {
+    const { supabase } = await requireUser();
+    const time = formText(form, "time", 5, true);
+    halfHourTime(time);
+    check(
+      await supabase.rpc("add_imported_lesson", {
+        p_student_id: uuidValue(studentId, "student"),
+        p_date: isoDate(form.get("date")),
+        p_time: time,
+      }),
+    );
+    revalidatePath("/", "layout");
+  });
+}
+export async function correctImportedLesson(
+  studentId: string,
+  occurrenceId: string,
+  status: string,
+) {
+  return validatedAction(async () => {
+    const { supabase } = await requireUser();
+    if (!["dada", "falta", "desmarcada"].includes(status))
+      throw new FormValidationError("status", "Escolha um estado válido.");
+    check(
+      await supabase.rpc("correct_imported_lesson", {
+        p_student_id: uuidValue(studentId, "student"),
+        p_occurrence_id: uuidValue(occurrenceId, "occurrence"),
+        p_status: status,
+      }),
+    );
+    revalidatePath("/", "layout");
+  });
 }
 
 /** Marca falta/desmarcada numa aula da agenda fixa. */

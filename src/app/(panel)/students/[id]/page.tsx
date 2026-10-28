@@ -1,4 +1,5 @@
-import { ReceiptDownload } from "@/components/receipt-download";
+import { ImportedHistoryManager } from "@/components/imported-history-manager";
+import { PaidPackages } from "@/components/paid-packages";
 import { ReplacementManager } from "@/components/replacement-manager";
 import { FormActions } from "@/components/button";
 import { needsSchedule } from "@/lib/student-setup";
@@ -8,7 +9,6 @@ import { getJitsiConfig } from "@/lib/classroom-server";
 import { ClassroomEntry } from "@/components/classroom-entry";
 import { classroomHref, nextJoinableLesson } from "@/lib/classroom";
 import { resendWelcome } from "../../emails/actions";
-import { MoneyField } from "@/components/money-field";
 import { ActionForm, SubmitButton } from "@/components/action-form";
 import { getTranslator } from "@/lib/i18n/server";
 import { StudentActivitySection } from "@/components/student-activity-section";
@@ -26,14 +26,12 @@ import { ConfirmButton } from "@/components/confirm-button";
 import { CopyButton } from "@/components/copy-button";
 import { LessonList } from "@/components/lesson-list";
 import { loadLedgers, studentPrice, type Plan, type Student } from "@/lib/data";
-import { nowInTZ, formatBRL, formatDate, WEEKDAYS } from "@/lib/dates";
+import { nowInTZ, formatDate, WEEKDAYS } from "@/lib/dates";
 import { visibleLessons } from "@/lib/ledger";
 import { getOrigin } from "@/lib/origin";
 import { requireUser } from "@/lib/supabase/server";
 import {
-  addPackage,
   deleteEvent,
-  deletePackage,
   deleteStudent,
   endSchedule,
   markLesson,
@@ -175,6 +173,12 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
                 {t("Aulas anteriores, com o plano e o pacote registrados na época.")}
               </p>
             </div>
+            <ImportedHistoryManager
+              studentId={id}
+              today={today}
+              initialDate={[...packages].map((p) => p.paid_on).sort()[0]}
+              lessons={lessons.filter((l) => l.past)}
+            />
             <LessonHistory
               pastOnly
               openingCredits={ledger.openingCredits}
@@ -190,67 +194,17 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
           </section>
         }
         pacotes={
-          <section id="pagamentos" className="card space-y-3 scroll-mt-6">
-            <h2 className="h2">{t("Pacotes pagos")}</h2>
-            {packages.length === 0 && (
-              <p className="text-sm text-muted">{t("Nenhum pagamento registrado.")}</p>
-            )}
-            <ul className="divide-y divide-line text-sm">
-              {[...packages]
-                .sort((a, b) => b.paid_on.localeCompare(a.paid_on))
-                .map((p) => (
-                  <li key={p.id} className="flex items-center gap-3 py-2">
-                    <span className="tabular-nums">{formatDate(p.paid_on, locale)}</span>
-                    <span>
-                      {p.lessons}
-                      {t(" aulas")}
-                    </span>
-                    <span className="text-muted">{formatBRL(p.amount, locale)}</span>
-                    {p.paid_on <= today && p.amount >= 0 && (
-                      <ReceiptDownload href={`/payments/${p.id}/receipt`} />
-                    )}
-                    <ActionForm action={deletePackage.bind(null, id, p.id)} className="ml-auto">
-                      <ConfirmButton message={t("Remover esse pagamento?")}>
-                        {t("remover")}
-                      </ConfirmButton>
-                    </ActionForm>
-                  </li>
-                ))}
-            </ul>
-            <ActionForm
-              action={addPackage.bind(null, id)}
-              className="grid grid-cols-2 gap-2 sm:grid-cols-4"
-            >
-              <div>
-                <label className="label">{t("Pago em")}</label>
-                <input className="input" name="paid_on" type="date" required defaultValue={today} />
-              </div>
-              <div>
-                <label className="label">{t("Aulas")}</label>
-                <input
-                  className="input"
-                  name="lessons"
-                  max={1000}
-                  type="number"
-                  min={1}
-                  required
-                  defaultValue={plan?.lessons}
-                />
-              </div>
-              <div>
-                <label className="label">{t("Valor (R$)")}</label>
-                <MoneyField
-                  className="input"
-                  name="amount"
-                  required
-                  defaultValue={studentPrice(student, plan)}
-                />
-              </div>
-              <div className="flex items-end">
-                <SubmitButton className="btn w-full">{t("Registrar pagamento")}</SubmitButton>
-              </div>
-            </ActionForm>
-          </section>
+          <PaidPackages
+            studentId={id}
+            packages={packages}
+            today={today}
+            lessons={plan?.lessons}
+            amount={studentPrice(student, plan)}
+            needsSchedule={
+              plan?.scheduling_mode !== "flexible" &&
+              !schedules.some((schedule) => !schedule.ends_on || schedule.ends_on >= today)
+            }
+          />
         }
         horarios={
           <section className="card space-y-3">

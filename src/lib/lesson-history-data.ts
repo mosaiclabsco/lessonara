@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Lesson, LessonEvent, LessonStatus } from "./ledger";
 export type OccurrenceRow = {
   id: string;
+  provenance?: "schedule" | "retroactive" | "manual";
   student_id: string;
   source_kind: "schedule" | "appointment" | "makeup";
   source_id: string;
@@ -47,6 +48,7 @@ export function historicalLesson(row: OccurrenceRow, today: string, time: string
     row.lesson_date < today || (row.lesson_date === today && row.lesson_time.slice(0, 5) <= time);
   return {
     historyId: row.id,
+    provenance: row.provenance,
     sourceKind: row.source_kind,
     sourceId: row.source_id,
     date: row.lesson_date,

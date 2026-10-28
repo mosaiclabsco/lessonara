@@ -39,6 +39,7 @@ export type LessonStatus = "agendada" | "dada" | "falta" | "desmarcada" | "repos
 
 export type Lesson = {
   historyId?: string;
+  provenance?: "schedule" | "retroactive" | "manual";
   planName?: string | null;
   packagePosition?: number | null;
   packageLessons?: number;

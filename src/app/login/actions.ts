@@ -42,6 +42,8 @@ export async function signIn(_prev: SignInState, formData: FormData): Promise<Si
 
 export async function signOut() {
   const supabase = await createClient();
-  await supabase.auth.signOut();
+  const claims = await supabase.auth.getClaims();
+  if (claims.data?.claims.support_actor) await supabase.rpc("end_support_session");
+  await supabase.auth.signOut(claims.data?.claims.support_actor ? { scope: "local" } : undefined);
   redirect("/login");
 }

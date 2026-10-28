@@ -63,5 +63,10 @@ export const requireUser = cache(async function requireUser() {
       .maybeSingle(),
   );
   if (teacher.error || !teacher.data) throw new Error("Acesso de professor(a) necessário.");
-  return { supabase, userId: data.claims.sub as string, teacher: teacher.data };
+  return {
+    supabase,
+    userId: data.claims.sub as string,
+    teacher: teacher.data,
+    claims: data.claims,
+  };
 });

@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 export function SiteAnalytics() {
   const path = usePathname();
   if (
+    path.startsWith("/support/") ||
     path.startsWith("/classroom/") ||
     path.startsWith("/p/") ||
     path.startsWith("/student") ||

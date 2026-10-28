@@ -1,21 +1,23 @@
 "use client";
 import { useEffect, useState, useId } from "react";
 
-export function notify(message: string) {
+export function notify(message: string, kind?: "success" | "error") {
   window.dispatchEvent(
-    new CustomEvent("lessonara:toast", { detail: { id: crypto.randomUUID(), message } }),
+    new CustomEvent("lessonara:toast", { detail: { id: crypto.randomUUID(), message, kind } }),
   );
 }
-export function Toast({ message }: { message: string }) {
+export function Toast({ message, kind }: { message: string; kind?: "success" | "error" }) {
   const id = useId();
   useEffect(() => {
     if (message)
-      window.dispatchEvent(new CustomEvent("lessonara:toast", { detail: { id, message } }));
-  }, [message, id]);
+      window.dispatchEvent(new CustomEvent("lessonara:toast", { detail: { id, message, kind } }));
+  }, [message, id, kind]);
   return null;
 }
 export function ToastHost() {
-  const [items, setItems] = useState<{ id: string; message: string }[]>([]);
+  const [items, setItems] = useState<{ id: string; message: string; kind?: "success" | "error" }[]>(
+    [],
+  );
   useEffect(() => {
     const listener = (event: Event) => {
       const item = (event as CustomEvent).detail;
@@ -33,12 +35,16 @@ export function ToastHost() {
     <div className="toast-stack" aria-live="polite">
       {items.map((item) => (
         <div
-          className={`toast-message ${/não|could not|no se|impossible|inválid|invalid|ocupado|já existe/i.test(item.message) ? "toast-error" : ""}`}
+          className={`toast-message ${item.kind === "error" || (item.kind !== "success" && /não|could not|no se|impossible|inválid|invalid|ocupado|já existe/i.test(item.message)) ? "toast-error" : ""}`}
           role="status"
           key={item.id}
         >
           <span aria-hidden="true">
-            {/não|could not|no se|impossible|inválid|invalid|ocupado|já existe/i.test(item.message)
+            {item.kind === "error" ||
+            (item.kind !== "success" &&
+              /não|could not|no se|impossible|inválid|invalid|ocupado|já existe/i.test(
+                item.message,
+              ))
               ? "!"
               : "✓"}
           </span>
