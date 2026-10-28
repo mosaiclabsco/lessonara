@@ -33,3 +33,7 @@ Aplicam-se ao portal do professor, ao portal do aluno e às telas web da sala. R
 - Respeite contraste, teclado, nomes acessíveis e layout móvel. Cores devem vir das variáveis do tema.
 
 - No menu recolhido, o controle de expandir e os links usam a mesma caixa de 44 px e o mesmo eixo central. Indicadores e badges ocultos não podem reservar margem ou deslocar os ícones.
+
+## Identidade nos temas
+
+Usar o componente compartilhado `Logo` nos portais do professor e aluno. Tema claro usa `complete-logo.svg`; tema escuro usa `complete-logo-dark.svg`, preservando as cores do SVG fornecido, sem caixa clara ou filtro. O tema segue as preferências já existentes, em todos os planos.

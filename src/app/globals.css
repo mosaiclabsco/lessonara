@@ -5385,11 +5385,14 @@ html:has(.app-shell) {
   max-width: 100%;
   object-fit: contain;
 }
-[data-theme="dark"] .lessonara-logo {
-  background: #f7f8fa;
-  border-radius: 8px;
-  padding: 6px;
-  box-sizing: content-box;
+.lessonara-logo-dark {
+  display: none;
+}
+[data-theme="dark"] .lessonara-logo-light {
+  display: none;
+}
+[data-theme="dark"] .lessonara-logo-dark {
+  display: block;
 }
 
 .generated-plan-code {

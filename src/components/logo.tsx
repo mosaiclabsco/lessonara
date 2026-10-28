@@ -2,13 +2,22 @@
 /* eslint-disable @next/next/no-img-element */
 export function Logo({ className = "h-9 w-auto" }: { className?: string }) {
   return (
-    <img
-      src="/brand/complete-logo.svg"
-      width={162}
-      height={36}
-      alt="Lessonara"
-      className={`lessonara-logo ${className}`}
-    />
+    <>
+      <img
+        src="/brand/complete-logo.svg"
+        width={162}
+        height={36}
+        alt="Lessonara"
+        className={`lessonara-logo lessonara-logo-light ${className}`}
+      />
+      <img
+        src="/brand/complete-logo-dark.svg"
+        width={162}
+        height={36}
+        alt="Lessonara"
+        className={`lessonara-logo lessonara-logo-dark ${className}`}
+      />
+    </>
   );
 }
 export function LogoMark({ className = "h-8 w-8" }: { className?: string }) {
