@@ -1,3 +1,4 @@
+// Links curtos e convites são autenticação básica em todos os planos; a URL nunca autoriza acesso.
 // Histórico retroativo, correções e pacotes: todos os planos; suporte só por operador verificado, sem ampliar o plano efetivo.
 // Convites e definição de senha são autenticação básica em todos os planos.
 // A criação/reemissão pertence exclusivamente ao admin; não é a feature comercial emails.

@@ -1,4 +1,5 @@
 "use server";
+import { studentPortalPath } from "@/lib/student-links";
 import { randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -27,5 +28,5 @@ export async function acceptInvite(_previous: { error?: string } | null, form: F
   if (old) await db.from("student_sessions").delete().eq("token_hash", hashSession(old));
   jar.set(STUDENT_COOKIE, token, { ...studentCookieOptions, maxAge: SESSION_SECONDS });
   jar.delete(CHALLENGE_COOKIE);
-  redirect(`/p/${opened.data.teacher_id}/s/${encodeURIComponent(opened.data.slug)}`);
+  redirect(studentPortalPath(opened.data.slug));
 }

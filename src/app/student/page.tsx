@@ -1,3 +1,4 @@
+import { studentPortalPath } from "@/lib/student-links";
 import { ActionForm, SubmitButton } from "@/components/action-form";
 import { getTranslator } from "@/lib/i18n/server";
 import { Suspense } from "react";
@@ -41,15 +42,14 @@ async function MyArea() {
         link.access_version === link.students.access_version,
     )
     .map((link) => link.students);
-  if (students.length === 1)
-    redirect(`/p/${students[0].teacher_id}/s/${encodeURIComponent(students[0].slug)}`);
+  if (students.length === 1) redirect(studentPortalPath(students[0].slug));
   return (
     <main className="portal-content py-12">
       <p className="eyebrow">{t("\u00C1REA DO ALUNO")}</p>
       <h1 className="text-3xl font-semibold">{t("Seu espa\u00E7o de aprendizagem")}</h1>
       <div className="mt-8 space-y-4">
         {students.map((student) => (
-          <Link key={student.id} className="card block" href={`/student/portal/${student.id}`}>
+          <Link key={student.id} className="card block" href={studentPortalPath(student.slug)}>
             <h2 className="font-semibold">{student.name}</h2>
             <p className="mt-2 text-sm text-muted">
               {t("Aulas com ")}

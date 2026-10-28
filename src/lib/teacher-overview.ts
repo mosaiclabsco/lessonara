@@ -1,3 +1,4 @@
+import { studentPortalPath } from "@/lib/student-links";
 import { platformPlan } from "./platform-plans";
 import { measure } from "./performance";
 import { getJitsiConfig } from "./classroom-server";
@@ -73,7 +74,7 @@ export async function loadTeacherOverview(view: OverviewView = "directory") {
                 remaining: ledger.remaining,
                 credits: ledger.credits,
                 used: ledger.used,
-                link: `${origin}/p/${student.teacher_id}/s/${encodeURIComponent(student.slug)}`,
+                link: `${origin}${studentPortalPath(student.slug)}`,
                 next: next ? { date: next.date, time: next.time } : null,
               };
             })
@@ -125,7 +126,7 @@ export async function loadTeacherOverview(view: OverviewView = "directory") {
                 id: student.id,
                 name: student.name,
                 remaining: ledger.remaining,
-                link: `${origin}/p/${student.teacher_id}/s/${encodeURIComponent(student.slug)}`,
+                link: `${origin}${studentPortalPath(student.slug)}`,
                 hasEmail: Boolean(student.email),
                 phone: student.phone ?? null,
                 phoneCountry: student.phone_country ?? null,

@@ -1,4 +1,5 @@
 "use server";
+import { studentPortalPath } from "@/lib/student-links";
 import { authorizedStudent } from "@/lib/student-access";
 import { createAdminClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
@@ -28,6 +29,6 @@ export async function updateStudentEmailPreferences(
     .eq("teacher_id", access.teacher_id);
   if (result.error) return { ok: false, message: "Não foi possível salvar as preferências." };
   revalidatePath(`/student/portal/${access.id}`);
-  if (access.slug) revalidatePath(`/p/${access.teacher_id}/s/${encodeURIComponent(access.slug)}`);
+  if (access.slug) revalidatePath(studentPortalPath(access.slug));
   return { ok: true, message: "Preferências salvas." };
 }

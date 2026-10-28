@@ -1,4 +1,5 @@
 const PUBLIC_PATHS = [
+  "/i",
   "/emails/unsubscribe",
   "/pdf-assets",
   "/classroom",

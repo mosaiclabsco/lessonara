@@ -14,6 +14,7 @@ it.each(["/about-admin", "/privacy/private", "/terms-admin"])(
 it.each([
   "/login",
   "/a/link",
+  "/i/invitation",
   "/student",
   "/student/login",
   "/p/teacher/s/student",
@@ -35,4 +36,8 @@ it("somente o endpoint exato do webhook dispensa login; a assinatura é conferid
   expect(isPublicPath("/api/webhooks/resend")).toBe(true);
   expect(isPublicPath("/api/webhooks/resend/private")).toBe(false);
   expect(isPublicPath("/api/webhooks/admin")).toBe(false);
+});
+
+it("does not expose routes that only resemble the short invitation prefix", () => {
+  expect(isPublicPath("/i-admin")).toBe(false);
 });

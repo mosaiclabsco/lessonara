@@ -1,4 +1,5 @@
 "use server";
+import { studentPortalPath } from "@/lib/student-links";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { authorizedStudent } from "@/lib/student-access";
@@ -67,7 +68,7 @@ export async function studentRenewal(
         ).error,
       );
     else throw new FormValidationError("", "Ação inválida.");
-    revalidatePath(`/p/${access.teacher_id}/s/${encodeURIComponent(access.slug)}`);
+    revalidatePath(studentPortalPath(access.slug));
   });
 }
 export async function resolveRenewal(requestId: string, reject: boolean, form: FormData) {

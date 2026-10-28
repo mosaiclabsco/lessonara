@@ -1,3 +1,4 @@
+import { studentInvitePath } from "../student-links";
 import { randomBytes } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/server";
 import { hashSession } from "./crypto";
@@ -35,5 +36,5 @@ export async function createWelcomeInvite(student: {
   });
   if (inserted.error) throw new Error("Não foi possível guardar o convite.");
   const origin = new URL(studentLoginUrl()).origin;
-  return `${origin}/student/invite/${token}`;
+  return `${origin}${studentInvitePath(token)}`;
 }

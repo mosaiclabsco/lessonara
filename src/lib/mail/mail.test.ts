@@ -36,10 +36,8 @@ it("OTP tem código, prazo e aviso contra compartilhamento", () => {
 
 it("boas-vindas e lembretes usam o link do professor e do aluno, sem segredo de sessão", () => {
   const args = ["Aluno", "Prof", "teacher-id", "random-student"] as const;
-  expect(welcomeEmail(...args).html).toContain(
-    "https://lessonara.example/p/teacher-id/s/random-student",
-  );
+  expect(welcomeEmail(...args).html).toContain("https://lessonara.example/a/random-student");
   expect(reminderEmail("Aluno", "Prof", "Renove", "teacher-id", "random-student").text).toContain(
-    "/p/teacher-id/s/random-student",
+    "/a/random-student",
   );
 });

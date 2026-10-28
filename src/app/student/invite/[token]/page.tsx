@@ -1,3 +1,4 @@
+import { studentPortalPath } from "@/lib/student-links";
 import { Suspense } from "react";
 import { createAdminClient } from "@/lib/supabase/server";
 import { hashSession } from "@/lib/mail/crypto";
@@ -33,7 +34,7 @@ async function Content({ params }: { params: Promise<{ token: string }> }) {
       invite.email === invite.students.email &&
       invite.access_version === invite.students.access_version
     ) {
-      loginUrl = `/p/${invite.teacher_id}/s/${encodeURIComponent(invite.students.slug)}`;
+      loginUrl = studentPortalPath(invite.students.slug);
       if (await authorizedStudent(invite.student_id)) redirect(loginUrl);
       valid = !invite.used_at && Date.parse(invite.expires_at) > new Date().getTime();
     }

@@ -79,7 +79,7 @@ it("usa vínculo validado do aluno e ocorrência real da agenda", async () => {
   );
   const result = await loadClassroomAccess(ref);
   expect(result?.participant).toEqual({ id: ref.studentId, name: "Aluno", role: "student" });
-  expect(result?.backHref).toBe("/p/teacher/s/student-link");
+  expect(result?.backHref).toBe("/a/student-link");
   expect(mock.claims).toHaveBeenCalled();
 });
 

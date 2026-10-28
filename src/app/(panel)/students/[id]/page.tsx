@@ -1,3 +1,4 @@
+import { studentPortalPath } from "@/lib/student-links";
 import { ImportedHistoryManager } from "@/components/imported-history-manager";
 import { PaidPackages } from "@/components/paid-packages";
 import { ReplacementManager } from "@/components/replacement-manager";
@@ -87,7 +88,7 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
   const cancelled = ledger.lessons.filter(
     (l) => l.event?.kind === "desmarcada" && !replaced.has(l.event.id),
   );
-  const link = `${await getOrigin()}/p/${student.teacher_id}/s/${encodeURIComponent(student.slug)}`;
+  const link = `${await getOrigin()}${studentPortalPath(student.slug)}`;
   const lessonActions = (l: (typeof lessons)[number]) =>
     l.status === "feriado" ||
     (l.sourceKind === "makeup" && l.status === "desmarcada") ? null : l.event ? (

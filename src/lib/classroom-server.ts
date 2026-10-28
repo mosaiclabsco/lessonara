@@ -1,3 +1,4 @@
+import { studentPortalPath } from "@/lib/student-links";
 import { teacherSessionValid } from "./teacher-session";
 import "server-only";
 import { loadTeacherPlan } from "./platform-plan-server";
@@ -75,7 +76,7 @@ export async function loadClassroomAccess(ref: ClassroomRef) {
   const backHref =
     participant.role === "teacher"
       ? `/students/${target.data.id}`
-      : `/p/${target.data.teacher_id}/s/${encodeURIComponent(target.data.slug)}`;
+      : studentPortalPath(target.data.slug);
   const plan = await loadTeacherPlan(target.data.teacher_id, db);
   return { participant, lesson, backHref, platformPlan: plan.id, roomAllowed: plan.classroom };
 }

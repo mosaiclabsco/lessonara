@@ -1,3 +1,4 @@
+import { studentPortalPath } from "../student-links";
 export function escapeHtml(value: string): string {
   return value.replace(
     /[&<>"']/g,
@@ -11,10 +12,7 @@ export function studentLoginUrl(teacherId?: string, slug?: string) {
     (process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
       : "http://localhost:3001");
-  return new URL(
-    teacherId && slug ? `/p/${teacherId}/s/${encodeURIComponent(slug)}` : "/student",
-    origin,
-  ).href;
+  return new URL(teacherId && slug ? studentPortalPath(slug) : "/student", origin).href;
 }
 
 function layout(title: string, content: string) {

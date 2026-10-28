@@ -47,7 +47,7 @@ it("binds the payment report to the authenticated student and request", async ()
     p_request: request,
     p_cancel: false,
   });
-  expect(mocks.revalidate).toHaveBeenCalledWith("/p/teacher/s/student-slug");
+  expect(mocks.revalidate).toHaveBeenCalledWith("/a/student-slug");
 });
 it("does not claim success when the report is stale or belongs to another student", async () => {
   mocks.rpc.mockResolvedValue({ error: { message: "not found" } });
