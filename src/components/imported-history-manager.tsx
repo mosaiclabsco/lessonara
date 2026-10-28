@@ -9,7 +9,7 @@ import { isFormFailure } from "@/lib/form-validation";
 import type { Lesson } from "@/lib/ledger";
 import { formatDate } from "@/lib/dates";
 import { Button, FormActions } from "./button";
-import { ActionForm, SubmitButton } from "./action-form";
+import { ActionForm, SubmitButton, ActionGroup } from "./action-form";
 import { Dialog } from "./dialog";
 import { TimeField } from "./time-field";
 import { useI18n } from "./browser-preferences-provider";
@@ -57,7 +57,7 @@ export function ImportedHistoryManager({
         )}
         busy={busy}
       >
-        <div className="space-y-6">
+        <ActionGroup className="space-y-6">
           <ActionForm action={(form) => execute(reconstructHistory.bind(null, studentId), form)}>
             <label className="label" htmlFor={`${id}-start`}>
               {t("Reconstruir desde")}
@@ -152,7 +152,7 @@ export function ImportedHistoryManager({
               </p>
             </div>
           )}
-        </div>
+        </ActionGroup>
       </Dialog>
     </>
   );

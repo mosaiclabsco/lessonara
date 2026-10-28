@@ -48,6 +48,12 @@ beforeAll(async () => {
     ),
   );
   await db.exec(
+    await readFile(
+      new URL("../migrations/0041_history_reconstruction_guards.sql", import.meta.url),
+      "utf8",
+    ),
+  );
+  await db.exec(
     `set test.uid='${teacher}';set test.role='authenticated';update schedules set ends_on=null where id='${schedule}';`,
   );
 }, 30000);
@@ -69,10 +75,12 @@ it("reconstructs once, reallocates chronologically, corrects imported lessons, a
   expect(rows.filter((r) => r.provenance === "retroactive").length).toBe(3);
   expect(rows[0].package_ref).toBe(pkg);
   expect(rows[0].package_position).toBe(1);
+  const auditsBefore = (await query(`select id from lesson_occurrence_changes`)).length;
   const again = await query<{ n: number }>(
     `select public.reconstruct_lesson_history('${student}',current_date-28) n`,
   );
   expect(again[0].n).toBe(0);
+  expect((await query(`select id from lesson_occurrence_changes`)).length).toBe(auditsBefore);
   await db.exec(`select public.register_paid_package('${student}',current_date,4,300,null,false);`);
   const duplicates = await query(
     `select package_ref,package_position from lesson_occurrences where counts and package_ref is not null group by 1,2 having count(*)>1`,
