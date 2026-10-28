@@ -5385,13 +5385,13 @@ html:has(.app-shell) {
   max-width: 100%;
   object-fit: contain;
 }
-.lessonara-logo-dark {
+.lessonara-logo.lessonara-logo-dark {
   display: none;
 }
-[data-theme="dark"] .lessonara-logo-light {
+[data-theme="dark"] .lessonara-logo.lessonara-logo-light {
   display: none;
 }
-[data-theme="dark"] .lessonara-logo-dark {
+[data-theme="dark"] .lessonara-logo.lessonara-logo-dark {
   display: block;
 }
 
