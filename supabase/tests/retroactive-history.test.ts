@@ -36,7 +36,7 @@ beforeAll(async () => {
     await readFile(new URL("../migrations/0029_lesson_history.sql", import.meta.url), "utf8"),
   );
   await db.exec(
-    `insert into teachers(id) values('${teacher}');insert into plans(id,teacher_id,name,lessons,price) values('${plan}','${teacher}','Original',4,300);insert into students(id,teacher_id,plan_id,name) values('${student}','${teacher}','${plan}','Fixture');insert into packages(id,student_id,paid_on,lessons,amount) values('${pkg}','${student}',current_date-30,4,300);insert into schedules(id,student_id,weekday,time,starts_on,ends_on) values('${schedule}','${student}',extract(dow from current_date-7),'09:00',current_date-7,current_date-1);`,
+    `insert into teachers(id) values('${teacher}');insert into plans(id,teacher_id,name,lessons,price) values('${plan}','${teacher}','Original',4,300);insert into students(id,teacher_id,plan_id,name) values('${student}','${teacher}','${plan}','Fixture');insert into packages(id,student_id,paid_on,lessons,amount) values('${pkg}','${student}',((now() at time zone 'America/Sao_Paulo')::date)-30,4,300);insert into schedules(id,student_id,weekday,time,starts_on,ends_on) values('${schedule}','${student}',extract(dow from ((now() at time zone 'America/Sao_Paulo')::date)-7),'09:00',((now() at time zone 'America/Sao_Paulo')::date)-7,((now() at time zone 'America/Sao_Paulo')::date)-1);`,
   );
   await db.exec(
     await readFile(new URL("../migrations/0038_retroactive_history.sql", import.meta.url), "utf8"),
@@ -62,7 +62,9 @@ afterAll(async () => {
   await db?.close();
 });
 it("reconstructs once, reallocates chronologically, corrects imported lessons, and removes payments without deleting history", async () => {
-  await db.exec(`select public.reconstruct_lesson_history('${student}',current_date-28);`);
+  await db.exec(
+    `select public.reconstruct_lesson_history('${student}',((now() at time zone 'America/Sao_Paulo')::date)-28);`,
+  );
   const rows = await query<{
     id: string;
     provenance: string;
@@ -77,11 +79,13 @@ it("reconstructs once, reallocates chronologically, corrects imported lessons, a
   expect(rows[0].package_position).toBe(1);
   const auditsBefore = (await query(`select id from lesson_occurrence_changes`)).length;
   const again = await query<{ n: number }>(
-    `select public.reconstruct_lesson_history('${student}',current_date-28) n`,
+    `select public.reconstruct_lesson_history('${student}',((now() at time zone 'America/Sao_Paulo')::date)-28) n`,
   );
   expect(again[0].n).toBe(0);
   expect((await query(`select id from lesson_occurrence_changes`)).length).toBe(auditsBefore);
-  await db.exec(`select public.register_paid_package('${student}',current_date,4,300,null,false);`);
+  await db.exec(
+    `select public.register_paid_package('${student}',((now() at time zone 'America/Sao_Paulo')::date),4,300,null,false);`,
+  );
   const duplicates = await query(
     `select package_ref,package_position from lesson_occurrences where counts and package_ref is not null group by 1,2 having count(*)>1`,
   );
@@ -96,7 +100,9 @@ it("reconstructs once, reallocates chronologically, corrects imported lessons, a
       )
     )[0].counts,
   ).toBe(false);
-  await db.exec(`select public.reconstruct_lesson_history('${student}',current_date-28);`);
+  await db.exec(
+    `select public.reconstruct_lesson_history('${student}',((now() at time zone 'America/Sao_Paulo')::date)-28);`,
+  );
   expect(
     (
       await query<{ counts: boolean }>(
@@ -119,53 +125,69 @@ it("reconstructs once, reallocates chronologically, corrects imported lessons, a
 it("rejects other tenants, expired sessions, anonymous calls and invalid history dates", async () => {
   await db.exec(`set test.uid='00000000-0000-4000-8000-000000000099'`);
   for (const sql of [
-    `select public.reconstruct_lesson_history('${student}',current_date-20)`,
+    `select public.reconstruct_lesson_history('${student}',((now() at time zone 'America/Sao_Paulo')::date)-20)`,
     `select public.remove_paid_package('${student}','${pkg}')`,
-    `select public.add_imported_lesson('${student}',current_date-2,'14:00')`,
-    `select public.register_paid_package('${student}',current_date,4,300,null,false)`,
+    `select public.add_imported_lesson('${student}',((now() at time zone 'America/Sao_Paulo')::date)-2,'14:00')`,
+    `select public.register_paid_package('${student}',((now() at time zone 'America/Sao_Paulo')::date),4,300,null,false)`,
   ])
     await expect(db.exec(sql)).rejects.toThrow();
   await db.exec(`set test.uid='${teacher}';set test.session='false'`);
   await expect(
-    db.exec(`select public.reconstruct_lesson_history('${student}',current_date-20)`),
+    db.exec(
+      `select public.reconstruct_lesson_history('${student}',((now() at time zone 'America/Sao_Paulo')::date)-20)`,
+    ),
   ).rejects.toThrow();
   await db.exec(`set test.session='true'`);
   await expect(
-    db.exec(`select public.reconstruct_lesson_history('${student}',current_date-731)`),
+    db.exec(
+      `select public.reconstruct_lesson_history('${student}',((now() at time zone 'America/Sao_Paulo')::date-731))`,
+    ),
   ).rejects.toThrow(/dois anos/);
   await db.exec(`set role anon`);
   await expect(
-    db.exec(`select public.reconstruct_lesson_history('${student}',current_date-20)`),
+    db.exec(
+      `select public.reconstruct_lesson_history('${student}',((now() at time zone 'America/Sao_Paulo')::date)-20)`,
+    ),
   ).rejects.toThrow();
   await db.exec(`reset role`);
 });
 it("launches manual history and rolls back a payment if reconstruction is invalid", async () => {
-  await db.exec(`select public.add_imported_lesson('${student}',current_date-3,'14:30');`);
+  await db.exec(
+    `select public.add_imported_lesson('${student}',((now() at time zone 'America/Sao_Paulo')::date)-3,'14:30');`,
+  );
   expect(await query(`select id from lesson_occurrences where provenance='manual'`)).toHaveLength(
     1,
   );
   await expect(
-    db.exec(`select public.add_imported_lesson('${student}',current_date-3,'14:30')`),
+    db.exec(
+      `select public.add_imported_lesson('${student}',((now() at time zone 'America/Sao_Paulo')::date)-3,'14:30')`,
+    ),
   ).rejects.toThrow(/Já existe/);
   const before = (await query(`select id from packages`)).length;
   await expect(
-    db.exec(`select public.register_paid_package('${student}',current_date-731,4,300,null,true)`),
+    db.exec(
+      `select public.register_paid_package('${student}',((now() at time zone 'America/Sao_Paulo')::date-731),4,300,null,true)`,
+    ),
   ).rejects.toThrow();
   expect((await query(`select id from packages`)).length).toBe(before);
 });
 
 it("requires a current schedule for recurring payments, including direct inserts, while flexible plans permit advance credit", async () => {
-  await db.exec(`update schedules set ends_on=current_date-1 where student_id='${student}'`);
+  await db.exec(
+    `update schedules set ends_on=((now() at time zone 'America/Sao_Paulo')::date)-1 where student_id='${student}'`,
+  );
   await expect(
-    db.exec(`select public.register_paid_package('${student}',current_date,4,300,null,false)`),
+    db.exec(
+      `select public.register_paid_package('${student}',((now() at time zone 'America/Sao_Paulo')::date),4,300,null,false)`,
+    ),
   ).rejects.toThrow(/horário fixo/);
   await expect(
     db.exec(
-      `insert into packages(student_id,paid_on,lessons,amount) values('${student}',current_date,4,300)`,
+      `insert into packages(student_id,paid_on,lessons,amount) values('${student}',((now() at time zone 'America/Sao_Paulo')::date),4,300)`,
     ),
   ).rejects.toThrow(/horário fixo/);
   await db.exec(
-    `update plans set scheduling_mode='flexible' where id='${plan}';select public.register_paid_package('${student}',current_date,4,300,null,false);`,
+    `update plans set scheduling_mode='flexible' where id='${plan}';select public.register_paid_package('${student}',((now() at time zone 'America/Sao_Paulo')::date),4,300,null,false);`,
   );
   expect(
     (await query(`select id from packages where student_id='${student}'`)).length,
