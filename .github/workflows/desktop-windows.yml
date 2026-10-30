@@ -91,9 +91,9 @@ jobs:
           Versão de teste do Lessonara para chamadas.
 
           - Instalador Windows x64 com abertura dos links lessonara://.
-          - Correção do foco e da edição da caixa de texto das anotações.
+          - Barra de anotações com saída explícita, Esc destacado e tamanho de texto de 10 a 50.
           - Barra de ferramentas excluída da captura no Windows compatível; desenhos continuam visíveis.
-          - Recuperação de erros e timeout do seletor de telas e janelas.
+          - Ferramentas podem ser desligadas ao clicar novamente; traduções PT/EN/ES/FR.
 
           O instalador Windows passou por testes automatizados de instalação, registro do protocolo e inicialização. Câmera, áudio e transmissão ainda precisam de validação numa chamada real no Windows. Distribuição de teste sem assinatura de editor; não desative proteções do sistema.
           NOTES

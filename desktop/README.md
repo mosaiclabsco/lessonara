@@ -50,3 +50,12 @@ Após conferir os testes e os hashes, publique somente os instaladores e seus ar
 ## Próxima prévia Windows 0.3.2
 
 O artefato passa a usar `Lessonara-0.3.2.exe`, mantendo `Lessonara.exe` como executável instalado. O workflow de instalação/hashes acompanha o novo nome. A distribuição pública só será atualizada após build Windows e existência do arquivo público. Esta mudança não assina o instalador; [opções e limitações de assinatura](windows-signing.md).
+
+
+## Anotações 0.3.3
+
+A barra impede seleção acidental dos próprios textos e mantém os controles clicáveis. Clicar novamente na ferramenta ativa a desliga. O botão **Voltar a clicar · Esc** fica visível e Esc também aparece como tecla destacada no rodapé. Os desenhos permanecem na tela ao desativar a ferramenta.
+
+Tamanho de texto: opções de 10 a 50, padrão 24. Escolha antes de escrever ou selecione uma anotação com Mover e altere o tamanho; dois cliques permitem editar o texto. Tamanho, desenho e área de seleção acompanham a anotação e Desfazer restaura a alteração. O processo principal aceita apenas inteiros entre 10 e 50 enviados pelo quadro principal da barra. Barra e editor têm traduções PT/EN/ES/FR, seguindo o idioma do sistema.
+
+Estes controles são arquivos locais do app: exigem instalar a nova prévia. O fundo virtual da sala é entregue pela web e não exige atualizar o executável. Esta versão continua sem assinatura de editor Windows; o Mac usa assinatura ad-hoc de teste. Verificação visual da barra em quatro idiomas e 23 testes desktop passaram; captura em uma chamada Windows real permanece no checklist do piloto.
