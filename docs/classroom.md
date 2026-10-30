@@ -1,6 +1,6 @@
 # Sala de aula do Lessonara
 
-A sala usa o Jitsi já instalado em meet.mosaic-labs.co. A autenticação de teste em aula.mosaic-labs.co permanece separada; o Lessonara valida sua própria sessão de professor ou de aluno.
+A sala usa o Jitsi em meet.mosaic-labs.co, hospedado desde 30/10/2026 em VPS Contabo independente do homelab. O Lessonara valida sua própria sessão de professor ou aluno; a PoC residencial de aula.mosaic-labs.co foi desativada. A infraestrutura e recuperação estão em [infra/classroom](../infra/classroom/README.md).
 
 ## Acesso
 
@@ -36,7 +36,7 @@ O backend autentica cada operação. Somente o professor proprietário publica o
 
 As anotações do quadro não são gravadas no banco. Um participante que permanece na sala pode retransmitir o último estado válido a quem entrar ou recarregar. Quando todos saem, o estado temporário se perde. O transporte do quadro continua autenticando snapshots; sua latência é distinta da sobreposição nativa, transmitida dentro da captura de tela. Os endpoints e o visualizador legado de PDF permanecem disponíveis para compatibilidade técnica, sem entrada de PDF na nova interface.
 
-A mídia depende da rede: o túnel Cloudflare transporta o acesso web, não a mídia UDP. O 1:1 pode usar P2P; o fallback por JVB/TURN precisa de conectividade apropriada. A verificação de protocolo confirma autenticação e papéis, mas não substitui teste de câmera e áudio reais entre duas redes.
+A mídia depende da rede: o proxy Cloudflare atende o acesso web da VPS, enquanto UDP10000 chega diretamente ao JVB público. P2P está desativado nesta implantação para usar o bridge validado. TURN ainda não está instalado; redes com bloqueio de UDP podem exigir esse fallback. A verificação de protocolo confirma autenticação e papéis, mas não substitui teste de câmera e áudio reais entre duas redes.
 
 ## Validação
 
@@ -64,3 +64,22 @@ A primeira entrada abre cinco minutos antes e termina no fim previsto. Quem poss
 O aplicativo não encerra uma chamada ativa ao atingir esse limite. Não há botão para prorrogar; depois da tolerância, o backend deixa de emitir tokens para nova entrada. A continuidade real sob Jitsi e a reconexão com dois participantes permanecem QA manual.
 
 O quadro usa estado por ocorrência e autorizações vinculadas à mesma referência. Navegar para outra sala reinicia o componente para evitar carregar conteúdo da anterior. A área útil foi ampliada e os textos aceitam tamanhos de 12 a 72 px, validados pelo servidor. As ferramentas de anotação sobre a tela do desktop continuam uma função separada; não foi incorporado Excalidraw.
+
+
+## Diagnóstico do piloto — 29/10/2026
+
+Professor em Windows/Chrome e aluno em macOS/Chrome entraram na mesma ocorrência e viram o outro participante; vídeo remoto/compartilhamento falharam, com desconexão relatada. Leitura do JVB encontrou 38 candidatos anunciados, todos privados, nenhum público. A LXC 103 anuncia somente seu endereço LAN; UDP 10000 já está publicado pelo container. Não há TURN entre os serviços em execução. O roteador Vivo informa IPv4 público, portanto o uso do servidor local é viável mediante conectividade correta da mídia.
+
+Nenhuma regra de porta, firewall ou configuração Jitsi foi alterada neste diagnóstico. O painel básico oferece aplicações predefinidas; a interface avançada consultada não está disponível. Preparação proposta: encaminhamento específico UDP 10000 para a LXC Jitsi e anúncio correto do endereço público, com cópia de configuração, procedimento de reversão e teste real entre redes. A aplicação da regra depende de acesso suportado ao NAT do roteador e confirmação explícita antes de expor a porta pelo navegador. Não usar DMZ, desativação geral do firewall ou alterações no gerenciamento da operadora para contornar a limitação.
+
+Mesmo com JVB acessível, redes que bloqueiam UDP podem precisar de TURN. Considerar o IP dinâmico, atualização do endereço anunciado e proteção/monitoramento do bridge. A presença manual não depende da participação técnica na chamada. A correção da mídia ainda não foi aplicada nem validada.
+
+## Migração aplicada — 30/10/2026
+
+Jitsi stable-11248 em VPS Contabo US East, Ubuntu 24.04 x86-64, seis CPUs e aproximadamente 12 GB de RAM. Domínio existente preservado, proxy Cloudflare ativado, certificado Let's Encrypt emitido automaticamente por HTTP-01. Não houve mudança de plano, de dados de alunos, de chave JWT do backend ou das regras de ocorrência. Nenhuma alteração de interface/textos do produto nesta migração.
+
+SSH por chave dedicada, senha SSH desativada, UFW com administração restrita, proteção adicional na DOCKER-USER, serviços internos em loopback e containers rootless/read-only com limites. Somente web HTTPS e mídia UDP necessárias expostas; sem VPN/rota ou portas de entrada no homelab.
+
+Validação pelo domínio público: professor owner, aluno member; sem token, assinatura inválida, token expirado e de outra sala negados. Focus criou sala sintética e checagem ICE/UDP autenticada da rede residencial ao candidato público respondeu. HTTPS200 e saúde do bridge confirmados. Não foram usados alunos/aulas reais. Ainda falta testar câmera, áudio, compartilhamento e reconexão com duas pessoas em redes diferentes. Não considerar o teste de protocolo como presença confirmada.
+
+A LXC103 antiga foi removida a pedido do usuário, com seu disco de 12 GB, depois de verificar backup criptografado da PoC/configuração e metadados da LXC/túnel. LXCs 101/102 preservadas; aproximadamente 537 MiB a mais de RAM disponível na medição e 255 MiB a menos de swap usada. Cópias criptografadas antigas e da VPS nova guardadas também no Mac; o arquivo diário na VPS tem retenção de 14 dias. O envio offsite recorrente e alertas externos ainda não foram automatizados; checagem local de saúde por minuto está ativa. Registro/túnel remoto da PoC aula.mosaic-labs.co é obsoleto e permanece pendente de limpeza na Cloudflare.

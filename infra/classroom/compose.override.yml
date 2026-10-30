@@ -1,0 +1,38 @@
+services:
+  web:
+    tmpfs: !override
+      - /run:size=32M,mode=1750,uid=1000,gid=1000,exec
+      - /tmp:size=32M,mode=1777,uid=1000,gid=1000,noexec
+    ports: !override
+      - '127.0.0.1:8000:8000'
+    mem_limit: 768m
+    cpus: 1.0
+    security_opt:
+      - no-new-privileges:true
+  prosody:
+    tmpfs: !override
+      - /run:size=32M,mode=1750,uid=1000,gid=1000,exec
+      - /tmp:size=32M,mode=1777,uid=1000,gid=1000,noexec
+    mem_limit: 512m
+    cpus: 1.0
+    security_opt:
+      - no-new-privileges:true
+  jicofo:
+    tmpfs: !override
+      - /run:size=32M,mode=1750,uid=1000,gid=1000,exec
+      - /tmp:size=32M,mode=1777,uid=1000,gid=1000,noexec
+    mem_limit: 1g
+    cpus: 1.5
+    security_opt:
+      - no-new-privileges:true
+  jvb:
+    tmpfs: !override
+      - /run:size=32M,mode=1750,uid=1000,gid=1000,exec
+      - /tmp:size=32M,mode=1777,uid=1000,gid=1000,noexec
+    ports: !override
+      - '0.0.0.0:10000:10000/udp'
+      - '127.0.0.1:8080:8080'
+    mem_limit: 3g
+    cpus: 3.0
+    security_opt:
+      - no-new-privileges:true

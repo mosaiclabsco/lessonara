@@ -1,0 +1,6 @@
+.env
+config/
+*.age
+*.agekey
+*.pem
+*.key

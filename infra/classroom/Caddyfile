@@ -1,0 +1,22 @@
+{
+    admin localhost:2019
+}
+
+meet.mosaic-labs.co {
+    tls {
+        issuer acme {
+            dir https://acme-v02.api.letsencrypt.org/directory
+            disable_tlsalpn_challenge
+        }
+    }
+    encode zstd gzip
+    header {
+        -Server
+        X-Content-Type-Options nosniff
+        Referrer-Policy no-referrer
+        Strict-Transport-Security "max-age=31536000"
+    }
+    reverse_proxy 127.0.0.1:8000 {
+        header_up X-Forwarded-Proto https
+    }
+}
