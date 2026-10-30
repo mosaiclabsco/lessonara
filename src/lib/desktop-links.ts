@@ -1,8 +1,8 @@
 import { classroomRefValid } from "./classroom";
 export const DESKTOP_RELEASE_URL =
-  "https://github.com/gabrielgoncalvesr/lessonara-downloads/releases/download/desktop-v0.3.1/Lessonara-0.3.1-mac-arm64.zip";
+  "https://github.com/gabrielgoncalvesr/lessonara-downloads/releases/download/desktop-v0.3.3/Lessonara-0.3.3-mac-arm64.zip";
 export const DESKTOP_WINDOWS_RELEASE_URL =
-  "https://github.com/gabrielgoncalvesr/lessonara-downloads/releases/download/desktop-v0.3.1/Lessonara-0.3.1-windows-x64-setup.exe";
+  "https://github.com/gabrielgoncalvesr/lessonara-downloads/releases/download/desktop-v0.3.3/Lessonara-0.3.3.exe";
 export function desktopClassroomHref(path: string) {
   const match = path.match(
     /^\/classroom\/([^/]+)\/(schedule|appointment|makeup)\/([^/]+)\/(\d{4}-\d{2}-\d{2})$/,

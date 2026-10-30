@@ -42,7 +42,7 @@ O texto não captura mais o ponteiro do canvas no clique que abre o editor. O ev
 
 ## Distribuição pública dos instaladores
 
-O código e o workflow de compilação permanecem no repositório privado. Os instaladores para download ficam em `gabrielgoncalvesr/lessonara-downloads`, separado do código do produto. O workflow Windows publica sua pré-release no repositório privado; a cópia para distribuição pública é manual.
+O código e o workflow de compilação ficam em `mosaiclabsco/lessonara` (a visibilidade é uma configuração do GitHub; não presumir que seja privado). Os instaladores para download ficam em `gabrielgoncalvesr/lessonara-downloads`, separado do código do produto. O workflow Windows publica sua pré-release no repositório de código; a cópia para distribuição pública é manual.
 
 Após conferir os testes e os hashes, publique somente os instaladores e seus arquivos `.sha256` na release pública correspondente. Nunca envie o repositório de código nem os arquivos de ambiente. Atualize `src/lib/desktop-links.ts` apenas para arquivos públicos existentes e confira os downloads sem autenticação.
 
