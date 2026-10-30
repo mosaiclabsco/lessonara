@@ -998,6 +998,7 @@
   "Histórico de aulas": "Lesson history",
   "Aulas anteriores, com o plano e o pacote registrados na época.": "Past lessons, with the plan and package recorded at the time.",
   "Cancelar aula": "Cancel lesson",
+  "Desmarcar aula": "Cancel lesson",
   "Importar lista": "Import list",
   "Sincronizar envia as aulas cadastradas no Lessonara ao Google Calendar. Não importa eventos existentes nem cria alunos automaticamente.": "Sync sends lessons registered in Lessonara to Google Calendar. It does not import existing events or create students automatically.",
   "Privacidade": "Privacy",
