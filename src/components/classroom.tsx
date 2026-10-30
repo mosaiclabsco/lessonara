@@ -155,6 +155,10 @@ export function Classroom({ joinUrl, backHref }: { joinUrl: string; backHref: st
           lang: "pt-BR",
           userInfo: { displayName: data.displayName },
           configOverwrite: {
+            virtualBackground: {
+              enableV2: true,
+              advanced: { temporalBlendRatio: 0.35 },
+            },
             whiteboard: { enabled: false },
             prejoinConfig: { enabled: true },
             disableDeepLinking: true,
