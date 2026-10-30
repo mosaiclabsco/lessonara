@@ -5881,3 +5881,100 @@ html:has(.app-shell) {
 .download-control.receipt-download {
   min-width: 148px;
 }
+
+/* Desktop rows and their heading share a fixed action track. */
+@media (min-width: 1101px) {
+  .student-table-heading,
+  .student-row {
+    grid-template-columns: minmax(150px, 1.6fr) minmax(100px, 1fr) minmax(110px, 1fr) 156px;
+  }
+}
+.nav-pending-count {
+  margin-left: auto;
+  min-width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--surface);
+  font-size: 11px;
+  font-weight: 600;
+}
+.menu-collapsed .nav-pending-count {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  font-size: 10px;
+}
+.nav-link {
+  position: relative;
+}
+
+.app-shell.menu-collapsed .sidebar .nav-link > .nav-pending-count {
+  max-width: none;
+  opacity: 1;
+  padding: 0;
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .student-table-heading,
+  .student-row {
+    grid-template-columns: minmax(140px, 1.4fr) 100px 110px;
+  }
+  .student-table-heading > :last-child {
+    display: none;
+  }
+  .student-actions {
+    grid-column: 1/-1;
+    justify-content: flex-end;
+  }
+}
+
+.student-detail-heading {
+  display: grid;
+  gap: 12px;
+}
+.student-detail-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.student-detail-title {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.student-detail-title h1 {
+  overflow-wrap: anywhere;
+}
+.student-detail-primary-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+@media (max-width: 767px) {
+  .student-detail-title-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .student-detail-primary-actions {
+    width: 100%;
+  }
+  .student-detail-primary-actions > * {
+    flex: 1;
+    min-width: 0;
+  }
+  .student-detail-primary-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}

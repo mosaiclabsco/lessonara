@@ -123,7 +123,7 @@ export function Dashboard({
             {plan.imports && (
               <Link href="/students/import" className="btn-ghost directory-import">
                 <Icon name="download" className="h-4 w-4" />
-                Importar lista
+                {t("Importar lista")}
               </Link>
             )}
             <Link
@@ -256,13 +256,6 @@ export function Dashboard({
                 <div className="student-balance">
                   <span className={`balance-pill ${r.remaining <= 1 ? "balance-warning" : ""}`}>
                     {r.remaining} {r.remaining === 1 ? t("aula") : t("aulas")}
-                  </span>
-                  <span className="mt-1 block text-[11px] text-muted">
-                    {r.remaining < 0
-                      ? t("Renova\u00E7\u00E3o pendente")
-                      : r.remaining <= 1
-                        ? t("Hora de renovar")
-                        : t("Dispon\u00EDveis no pacote")}
                   </span>
                 </div>
                 <div className="student-actions">

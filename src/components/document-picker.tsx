@@ -121,7 +121,7 @@ export function DocumentPicker({
               {t("Enviar novo arquivo")}
             </button>
             <p className="text-xs text-muted">
-              {t("Até {value0}. O arquivo será salvo em Documentos ao confirmar a conferência.", {
+              {t("Até {value0}. O arquivo será salvo em Documentos ao confirmar.", {
                 value0: uploadSize(plan.maxFileBytes),
               })}
             </p>

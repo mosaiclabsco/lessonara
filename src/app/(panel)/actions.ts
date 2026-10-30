@@ -583,3 +583,36 @@ export async function reorderPlans(ids: string[]) {
   check(await supabase.rpc("reorder_teacher_plans", { plan_ids: ids }));
   revalidatePath("/", "layout");
 }
+
+export async function saveAttendanceMode(form: FormData) {
+  return validatedAction(async () => {
+    const { supabase } = await requireUser();
+    const mode = formText(form, "attendance_mode", 10, true);
+    if (!["manual", "automatic"].includes(mode))
+      throw new FormValidationError(
+        "attendance_mode",
+        "Escolha uma forma válida de confirmar presença.",
+      );
+    check(await supabase.rpc("set_attendance_mode", { p_mode: mode }));
+    revalidatePath("/", "layout");
+  });
+}
+export async function confirmLessonAttendance(
+  studentId: string,
+  occurrenceId: string,
+  status: string,
+) {
+  return validatedAction(async () => {
+    const { supabase } = await requireUser();
+    if (!["dada", "falta"].includes(status))
+      throw new FormValidationError("status", "Escolha presença ou falta.");
+    check(
+      await supabase.rpc("set_lesson_attendance", {
+        p_student_id: uuidValue(studentId, "student"),
+        p_occurrence_id: uuidValue(occurrenceId, "occurrence"),
+        p_status: status,
+      }),
+    );
+    revalidatePath("/", "layout");
+  });
+}

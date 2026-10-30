@@ -74,6 +74,7 @@ export async function loadTeacherOverview(view: OverviewView = "directory") {
                 remaining: ledger.remaining,
                 credits: ledger.credits,
                 used: ledger.used,
+                awaitingAttendance: ledger.lessons.filter((l) => l.status === "pendente").length,
                 link: `${origin}${studentPortalPath(student.slug)}`,
                 next: next ? { date: next.date, time: next.time } : null,
               };

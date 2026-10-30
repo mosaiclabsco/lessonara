@@ -41,7 +41,7 @@ export function CancelLessonButton({
       >
         <BusyContent pending={pending}>
           <Icon name="calendar" className="h-4 w-4" />
-          {t("desmarcar")}
+          {t("Cancelar aula")}
         </BusyContent>
       </button>
       {error && <Toast message={t(error)} />}

@@ -35,7 +35,7 @@ import { requireUser } from "@/lib/supabase/server";
 import {
   deleteEvent,
   deleteStudent,
-  markLesson,
+  confirmLessonAttendance,
   regenerateLink,
   updateStudent,
 } from "../../actions";
@@ -90,41 +90,58 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
   );
   const link = `${await getOrigin()}${studentPortalPath(student.slug)}`;
   const lessonActions = (l: (typeof lessons)[number]) =>
-    l.status === "feriado" ||
-    (l.sourceKind === "makeup" && l.status === "desmarcada") ? null : l.event ? (
-      <ActionForm action={deleteEvent.bind(null, id, l.event.id)}>
-        <SubmitButton className="btn-xs">{t("desfazer")}</SubmitButton>
-      </ActionForm>
-    ) : (
+    l.status === "feriado" || l.status === "desmarcada" ? null : l.past && l.historyId ? (
       <>
-        <ActionForm action={markLesson.bind(null, id, l.date, l.time, "falta")}>
-          <SubmitButton
-            className="btn-xs"
-            title={t("Avisou em cima da hora ou n\u00E3o veio: conta como aula")}
-          >
-            {t("falta")}
-          </SubmitButton>
-        </ActionForm>
+        {l.status !== "dada" && (
+          <ActionForm action={confirmLessonAttendance.bind(null, id, l.historyId, "dada")}>
+            <SubmitButton icon="check" className="btn-xs">
+              {t("Compareceu")}
+            </SubmitButton>
+          </ActionForm>
+        )}
+        {l.status !== "falta" && (
+          <ActionForm action={confirmLessonAttendance.bind(null, id, l.historyId, "falta")}>
+            <SubmitButton icon="close" className="btn-xs btn-ghost btn-danger">
+              {t("Faltou")}
+            </SubmitButton>
+          </ActionForm>
+        )}
         <CancelLessonButton studentId={id} date={l.date} time={l.time} today={today} />
       </>
+    ) : l.event ? (
+      <ActionForm action={deleteEvent.bind(null, id, l.event.id)}>
+        <SubmitButton icon="undo" className="btn-xs btn-ghost">
+          {t("desfazer")}
+        </SubmitButton>
+      </ActionForm>
+    ) : (
+      <CancelLessonButton studentId={id} date={l.date} time={l.time} today={today} />
     );
   return (
     <main className="space-y-6">
-      <div className="detail-heading flex flex-wrap items-center gap-3">
+      <div className="detail-heading student-detail-heading">
         <Link href="/students" className="text-sm text-muted hover:text-fg">
           {t("\u2190 Alunos")}
         </Link>
-        <h1 className="w-full text-xl font-semibold">{student.name}</h1>
-        {pendingSetup && (
-          <span className="balance-pill balance-warning">{t("Pendente · configurar horário")}</span>
-        )}
-        <CopyButton text={link} />
-        <ActionForm action={resendWelcome}>
-          <input type="hidden" name="studentId" value={student.id} />
-          <SubmitButton className="btn-xs" icon="mail">
-            {t("Reenviar convite")}
-          </SubmitButton>
-        </ActionForm>
+        <div className="student-detail-title-row">
+          <div className="student-detail-title">
+            <h1 className="text-xl font-semibold">{student.name}</h1>
+            {pendingSetup && (
+              <span className="balance-pill balance-warning">
+                {t("Pendente · configurar horário")}
+              </span>
+            )}
+          </div>
+          <div className="student-detail-primary-actions">
+            <CopyButton text={link} />
+            <ActionForm action={resendWelcome}>
+              <input type="hidden" name="studentId" value={student.id} />
+              <SubmitButton className="btn-xs" icon="mail">
+                {t("Reenviar convite")}
+              </SubmitButton>
+            </ActionForm>
+          </div>
+        </div>
       </div>
 
       <ReplacementPrompt studentId={id} today={today} />

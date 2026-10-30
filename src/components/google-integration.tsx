@@ -51,6 +51,11 @@ export async function GoogleIntegration({
           {t("Conectar Google")}
         </a>
       )}
+      <p className="text-sm text-muted">
+        {t(
+          "Sincronizar envia as aulas cadastradas no Lessonara ao Google Calendar. Não importa eventos existentes nem cria alunos automaticamente.",
+        )}
+      </p>
       <p className="text-xs text-muted">
         {t(
           "A integração usa a agenda principal, a duração configurada por aula e o fuso de São Paulo.",

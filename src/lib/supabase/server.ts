@@ -57,7 +57,7 @@ export const requireUser = cache(async function requireUser() {
     supabase
       .from("teachers")
       .select(
-        "id,name,email,lesson_minutes,profile_completed_at,platform_plan,import_onboarding,reviewed_settings,onboarding_dismissed_at",
+        "id,name,email,lesson_minutes,profile_completed_at,platform_plan,import_onboarding,reviewed_settings,onboarding_dismissed_at,attendance_mode,attendance_effective_at",
       )
       .eq("id", data.claims.sub)
       .maybeSingle(),

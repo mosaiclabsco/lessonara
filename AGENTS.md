@@ -17,3 +17,7 @@ Para trabalho com múltiplos itens, registrar o escopo ativo em `doing.md` antes
 ## Autorização por plano
 
 Toda feature deve declarar planos elegíveis e limites em `src/lib/platform-plans.ts` e documentar a decisão em `docs/plans.md`. A interface consome essa definição apenas para apresentação; segurança exige verificar o plano autoritativo do professor no servidor, autenticação, vínculo e isolamento por tenant em páginas, actions, APIs, downloads e workers. Não aceitar plano, papel ou teacher_id enviados pelo cliente como autorização. Replicar invariantes necessários nas RPCs/RLS/Storage; alterações de plano somente pelo fluxo administrativo autorizado. Testar acesso direto negado, outro tenant, downgrade com trabalho já na fila e concorrência de cotas. Flags de UI/localStorage não concedem direitos. Documentar migrações e publicação separadamente da implementação local.
+
+## Traduções em toda tarefa
+
+Sempre revisar os textos novos e os textos existentes das telas/fluxos afetados pela tarefa. Usar os tradutores compartilhados e acrescentar traduções ausentes em inglês, espanhol e francês (`src/lib/i18n/en.json`, `es.json`, `fr.json`), incluindo rótulos, validações, acessibilidade, estados vazios e erros visíveis. Não considerar fallback em português como tradução concluída. Preservar placeholders e validar os quatro idiomas nas superfícies alteradas.

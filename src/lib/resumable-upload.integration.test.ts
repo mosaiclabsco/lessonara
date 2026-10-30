@@ -63,6 +63,7 @@ afterAll(async () => {
 });
 it("retoma após 503 sem reiniciar o objeto nem duplicar bytes confirmados", async () => {
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", origin);
+  vi.stubEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "sb_publishable_synthetic");
   const progress: number[] = [];
   await new Promise<void>((resolve, reject) => {
     const upload = createResumableUpload(Buffer.alloc(7 * 1024 * 1024) as unknown as File, {

@@ -25,6 +25,7 @@ import { loadHolidayRules } from "@/lib/holiday-data";
 import { nowInTZ } from "@/lib/dates";
 import { Suspense } from "react";
 import PanelLoading from "../loading";
+import { saveAttendanceMode } from "../actions";
 import { updateTeacher } from "../actions";
 
 import type { Plan } from "@/lib/data";
@@ -186,6 +187,31 @@ async function SettingsContent({
               </FormActions>
             </ActionForm>
 
+            <ActionForm action={saveAttendanceMode} className="card space-y-3">
+              <h2 className="h2">{t("Confirmação de presença")}</h2>
+              <label className="label" htmlFor="attendance-mode">
+                {t("Como registrar as aulas")}
+              </label>
+              <select
+                id="attendance-mode"
+                name="attendance_mode"
+                className="input"
+                defaultValue={teacher.attendance_mode ?? "manual"}
+              >
+                <option value="manual">{t("Manual — eu confirmo se o aluno compareceu")}</option>
+                <option value="automatic">
+                  {t("Automática — presumir aula realizada pelo horário")}
+                </option>
+              </select>
+              <p className="text-sm text-muted">
+                {t(
+                  "Aplica-se às próximas aulas. O histórico existente é preservado. No modo manual, confirme Compareceu ou Faltou após o início da aula.",
+                )}
+              </p>
+              <FormActions>
+                <SubmitButton>{t("Salvar presença")}</SubmitButton>
+              </FormActions>
+            </ActionForm>
             <BrowserPreferences />
           </>
         );

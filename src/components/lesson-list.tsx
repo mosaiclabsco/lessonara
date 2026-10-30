@@ -11,6 +11,7 @@ const STATUS: Record<
     className: string;
   }
 > = {
+  pendente: { label: "Aguardando presença", className: "text-muted" },
   feriado: { label: "Feriado", className: "text-muted" },
   dada: { label: "Dada", className: "text-ok" },
   agendada: { label: "Agendada", className: "text-info" },

@@ -112,9 +112,17 @@ export async function loadLedgers(
   const rulesPromise = studentsPromise.then((students) =>
     loadHolidayRules(supabase, [...new Set(students.data.map((student) => student.teacher_id))]),
   );
-  const [students, schedules, packages, events, appointments, rules, history] = await measure(
-    "ledger.reads",
-    () =>
+  const attendancePromise = studentsPromise.then(async (students) => {
+    const ids = [...new Set(students.data.map((s) => s.teacher_id))];
+    const result = await supabase
+      .from("teachers")
+      .select("id,attendance_mode,attendance_effective_at")
+      .in("id", ids);
+    if (result.error) throw result.error;
+    return result.data ?? [];
+  });
+  const [students, schedules, packages, events, appointments, rules, history, attendance] =
+    await measure("ledger.reads", () =>
       Promise.all([
         studentsPromise,
         rows<ScheduleRow & { student_id: string }>(
@@ -138,8 +146,9 @@ export async function loadLedgers(
         }>("appointments", "id,student_id,date,time,meet_url,duration_minutes"),
         rulesPromise,
         loadLessonHistory(supabase, studentIds),
+        attendancePromise,
       ]),
-  );
+    );
   return measure("ledger.compute", async () => {
     const { today, time } = nowInTZ();
     const group = <T extends { student_id: string }>(rows: T[]) => {
@@ -181,6 +190,12 @@ export async function loadLedgers(
         : [];
       result.set(id, {
         ledger: computeLedger({
+          attendance: (() => {
+            const a = attendance.find((a) => a.id === teacherId);
+            return a
+              ? { mode: a.attendance_mode, effectiveAt: a.attendance_effective_at }
+              : undefined;
+          })(),
           openingCredits: openingByStudent.get(id) ?? 0,
           history: (historyGroups.get(id) ?? []).map((row) => historicalLesson(row, today, time)),
           schedules: s,

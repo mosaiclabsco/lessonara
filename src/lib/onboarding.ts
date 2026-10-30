@@ -3,6 +3,7 @@ import { cache } from "react";
 import { requireUser } from "./supabase/server";
 export type OnboardingState = {
   importState: string;
+  hasStudents?: boolean;
   reviewedSettings: string[];
   complete: boolean;
   dismissed: boolean;
@@ -59,7 +60,15 @@ export const loadOnboarding = cache(async () => {
     .eq("is_active", true)
     .limit(1);
   if (plans.error) throw new Error("Não foi possível carregar a configuração inicial.");
-  return onboardingState(teacher, plans.data?.length ?? 0);
+  const students = await supabase
+    .from("students")
+    .select("id", { count: "exact", head: true })
+    .eq("teacher_id", userId);
+  if (students.error) throw new Error("Não foi possível consultar os alunos.");
+  return {
+    ...onboardingState(teacher, plans.data?.length ?? 0),
+    hasStudents: (students.count ?? 0) > 0,
+  };
 });
 export async function requireConfiguredTeacher() {
   const state = await loadOnboarding();

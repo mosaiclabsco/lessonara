@@ -229,3 +229,27 @@ it("reserves an early joined occurrence once without consuming a credit before i
   expect(ledger.remaining).toBe(4);
   expect(ledger.lessons).toHaveLength(1);
 });
+
+it("manual attendance waits for confirmation without consuming credits, and keeps old automatic history", () => {
+  const ledger = computeLedger({
+    schedules: [{ ...tuesday, id: "schedule", starts_on: "2026-10-06" }],
+    events: [],
+    packages: [pkg("2026-10-01", 4)],
+    today: "2026-10-07",
+    time: "10:00",
+    attendance: { mode: "manual", effectiveAt: "2026-10-06T00:00:00-03:00" },
+  });
+  expect(ledger.lessons.find((l) => l.date === "2026-10-06")?.status).toBe("pendente");
+  expect(ledger.used).toBe(0);
+  expect(ledger.remaining).toBe(4);
+  const old = computeLedger({
+    schedules: [{ ...tuesday, id: "schedule", starts_on: "2026-10-06" }],
+    events: [],
+    packages: [pkg("2026-10-01", 4)],
+    today: "2026-10-07",
+    time: "10:00",
+    attendance: { mode: "manual", effectiveAt: "2026-10-07T00:00:00-03:00" },
+  });
+  expect(old.lessons[0].status).toBe("dada");
+  expect(old.used).toBe(1);
+});

@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { hasPlatformFeature, type PlatformPlan } from "@/lib/platform-plans";
 import { useI18n } from "@/components/browser-preferences-provider";
 import Link from "next/link";
@@ -19,18 +20,65 @@ const links: {
   { href: "/emails", label: "Emails", icon: "book" },
   { href: "/settings", label: "Configurações", icon: "settings" },
 ];
-export function PanelNav({ platformPlan = "essential" }: { platformPlan?: PlatformPlan }) {
+export function PanelNav({
+  platformPlan = "essential",
+  pendingCount = 0,
+}: {
+  platformPlan?: PlatformPlan;
+  pendingCount?: number;
+}) {
   const pathname = usePathname();
-  return <NavLinks pathname={pathname} platformPlan={platformPlan} />;
+  const [live, setLive] = useState({ source: pendingCount, value: pendingCount });
+  useEffect(() => {
+    const controller = new AbortController();
+    let running = false;
+    const update = async () => {
+      if (document.visibilityState !== "visible" || running) return;
+      running = true;
+      try {
+        const response = await fetch("/api/pending-count", {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        if (!response.ok || !response.headers.get("content-type")?.includes("application/json"))
+          return;
+        const data = await response.json();
+        if (Number.isSafeInteger(data.count) && data.count >= 0 && !controller.signal.aborted)
+          setLive({ source: pendingCount, value: data.count });
+      } catch {
+      } finally {
+        running = false;
+      }
+    };
+    const timer = setInterval(() => void update(), 60000);
+    const refresh = () => void update();
+    window.addEventListener("focus", refresh);
+    window.addEventListener("lessonara:pending-changed", refresh);
+    return () => {
+      controller.abort();
+      clearInterval(timer);
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("lessonara:pending-changed", refresh);
+    };
+  }, [pendingCount, pathname]);
+  return (
+    <NavLinks
+      pathname={pathname}
+      platformPlan={platformPlan}
+      pendingCount={live.source === pendingCount ? live.value : pendingCount}
+    />
+  );
 }
 export function PanelNavFallback() {
   return <NavLinks />;
 }
 function NavLinks({
   pathname,
+  pendingCount = 0,
   platformPlan = "essential",
 }: {
   platformPlan?: PlatformPlan;
+  pendingCount?: number;
   pathname?: string;
 }) {
   const { t } = useI18n();
@@ -58,7 +106,16 @@ function NavLinks({
               {href === "/emails" && !hasPlatformFeature(platformPlan, "emails") && (
                 <span className="count-badge">Pro</span>
               )}
-              {active && <span className="nav-dot" />}
+              {href === "/pending" && pendingCount > 0 ? (
+                <span
+                  className="nav-pending-count"
+                  aria-label={t("{value0} pendências", { value0: pendingCount })}
+                >
+                  {pendingCount > 99 ? "99+" : pendingCount}
+                </span>
+              ) : (
+                active && <span className="nav-dot" />
+              )}
             </Link>
           );
         })}

@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { Upload } from "tus-js-client";
 import { createResumableUpload } from "@/lib/resumable-upload";
+import { useI18n } from "./browser-preferences-provider";
 import { Icon } from "./icon";
 type Options = {
   file: File;
@@ -28,10 +29,15 @@ export function useUploads() {
   return context;
 }
 export function UploadProvider({ children }: { children: ReactNode }) {
+  const { t } = useI18n();
   const [progress, setProgress] = useState<Progress | null>(null),
-    task = useRef<{ upload: Upload; options: Options; reject: (reason: Error) => void } | null>(
-      null,
-    );
+    task = useRef<{
+      upload: Upload;
+      options: Options;
+      uploaded: boolean;
+      finish: () => void;
+      reject: (reason: Error) => void;
+    } | null>(null);
   const busy = progress !== null && progress.state !== "done";
   useEffect(() => {
     if (!busy) return;
@@ -55,8 +61,7 @@ export function UploadProvider({ children }: { children: ReactNode }) {
       );
     setProgress({ name: options.file.name, percent: 0, state: "sending" });
     return new Promise<void>((resolve, reject) => {
-      const fail = (cause: unknown) => {
-        const error = cause instanceof Error ? cause : new Error("O envio falhou.");
+      const fail = () => {
         setProgress((p) =>
           p
             ? {
@@ -66,7 +71,7 @@ export function UploadProvider({ children }: { children: ReactNode }) {
               }
             : p,
         );
-        reject(error);
+        // Keep the form awaiting completion when the user resumes the same upload.
       };
       const upload = createResumableUpload(options.file, {
         ...options,
@@ -78,22 +83,26 @@ export function UploadProvider({ children }: { children: ReactNode }) {
           ),
         onError: fail,
         onSuccess: () => {
-          setProgress((p) => (p ? { ...p, percent: 100, state: "finishing" } : p));
-          void options
-            .complete()
-            .then(() => {
-              setProgress((p) =>
-                p
-                  ? { ...p, percent: 100, state: "done", message: "Arquivo enviado e confirmado." }
-                  : p,
-              );
-              task.current = null;
-              resolve();
-            })
-            .catch(fail);
+          if (task.current) task.current.uploaded = true;
+          finish();
         },
       });
-      task.current = { upload, options, reject };
+      const finish = () => {
+        setProgress((p) => (p ? { ...p, percent: 100, state: "finishing" } : p));
+        void options
+          .complete()
+          .then(() => {
+            setProgress((p) =>
+              p
+                ? { ...p, percent: 100, state: "done", message: "Arquivo enviado e confirmado." }
+                : p,
+            );
+            task.current = null;
+            resolve();
+          })
+          .catch(fail);
+      };
+      task.current = { upload, options, uploaded: false, finish, reject };
       upload.start();
     });
   }
@@ -104,7 +113,8 @@ export function UploadProvider({ children }: { children: ReactNode }) {
   function resume() {
     if (!task.current) return;
     setProgress((p) => (p ? { ...p, state: "sending", message: undefined } : p));
-    task.current.upload.start();
+    if (task.current.uploaded) task.current.finish();
+    else task.current.upload.start();
   }
   async function discard() {
     const active = task.current;
@@ -131,21 +141,23 @@ export function UploadProvider({ children }: { children: ReactNode }) {
     <Context.Provider value={{ busy, send }}>
       {children}
       {progress && (
-        <aside className="upload-status" aria-label="Envio de arquivo">
+        <aside className="upload-status" aria-label={t("Envio de arquivo")}>
           <div className="flex items-center justify-between gap-4">
             <strong className="truncate">
-              {progress.state === "done"
-                ? "Envio concluído"
-                : progress.state === "paused"
-                  ? "Envio pausado"
-                  : progress.state === "failed"
-                    ? "Envio interrompido"
-                    : progress.state === "finishing"
-                      ? "Confirmando arquivo…"
-                      : "Enviando arquivo"}
+              {t(
+                progress.state === "done"
+                  ? "Envio concluído"
+                  : progress.state === "paused"
+                    ? "Envio pausado"
+                    : progress.state === "failed"
+                      ? "Envio interrompido"
+                      : progress.state === "finishing"
+                        ? "Confirmando arquivo…"
+                        : "Enviando arquivo",
+              )}
             </strong>
             {progress.state === "done" && (
-              <button aria-label="Fechar aviso de envio" onClick={() => setProgress(null)}>
+              <button aria-label={t("Fechar aviso de envio")} onClick={() => setProgress(null)}>
                 <Icon name="close" className="h-4 w-4" />
               </button>
             )}
@@ -158,30 +170,32 @@ export function UploadProvider({ children }: { children: ReactNode }) {
               className="w-full"
               max={100}
               value={progress.percent}
-              aria-label="Progresso do upload"
+              aria-label={t("Progresso do upload")}
             />
             <span className="text-xs tabular-nums">{progress.percent}%</span>
           </div>
           <p role="status" className="mt-3 text-xs text-muted">
-            {progress.message ??
-              "Pode navegar dentro do Lessonara. Mantenha esta aba aberta; fechar ou recarregar interrompe o envio."}
+            {t(
+              progress.message ??
+                "Pode navegar dentro do Lessonara. Mantenha esta aba aberta; fechar ou recarregar interrompe o envio.",
+            )}
           </p>
           {progress.state !== "done" && progress.state !== "finishing" && (
             <div className="mt-4 flex gap-3">
               {progress.state === "sending" ? (
                 <button className="btn-xs" onClick={() => void pause()}>
                   <Icon name="clock" className="h-4 w-4" />
-                  Pausar
+                  {t("Pausar")}
                 </button>
               ) : (
                 <button className="btn-xs" onClick={resume}>
                   <Icon name="arrow" className="h-4 w-4" />
-                  Retomar
+                  {t("Retomar")}
                 </button>
               )}
               <button className="btn-xs" onClick={() => void discard()}>
                 <Icon name="trash" className="h-4 w-4" />
-                Descartar
+                {t("Descartar")}
               </button>
             </div>
           )}

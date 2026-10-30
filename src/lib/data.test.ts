@@ -42,7 +42,13 @@ it("reuses server-loaded ownership and starts holidays before ledger reads finis
   const fixture = database(owned);
   const result = loadLedgers(fixture.db, ["student"], owned);
   await Promise.resolve();
-  expect(fixture.queries).toEqual(["schedules", "packages", "lesson_events", "appointments"]);
+  expect(fixture.queries).toEqual([
+    "schedules",
+    "packages",
+    "lesson_events",
+    "appointments",
+    "teachers",
+  ]);
   expect(holiday.load).toHaveBeenCalledWith(fixture.db, ["teacher"]);
   fixture.release();
   expect((await result).get("student")?.ledger.remaining).toBe(0);

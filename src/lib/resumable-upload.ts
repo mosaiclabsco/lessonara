@@ -3,7 +3,7 @@ export function storageUploadEndpoint(raw: string) {
   const url = new URL(raw);
   if (url.hostname.endsWith(".supabase.co") && !url.hostname.endsWith(".storage.supabase.co"))
     url.hostname = url.hostname.replace(/\.supabase\.co$/, ".storage.supabase.co");
-  url.pathname = "/storage/v1/upload/resumable";
+  url.pathname = "/storage/v1/upload/resumable/sign";
   url.search = "";
   url.hash = "";
   return url.href;
@@ -27,7 +27,11 @@ export function createResumableUpload(
     uploadDataDuringCreation: true,
     removeFingerprintOnSuccess: true,
     storeFingerprintForResuming: false,
-    headers: { "x-signature": input.token, "x-upsert": "false" },
+    headers: {
+      apikey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+      "x-signature": input.token,
+      "x-upsert": "false",
+    },
     metadata: {
       bucketName: input.bucket,
       objectName: input.path,

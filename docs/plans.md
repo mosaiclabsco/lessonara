@@ -135,3 +135,13 @@ Em todos os planos, o portal permanente abre diretamente em `/a/<slug>`; slug gl
 ### Ajustes móveis e feedback de downloads — 28/10/2026
 
 Onboarding manual, menu móvel, encerramento de horário em modal, seletores de arquivo e disponibilidade com dia/data respeitam os planos e vínculos existentes. Importação e exportação continuam exclusivas de Plus/Pro; recibos e apresentação clara de emails estão em todos os planos. Downloads CSV/XLSX/PDF exibem preparação e pausa de 10 segundos após sucesso; respostas 429 usam o prazo real de Retry-After. Verificações autoritativas de sessão, plano e tenant continuam nas rotas existentes. Mudanças apenas de apresentação não alteram permissões, cobrança ou registros de aulas.
+
+### Presença e atividades individuais — 29/10/2026
+
+Presença configurável, confirmação por ocorrência e atividades individuais estão em todos os planos. O padrão manual vale para aulas novas a partir da implantação/preferência; aulas passadas já registradas permanecem no histórico. Pendências reservam a posição prevista no pacote, mas não entram no total de aulas utilizadas até a confirmação. Compareceu/Faltou exigem professor proprietário, sessão válida, ocorrência iniciada e permitem correção auditada/idempotente; não é permitido confirmar aula futura, cancelada ou feriado. Preferências passam por RPC autorizada; o backend/SQL preservam o histórico antes da mudança.
+
+Upload de exercício segue a biblioteca privada, validação e cota do professor; cada atividade está vinculada ao aluno explicitamente escolhido. Upload não compartilha o documento com outros alunos. TUS assinado usa `/storage/v1/upload/resumable/sign`, chave publishable e assinatura restrita ao caminho. Retomada mantém a operação de atribuição aguardando confirmação do arquivo.
+
+Contagem de pendências é privada ao professor e soma somente áreas elegíveis ao seu plano. `GET /api/pending-count` não aceita identidade do cliente: exige sessão, resolve o tenant no servidor e limita 30 consultas/minuto por professor; retorna `{count}` com `private, no-store`, 429 com Retry-After ou 503 se o limitador não estiver disponível. O menu atualiza após actions, foco e a cada minuto com aba visível.
+
+Migração correspondente: `0042_manual_attendance.sql`. Verificações locais: 504 testes, QA fictício PT/EN/ES/FR, alinhamento de colunas e largura móvel 390 px. Migração aplicada no Supabase em 29/10/2026; contagem de histórico anterior conferida antes da aplicação (14 ocorrências). Publicação do portal em andamento.

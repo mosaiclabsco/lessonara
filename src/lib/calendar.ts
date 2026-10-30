@@ -16,6 +16,7 @@ export type CalendarLesson = {
 };
 
 export const LESSON_STATUS: Record<LessonStatus, string> = {
+  pendente: "Aguardando presença",
   feriado: "Feriado",
   agendada: "Agendada",
   dada: "Realizada",

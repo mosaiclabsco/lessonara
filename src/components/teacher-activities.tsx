@@ -1,4 +1,5 @@
 "use client";
+import { useUploads } from "./upload-provider";
 import { usePlatformPlan } from "./platform-plan-provider";
 import { ConfirmDialog } from "./dialog";
 import { Toast } from "./toast";
@@ -14,7 +15,6 @@ import { activityStatus, type Activity, type ActivityDocument } from "@/lib/acti
 import { activityDateTime } from "@/lib/activity-dates";
 import { formatDate } from "@/lib/dates";
 import { formatFileSize } from "@/lib/document-rules";
-import { createBrowserSupabase } from "@/lib/supabase/browser";
 import { DOCUMENT_BUCKET, validateDocumentFile } from "@/lib/document-rules";
 import {
   beginDocumentUpload,
@@ -27,6 +27,39 @@ import {
   removeSubmissionFile,
   reviewActivity,
 } from "@/app/(panel)/activities/actions";
+async function uploadActivityFile(
+  file: File,
+  title: string,
+  maxBytes: number,
+  send: ReturnType<typeof useUploads>["send"],
+  subject: string,
+) {
+  validateDocumentFile(file.name, file.size, maxBytes);
+  const prepared = await beginDocumentUpload({
+    title: title.slice(0, 120),
+    subject,
+    fileName: file.name,
+    byteSize: file.size,
+  });
+  if (!prepared.ok) throw new Error(prepared.message);
+  await send({
+    file,
+    bucket: DOCUMENT_BUCKET,
+    id: prepared.data.id,
+    path: prepared.data.path,
+    token: prepared.data.token,
+    mimeType: prepared.data.mimeType,
+    complete: async () => {
+      const done = await finishDocumentUpload(prepared.data.id);
+      if (!done.ok) throw new Error(done.message);
+    },
+    discard: async () => {
+      const done = await removeLibraryDocument(prepared.data.id, true);
+      if (!done.ok) throw new Error(done.message);
+    },
+  });
+  return prepared.data.id;
+}
 function ActivityItem({
   activity,
   today,
@@ -38,6 +71,7 @@ function ActivityItem({
 }) {
   const { t, locale } = useI18n();
   const plan = usePlatformPlan();
+  const uploads = useUploads();
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState("");
   const [remove, setRemove] = useState(false);
@@ -127,26 +161,13 @@ function ActivityItem({
                   let documentId = String(data.get("feedback_document") ?? "");
                   const file = data.get("feedback_file");
                   if (file instanceof File && file.size) {
-                    validateDocumentFile(file.name, file.size, plan.maxFileBytes);
-                    const prepared = await beginDocumentUpload({
-                      title: `Correção · ${activity.title}`.slice(0, 120),
-                      subject: "Correção de atividade",
-                      fileName: file.name,
-                      byteSize: file.size,
-                    });
-                    if (!prepared.ok) throw new Error(prepared.message);
-                    documentId = prepared.data.id;
-                    const upload = await createBrowserSupabase()
-                      .storage.from(DOCUMENT_BUCKET)
-                      .uploadToSignedUrl(prepared.data.path, prepared.data.token, file, {
-                        contentType: prepared.data.mimeType,
-                      });
-                    if (upload.error) {
-                      await removeLibraryDocument(documentId, true);
-                      throw new Error("Não foi possível enviar o arquivo de correção.");
-                    }
-                    const finished = await finishDocumentUpload(documentId);
-                    if (!finished.ok) throw new Error(finished.message);
+                    documentId = await uploadActivityFile(
+                      file,
+                      t("Correção · {value0}", { value0: activity.title }),
+                      plan.maxFileBytes,
+                      uploads.send,
+                      t("Correção de atividade"),
+                    );
                   }
                   const result = await reviewActivity(
                     activity.id,
@@ -307,6 +328,8 @@ export function TeacherActivities({
   ready: boolean;
 }) {
   const { t } = useI18n();
+  const plan = usePlatformPlan();
+  const uploads = useUploads();
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState("");
   const [filter, setFilter] = useState("open");
@@ -334,7 +357,7 @@ export function TeacherActivities({
             <h2>{t("Enviar atividade")}</h2>
             <p>
               {t(
-                "Reutilize um material de Documentos e receba a devolu\u00E7\u00E3o pelo link do aluno.",
+                "Escolha um documento ou envie um exercício personalizado. A atividade fica vinculada somente ao aluno selecionado.",
               )}
             </p>
           </div>
@@ -351,14 +374,25 @@ export function TeacherActivities({
           <form
             onSubmit={(event) => {
               event.preventDefault();
+              if (pending || uploads.busy) return;
               const form = event.currentTarget;
               const data = new FormData(form);
               setMessage("");
               startTransition(async () => {
                 try {
+                  let documentId = String(data.get("document_id") ?? "");
+                  const file = data.get("activity_file");
+                  if (file instanceof File && file.size)
+                    documentId = await uploadActivityFile(
+                      file,
+                      String(data.get("title")),
+                      plan.maxFileBytes,
+                      uploads.send,
+                      t("Atividade individual"),
+                    );
                   const result = await assignActivity({
                     studentId: studentId ?? String(data.get("student_id")),
-                    documentId: String(data.get("document_id") ?? ""),
+                    documentId,
                     title: String(data.get("title")),
                     instructions: String(data.get("instructions") ?? ""),
                     dueOn: String(data.get("due_on") ?? ""),
@@ -374,7 +408,7 @@ export function TeacherActivities({
             }}
             className="mt-5 space-y-4"
           >
-            <fieldset disabled={pending} className="activity-assignment-grid">
+            <fieldset disabled={pending || uploads.busy} className="activity-assignment-grid">
               {!studentId && (
                 <div>
                   <label className="label" htmlFor="activity-student">
@@ -414,13 +448,14 @@ export function TeacherActivities({
               </div>
               <div>
                 <label className="label" htmlFor="activity-document">
-                  {t("Arquivo de Documentos (opcional)")}
+                  {t("Documento ou upload (opcional)")}
                 </label>
                 <DocumentPicker
                   key={message}
                   documents={documents}
                   name="document_id"
-                  disabled={pending}
+                  fileName="activity_file"
+                  disabled={pending || uploads.busy}
                 />
               </div>
               <div>

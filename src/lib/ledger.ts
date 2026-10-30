@@ -35,7 +35,8 @@ export type Package = {
 
 export type Holiday = { date: string; name: string };
 export type HolidayPolicy = "consume" | "preserve";
-export type LessonStatus = "agendada" | "dada" | "falta" | "desmarcada" | "reposicao" | "feriado";
+export type LessonStatus =
+  "pendente" | "agendada" | "dada" | "falta" | "desmarcada" | "reposicao" | "feriado";
 
 export type Lesson = {
   historyId?: string;
@@ -86,6 +87,7 @@ export function sortPackages(packages: Package[]) {
 const MAX_WEEKS = 104;
 
 export function computeLedger(input: {
+  attendance?: { mode: string; effectiveAt: string };
   openingCredits?: number;
   history?: Lesson[];
   schedules: Schedule[];
@@ -116,6 +118,9 @@ export function computeLedger(input: {
     byDate.set(e.date, [...(byDate.get(e.date) ?? []), e]);
   }
 
+  const requiresConfirmation = (date: string, t: string) =>
+    input.attendance?.mode === "manual" &&
+    Date.parse(`${date}T${t}:00-03:00`) >= Date.parse(input.attendance.effectiveAt);
   const isPast = (date: string, t: string) => date < today || (date === today && t <= time);
 
   const lessons: Lesson[] = [];
@@ -150,7 +155,9 @@ export function computeLedger(input: {
         : holidayName
           ? "feriado"
           : past
-            ? "dada"
+            ? requiresConfirmation(date, s.time)
+              ? "pendente"
+              : "dada"
             : "agendada";
       const counts =
         status !== "desmarcada" && (status !== "feriado" || input.holidayPolicy === "consume");
@@ -181,7 +188,9 @@ export function computeLedger(input: {
       : holidayName
         ? "feriado"
         : past
-          ? "dada"
+          ? requiresConfirmation(a.date, a.time)
+            ? "pendente"
+            : "dada"
           : "agendada";
     lessons.push({
       sourceKind: "appointment",
@@ -208,7 +217,7 @@ export function computeLedger(input: {
       sourceId: e.id,
       date: e.date,
       time: t,
-      status: "reposicao",
+      status: isPast(e.date, t) && requiresConfirmation(e.date, t) ? "pendente" : "reposicao",
       counts: true,
       past: isPast(e.date, t),
       packageIndex: null,
@@ -265,7 +274,7 @@ export function computeLedger(input: {
   let coveredUntil: string | null = null;
   for (const l of lessons) {
     if (!l.counts) continue;
-    if (l.past) used++;
+    if (l.past && l.status !== "pendente") used++;
     if (!l.historyId) {
       const openingSlot = firstFree("opening", Math.max(0, opening));
       if (openingSlot) {

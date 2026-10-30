@@ -38,7 +38,7 @@ jobs:
       - name: Verify installer, protocol registration and app startup
         run: |
           $version = '${{ steps.version.outputs.version }}'
-          $installer = (Resolve-Path "out/windows/Lessonara-$version-windows-x64-setup.exe").Path
+          $installer = (Resolve-Path "out/windows/Lessonara-$version.exe").Path
           $installDir = Join-Path $env:LOCALAPPDATA 'Programs/Lessonara'
           $setup = Start-Process -FilePath $installer -ArgumentList '/S' -Wait -PassThru
           if ($setup.ExitCode -ne 0) { throw "Installer failed: $($setup.ExitCode)" }
@@ -59,8 +59,8 @@ jobs:
         with:
           name: windows-installer
           path: |
-            desktop/out/windows/*-setup.exe
-            desktop/out/windows/*-setup.exe.sha256
+            desktop/out/windows/Lessonara-*.exe
+            desktop/out/windows/Lessonara-*.exe.sha256
           if-no-files-found: error
           retention-days: 3
   publish:

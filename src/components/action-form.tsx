@@ -99,6 +99,7 @@ export function ActionForm({
         setErrorField(result.validation.field);
         return;
       }
+      window.dispatchEvent(new Event("lessonara:pending-changed"));
       notify(t("Alterações salvas."));
     } catch (cause) {
       preserveValues.current = true;

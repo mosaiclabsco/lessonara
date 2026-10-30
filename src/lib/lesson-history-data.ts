@@ -54,7 +54,7 @@ export function historicalLesson(row: OccurrenceRow, today: string, time: string
     date: row.lesson_date,
     time: row.lesson_time.slice(0, 5),
     durationMinutes: row.duration_minutes,
-    status: row.status === "agendada" && past ? "dada" : row.status,
+    status: row.status,
     counts: row.counts,
     past,
     packageId: row.package_ref,
