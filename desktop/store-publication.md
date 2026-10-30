@@ -1,6 +1,6 @@
 # Microsoft Store — preparação do piloto
 
-Estado em 30/10/2026: configuração e workflow preparados; **nenhum pacote foi enviado à Store, nenhuma listagem foi criada e nenhum pacote foi assinado pela Microsoft**. Falta concluir o acesso ao Partner Center e obter a identidade real do aplicativo. O aviso de atualização dos termos da conta Microsoft exige revisão pessoal do titular. A visibilidade desejada ainda aguarda confirmação; a preparação não autoriza listagem pública.
+Estado em 30/10/2026: configuração e workflow preparados; **nenhum pacote foi enviado à Store, nenhuma listagem foi criada e nenhum pacote foi assinado pela Microsoft**. Conta individual criada e verificada pelo titular; Apps and games liberado. Lessonara aparece disponível, mas a reserva falhou por permissão de registro no Microsoft Entra. A página Tenants mostrou nenhuma associação. Abrir/preparar criação de diretório requer autorização específica do titular, atualmente pendente. Ainda não há identidade real do aplicativo. A visibilidade desejada aguarda confirmação; a preparação não autoriza listagem pública.
 
 ## Identidade e conta
 
@@ -43,3 +43,14 @@ O verificador exige identidade/editor correspondentes, executável presente, pro
 - [Beta testing e audiência privada](https://learn.microsoft.com/en-us/windows/apps/publish/beta-testing-and-targeted-distribution)
 - [Assinatura de código e distribuição pela Store](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/code-signing-options)
 - [Target AppX do electron-builder](https://www.electron.build/docs/appx/)
+
+
+## Registro interno bloqueado após cadastro da conta
+
+O Partner Center aceitou a conta, mas negou a reserva de Lessonara com erro de permissão para registrar aplicativo no diretório de contas pessoais. Não repetir a reserva em loop nem interpretar nome disponível como app criado. A página Tenants confirma ausência de associações; a documentação permite criar e associar um diretório pelo próprio Partner Center. Nenhuma permissão de convidado, papel administrativo ou vínculo foi alterado. Revisão automática bloqueou o botão de abertura por exigir autorização explícita para novo diretório; solicitação pendente com o titular.
+
+Após autorização, conferir formulário, ausência de cobrança, nome/domínio e administrador com o titular. O titular deve definir senha e aceitar eventuais contratos pessoalmente. Somente depois de criar/vincular o diretório e confirmar a sessão correta retomar a reserva do app. Se persistir, preparar solicitação ao suporte oficial da Store e obter autorização para enviá-la; não enviar mensagens por inferência.
+
+- [Criar diretório Entra pelo Partner Center](https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/create-new-azure-ad-tenant)
+- [Custo adicional e associação Entra](https://learn.microsoft.com/en-us/windows/apps/publish/store-submission-api)
+- [Suporte oficial da Store](https://learn.microsoft.com/en-us/windows/apps/publish/contact-us)
