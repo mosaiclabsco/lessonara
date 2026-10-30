@@ -15,3 +15,8 @@ Assinatura válida identifica o editor e permite acumular reputação; não gara
 Nenhum certificado/serviço foi contratado ou configurado. Selecionar Store/MSIX ou uma emissora que valide o titular; somente depois integrar assinatura de executável e instalador com timestamp no CI, segredo protegido e verificação Authenticode. A versão curta não deve ser apresentada como assinada.
 
 Fontes oficiais: [opções Microsoft](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/code-signing-options), [SmartScreen](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation).
+
+
+## Preparação da Store — 30/10/2026
+
+A preparação técnica está implementada, sem submissão/listagem: perfil AppX com identidade obrigatória do Partner Center, workflow manual apenas de artefato e verificação do manifesto. A conta Microsoft abriu num aviso de atualização de termos; revisão pessoal do titular pendente. Também pendente confirmação de audiência restrita ou pública, identidade real, build Windows do pacote e teste de aquisição pela Store. Cadastro pelo novo fluxo da Microsoft é gratuito; não contratar certificado para essa etapa. Procedimento e referências atualizadas em [store-publication.md](store-publication.md). Os instaladores 0.3.3 já distribuídos continuam sem assinatura de editor Windows.

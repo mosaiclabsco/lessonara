@@ -32,7 +32,7 @@ function createWindow(){
  mainWindow.on('closed',()=>{cancelCapture?.();stopCapture();mainWindow=null;compact=false;joined=false;});void mainWindow.loadURL(APP_ORIGIN+'/calls');
 }
 if(locked)app.whenReady().then(()=>{
- if(app.isPackaged)app.setAsDefaultProtocolClient('lessonara');
+ if(app.isPackaged&&!process.windowsStore)app.setAsDefaultProtocolClient('lessonara');
  overlay=setupOverlay(value=>{tool=value;state();});
  ipcMain.on('desktop:hub-ready',event=>{if(!trusted(event)||event.senderFrame.url!==APP_ORIGIN+'/calls')return;hubReady=true;if(pendingRoom){const room=pendingRoom;pendingRoom=null;void navigate(room);}});
  ipcMain.handle('desktop:state:get',event=>trusted(event)?{compact,capture,tool}:null);

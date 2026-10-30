@@ -59,3 +59,8 @@ A barra impede seleção acidental dos próprios textos e mantém os controles c
 Tamanho de texto: opções de 10 a 50, padrão 24. Escolha antes de escrever ou selecione uma anotação com Mover e altere o tamanho; dois cliques permitem editar o texto. Tamanho, desenho e área de seleção acompanham a anotação e Desfazer restaura a alteração. O processo principal aceita apenas inteiros entre 10 e 50 enviados pelo quadro principal da barra. Barra e editor têm traduções PT/EN/ES/FR, seguindo o idioma do sistema.
 
 Estes controles são arquivos locais do app: exigem instalar a nova prévia. O fundo virtual da sala é entregue pela web e não exige atualizar o executável. Esta versão continua sem assinatura de editor Windows; o Mac usa assinatura ad-hoc de teste. Verificação visual da barra em quatro idiomas e 23 testes desktop passaram; captura em uma chamada Windows real permanece no checklist do piloto.
+
+
+## Preparação Microsoft Store
+
+Perfil Store separado em `electron-builder.store.cjs`, target AppX compatível com o fluxo de apps MSIX/AppX, com identidade real obrigatória e protocolo no manifesto. `npm run package:store` e o workflow manual Desktop Store package geram somente um artefato para revisão. Nenhuma listagem foi criada e não há submissão automática. Conta, identidade do aplicativo, audiência e validação do pacote real ainda pendentes; ver [guia de publicação](store-publication.md). A assinatura gratuita ocorre pela Microsoft depois da certificação, não durante nosso build local.

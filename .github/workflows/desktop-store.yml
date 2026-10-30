@@ -1,0 +1,64 @@
+name: Desktop Store package
+on:
+  workflow_dispatch:
+    inputs:
+      identity_name:
+        description: Package/Identity/Name from Partner Center
+        required: true
+        type: string
+      publisher:
+        description: Package/Identity/Publisher (CN=GUID) from Partner Center
+        required: true
+        type: string
+      publisher_display_name:
+        description: Package/Properties/PublisherDisplayName from Partner Center
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: desktop-store-package
+  cancel-in-progress: false
+jobs:
+  package:
+    if: github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      STORE_IDENTITY_NAME: ${{ inputs.identity_name }}
+      STORE_PUBLISHER: ${{ inputs.publisher }}
+      STORE_PUBLISHER_DISPLAY_NAME: ${{ inputs.publisher_display_name }}
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+    defaults:
+      run:
+        working-directory: desktop
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: ".nvmrc"
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm test
+      - run: python -B -m unittest discover -s scripts -p 'test_*.py'
+      - run: npm run package:store
+      - name: Verify Store package
+        run: |
+          $packages = @(Get-ChildItem 'out/store/*.appx')
+          if ($packages.Count -ne 1) { throw 'Expected exactly one Store package' }
+          python scripts/verify-store-package.py $packages[0].FullName
+          if ($LASTEXITCODE -ne 0) { throw 'Store manifest verification failed' }
+          $hash = (Get-FileHash $packages[0].FullName -Algorithm SHA256).Hash.ToLower()
+          "$hash  $($packages[0].Name)" | Set-Content "$($packages[0].FullName).sha256" -Encoding ascii
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: store-package-for-review
+          path: |
+            desktop/out/store/*.appx
+            desktop/out/store/*.appx.sha256
+          if-no-files-found: error
+          retention-days: 7

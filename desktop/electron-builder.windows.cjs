@@ -1,7 +1,7 @@
 module.exports={
  appId:'co.mosaic-labs.lessonara',productName:'Lessonara',
  directories:{output:'out/windows'},
- files:['*.cjs','*.js','*.html','annotation-palette.json','icon.png','package.json','!electron-builder.windows.cjs','!annotation-preview.cjs'],
+ files:['*.cjs','*.js','*.html','annotation-palette.json','icon.png','package.json','!electron-builder.windows.cjs','!electron-builder.store.cjs','!annotation-preview.cjs'],
  asar:true,npmRebuild:false,publish:null,
  protocols:[{name:'Lessonara',schemes:['lessonara']}],
  win:{target:[{target:'nsis',arch:['x64']}],icon:'icon.png',requestedExecutionLevel:'asInvoker'},

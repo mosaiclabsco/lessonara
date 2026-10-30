@@ -8,7 +8,8 @@
     "start": "electron .",
     "test": "node --test tests/*.test.cjs",
     "package:mac": "electron-packager . Lessonara --platform=darwin --arch=arm64 --out=out --overwrite --app-bundle-id=co.mosaic-labs.lessonara --protocol=lessonara --protocol-name=Lessonara --ignore=out --ignore=tests --extend-info=Info.plist --icon=icon.icns --ignore=Lessonara.iconset --ignore=\\.zip$ --ignore=annotation-preview\\.cjs$",
-    "package:windows": "electron-builder --config electron-builder.windows.cjs --win nsis --x64 --publish never"
+    "package:windows": "electron-builder --config electron-builder.windows.cjs --win nsis --x64 --publish never",
+    "package:store": "electron-builder --config electron-builder.store.cjs --win appx --x64 --publish never"
   },
   "devDependencies": {
     "@electron/packager": "^20.3.0",
