@@ -96,7 +96,7 @@ export function ClassroomEntry({
         <ButtonLink
           icon="download"
           variant="primary"
-          className="mt-4 w-full whitespace-normal text-center"
+          className="mt-4 w-full whitespace-normal! text-center"
           href="/desktop"
           prefetch={false}
           target="_blank"

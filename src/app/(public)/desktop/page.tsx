@@ -19,7 +19,7 @@ export default async function DesktopDownload() {
           <ButtonLink
             icon="download"
             variant="primary"
-            className="mt-4 w-full whitespace-normal text-center"
+            className="mt-4 w-full whitespace-normal! text-center"
             href={DESKTOP_WINDOWS_RELEASE_URL}
             prefetch={false}
           >
@@ -35,7 +35,7 @@ export default async function DesktopDownload() {
           <ButtonLink
             icon="download"
             variant="primary"
-            className="mt-4 w-full whitespace-normal text-center"
+            className="mt-4 w-full whitespace-normal! text-center"
             href={DESKTOP_RELEASE_URL}
             download
             prefetch={false}
