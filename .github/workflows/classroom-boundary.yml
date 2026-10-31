@@ -1,0 +1,27 @@
+name: Classroom network boundary
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "infra/classroom/**"
+      - ".github/workflows/classroom-boundary.yml"
+  schedule:
+    - cron: "19 7 * * 1"
+permissions:
+  contents: read
+concurrency:
+  group: lessonara-classroom-boundary
+  cancel-in-progress: false
+jobs:
+  boundary:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Validate firewall allowlist safety
+        run: python3 -B -m unittest discover -s infra/classroom -p 'test_*.py'
+      - name: Verify public HTTPS and deny direct administrative access
+        run: python3 -B infra/classroom/probe.py

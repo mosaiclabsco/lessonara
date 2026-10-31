@@ -81,3 +81,8 @@ O teste do fluxo de reaproveitamento também concluiu um backup sem fornecer as 
 - [R2: preços](https://developers.cloudflare.com/r2/pricing/)
 - [Retenção Restic](https://restic.readthedocs.io/en/stable/060_forget.html)
 - [Agendamentos GitHub Actions](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows)
+
+
+## Execução natural confirmada em 31/10/2026
+
+A consulta autenticada ao GitHub confirmou runs com evento `schedule`, conclusão success e workflow publicado. Exemplos: [41201406887](https://github.com/mosaiclabsco/lessonara/actions/runs/41201406887) e [41224261252](https://github.com/mosaiclabsco/lessonara/actions/runs/41224261252), ambos de31/10. Assim, a pendência de observar a execução natural foi encerrada. Isto não é uma nova execução manual nem uma recuperação completa do produto. Segurança e recuperação isolada da configuração da sala estão registradas em [revisão da VPS](vps-security-review.md); offsite automático da VPS e alertas permanecem separados.

@@ -38,3 +38,8 @@ Registrar data, ambiente/versão, cenário, resultado esperado e observado e ref
 - [ ] Abrir quadros em duas ocorrências distintas e verificar isolamento, fonte e área útil em desktop e celular.
 - [x] Definido e implementado histórico persistente de aulas, com data, horário e vínculo ao pacote; publicado antes da rodada de 24/10. Ver [histórico de aulas](lesson-history.md).
 - [ ] Conferir manualmente que aulas dadas preservam data e pacote ao trocar plano ou remover/recriar horários; validar uma renovação completa durante o piloto.
+
+
+## Matriz técnica — 31/10/2026
+
+Executadas89 verificações automatizadas e42 verificações em produção com fixtures Essencial/Plus/Pro, incluindo download próprio/cruzado, Storage, limites20/50/50MB, RLS, exportação e Google por acesso direto. Fixtures e arquivos removidos, sem emails/pagamentos reais. [Escopo e evidências](vps-security-review.md). Isto cobre a parte técnica da matriz; OTP real e iPhone foram adiados explicitamente pelo usuário. Preservar QA visual/manual e a aula real como pendências distintas.

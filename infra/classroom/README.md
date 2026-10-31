@@ -4,7 +4,7 @@ Jitsi exclusivo da sala Pro do Lessonara. Não hospeda o portal, banco ou dados 
 
 ## Acesso
 
-Origem VPS: `13.140.235.111`; SSH com `~/.ssh/id_ed25519_lessonara_contabo`, usuário root por chave. A chave de trabalho e a do homelab não são usadas na VPS.
+Origem VPS: `13.140.235.111`; SSH com `~/.ssh/id_ed25519_lessonara_contabo`, usuário `lessonara-admin` por chave e elevação explícita com `sudo -n`. Login SSH root, senha e encaminhamento de conexões estão desativados desde 31/10/2026. A chave de trabalho e a do homelab não são usadas na VPS.
 
 ## Versão e arquivos
 
@@ -21,10 +21,10 @@ Executar Compose em `/opt/lessonara-classroom`, junto de `compose.override.yml` 
 
 - VPS independente, sem túnel/VPN/rota para o homelab.
 - SSH por chave exclusiva; autenticação por senha desativada. UFW permite SSH apenas do IP administrativo observado durante a instalação. Se esse IP mudar, ajustar a regra pelo console da Contabo usando a credencial pessoal do operador.
-- Caddy recebe TCP80/443 e encaminha a interface web para 127.0.0.1:8000. O registro `meet.mosaic-labs.co` continua proxied pela Cloudflare. Emissão automática Let's Encrypt por HTTP-01; TLS-ALPN desativado porque o proxy da Cloudflare termina essa conexão.
+- Caddy recebe TCP80 para ACME/redirect e TCP443 somente dos CIDRs oficiais Cloudflare, e encaminha a interface web para 127.0.0.1:8000. HTTP/3 não é utilizado; UDP443 não escuta. A lista HTTPS é validada e atualizada semanalmente por `cloudflare-firewall.py`, mantendo regras anteriores em caso de resposta inválida. O registro `meet.mosaic-labs.co` continua proxied pela Cloudflare. Emissão automática Let's Encrypt por HTTP-01; TLS-ALPN desativado porque o proxy da Cloudflare termina essa conexão.
 - Única publicação Docker externa: UDP10000 para o JVB; endpoints administrativos em loopback. Não confiar somente em UFW para portas publicadas pelo Docker: `docker-ingress.sh` limita tráfego externo na DOCKER-USER, persistido pelo systemd.
 - JVB anuncia o IPv4 público, sem candidatos privados. P2P fica desativado nesta implantação para usar o bridge validado. TURN ainda não está instalado; redes que bloqueiam UDP exigem validação e possível configuração adicional.
-- Containers rootless/read-only, no-new-privileges, limites de CPU/RAM e logs com rotação. UID/GID1000 explícitos no tmpfs de /run são necessários com a proteção contra ganho de privilégios.
+- Containers com usuário não root, filesystem read-only, no-new-privileges, limites de CPU/RAM e logs com rotação. O daemon Docker continua rootful; isso não é uma implantação Docker rootless. UID1000, CapEff/CapPrm zerados e NoNewPrivs=1 foram conferidos nos quatro containers em 31/10. UID/GID1000 explícitos no tmpfs de /run são necessários com a proteção contra ganho de privilégios.
 
 ## Instalação e recuperação
 
@@ -48,7 +48,7 @@ O arquivo `homelab-classroom-20261030.tar.gz.age` contém a PoC/stack antiga; o 
 
 ## Backups e monitoramento
 
-Backup criptografado diário da configuração na VPS, retenção de 14 dias, pelo `lessonara-classroom-backup.timer`. Não há gravações/transcrições nesta stack. Uma cópia inicial atual foi salva fora da VPS no Mac; transferência offsite recorrente ainda não foi automatizada. Guardar a identidade de recuperação em outro local seguro antes de depender somente do Mac.
+Backup criptografado diário da configuração na VPS, retenção de 14 dias, pelo `lessonara-classroom-backup.timer`. A cópia agora inclui regras UFW, SSH, sudoers, chave pública administrativa e atualizador Cloudflare; nenhuma identidade privada age é mantida na VPS. Não há gravações/transcrições nesta stack. Uma cópia inicial atual foi salva fora da VPS no Mac; transferência offsite recorrente ainda não foi automatizada. Guardar a identidade de recuperação em outro local seguro antes de depender somente do Mac.
 
 Checagem local por minuto verifica quatro containers, HTTP interno, saúde do bridge e Caddy; falhas aparecem no systemd/journal. Não confundir isso com alerta externo: entrega de notificações e checagem independente do host ainda são pendentes.
 
@@ -59,3 +59,18 @@ Checagem local por minuto verifica quatro containers, HTTP interno, saúde do br
 - Focus criou sala sintética; bridge anunciou somente endereço público; checagem ICE/UDP autenticada da rede residencial à VPS respondeu. Sem contas ou aulas reais alteradas.
 - Certificado público emitido e HTTPS200. Essas verificações não substituem câmera/áudio/compartilhamento entre dois participantes reais.
 - Homelab: LXC103 e volume removidos após backup e validação pública; LXCs 101/102 preservadas. Conferir o registro final em `docs/classroom.md` e na documentação do home-server.
+
+
+## Revisão de segurança e recuperação — 31/10/2026
+
+Ver [evidências, exposição e pendências](../../docs/vps-security-review.md). O script `provision-admin.sh` prepara a conta usando somente a chave já autorizada. Antes de executar `harden-ssh.sh`, verificar uma segunda sessão com `ssh -i ~/.ssh/id_ed25519_lessonara_contabo lessonara-admin@13.140.235.111 'sudo -n id -u'`. O endurecimento arma reversão em cinco minutos; cancelar `lessonara-ssh-rollback.timer` somente após testar nova sessão e sudo. O console Contabo continua sendo o caminho alternativo, sem alterar senha/credencial do titular.
+
+Instalar `cloudflare-firewall.py` em `/usr/local/sbin/lessonara-cloudflare-firewall` antes de `harden-network.sh`. O script de rede preserva SSH e mídia, adiciona as permissões Cloudflare antes de remover o HTTPS irrestrito e arma reversão de UFW/Caddy. Testar o domínio público e outra sessão SSH antes de cancelar `lessonara-network-rollback.timer`. As cópias anteriores ficam privadas em `/root/lessonara-recovery/hardening-before/`.
+
+As imagens estão fixadas por digest em `compose.override.yml`, conforme `images.lock`. Mudanças de versão exigem atualizar os dois após revisão; não puxar tags móveis por rotina. A configuração foi persistida sem reiniciar a sala: os containers em execução já usam esses mesmos digests.
+
+`restore-drill.sh` recebe exclusivamente um diretório novo `/opt/lessonara-restore-drill.*`, preparado com o arquivo restaurado. Recria a configuração em volumes próprios, substitui credenciais internas por valores sintéticos, recusa mounts da stack real e qualquer porta publicada, usa rede Docker interna e remove a stack ao terminar. Rodar sem sobreposição de outra operação pesada. O teste não restaura portal, banco, Auth ou integrações e não equivale a recuperação completa em outra VPS.
+
+`probe.py --admin-network` confere a exposição a partir da origem administrativa. Em origem pública usar `probe.py` sem a flag: SSH22 e HTTPS443 diretos devem falhar, TCP80 e HTTPS pelo domínio devem funcionar. O workflow `Classroom network boundary` executa essa checagem a partir do GitHub, manualmente, após mudanças de infraestrutura e semanalmente. Falha de workflow não comprova entrega de alerta ao operador.
+
+Backup offsite automático, cópia independente da identidade age e entrega de alertas ainda não foram ativados nesta revisão: dependem da autorização específica de exportação criptografada e de um destinatário válido. Não há endpoint `/ops/backup` publicado.
