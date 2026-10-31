@@ -6,6 +6,7 @@ import { useLessonClock } from "./use-lesson-clock";
 import { LessonUnavailable } from "./lesson-unavailable";
 import { useRef } from "react";
 import { Icon } from "./icon";
+import { ButtonLink } from "./button";
 import { useI18n } from "./browser-preferences-provider";
 import { usePlatformPlan } from "./platform-plan-provider";
 import { desktopClassroomHref } from "@/lib/desktop-links";
@@ -92,14 +93,17 @@ export function ClassroomEntry({
         <p className="text-xs text-muted mt-4">
           {t("Na primeira vez, abra o app e entre com sua conta de professor.")}
         </p>
-        <a
-          className="portal-text-button text-sm mt-4"
+        <ButtonLink
+          icon="download"
+          variant="primary"
+          className="mt-4 w-full whitespace-normal text-center"
           href="/desktop"
+          prefetch={false}
           target="_blank"
           rel="noreferrer"
         >
           {t("Baixar app para computador")}
-        </a>
+        </ButtonLink>
       </dialog>
     </>
   );

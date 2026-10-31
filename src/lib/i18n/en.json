@@ -1058,5 +1058,20 @@
   "Menu principal": "Main menu",
   "Recolher menu": "Collapse menu",
   "Expandir menu": "Expand menu",
-  "Fechar menu": "Close menu"
+  "Fechar menu": "Close menu",
+  "Lessonara · Chamadas": "Lessonara · Calls",
+  "Entre nas aulas pelo aplicativo usando sua conta de professor do plano Pro. Seus alunos podem continuar no navegador.": "Join lessons in the app using your Pro teacher account. Your students can keep using the browser.",
+  "Windows de 64 bits · Intel ou AMD": "64-bit Windows · Intel or AMD",
+  "Baixar na Microsoft Store": "Download from Microsoft Store",
+  "Instale pela Microsoft Store. Depois, abra o Lessonara e entre com sua conta.": "Install from Microsoft Store. Then open Lessonara and sign in to your account.",
+  "Mac com chip Apple Silicon": "Mac with Apple Silicon",
+  "Baixar para Mac": "Download for Mac",
+  "Descompacte o arquivo, mova o Lessonara para Aplicativos e abra para entrar com sua conta.": "Unzip the file, move Lessonara to Applications, then open it and sign in to your account.",
+  "A versão para Mac ainda não tem notarização da Apple. Se o sistema bloquear a abertura, entre na aula pelo navegador.": "The Mac version is not yet notarized by Apple. If the system blocks it from opening, join the lesson in your browser.",
+  "Como entrar nas aulas": "How to join lessons",
+  "Abra o app e entre com seu email e senha para ver suas chamadas.": "Open the app and sign in with your email and password to see your calls.",
+  "Ao entrar numa aula pelo site, escolha “Abrir no app”. O portal continua no navegador.": "When joining a lesson on the website, choose “Open in app”. The portal stays in the browser.",
+  "Escolha uma tela inteira ou uma janela para compartilhar. Para usar anotações sobre outros aplicativos, compartilhe a tela inteira.": "Choose an entire screen or a window to share. To annotate over other applications, share the entire screen.",
+  "Ao minimizar uma chamada ativa, ela continua numa janela flutuante. Use caneta, laser e texto durante o compartilhamento; Esc libera os cliques na tela. No Mac, a barra pode aparecer na transmissão.": "When you minimize an active call, it continues in a floating window. Use the pen, laser and text while sharing; Esc lets you click the screen again. On Mac, the toolbar may appear in the broadcast.",
+  "Entrar pelo navegador": "Sign in with your browser"
 }

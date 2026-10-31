@@ -1058,5 +1058,20 @@
   "Menu principal": "Menu principal",
   "Recolher menu": "Réduire le menu",
   "Expandir menu": "Développer le menu",
-  "Fechar menu": "Fermer le menu"
+  "Fechar menu": "Fermer le menu",
+  "Lessonara · Chamadas": "Lessonara · Appels",
+  "Entre nas aulas pelo aplicativo usando sua conta de professor do plano Pro. Seus alunos podem continuar no navegador.": "Rejoignez les cours dans l’application avec votre compte professeur Pro. Vos élèves peuvent continuer dans le navigateur.",
+  "Windows de 64 bits · Intel ou AMD": "Windows 64 bits · Intel ou AMD",
+  "Baixar na Microsoft Store": "Télécharger sur le Microsoft Store",
+  "Instale pela Microsoft Store. Depois, abra o Lessonara e entre com sua conta.": "Installez depuis le Microsoft Store. Puis ouvrez Lessonara et connectez-vous à votre compte.",
+  "Mac com chip Apple Silicon": "Mac avec puce Apple Silicon",
+  "Baixar para Mac": "Télécharger pour Mac",
+  "Descompacte o arquivo, mova o Lessonara para Aplicativos e abra para entrar com sua conta.": "Décompressez le fichier, déplacez Lessonara dans Applications, puis ouvrez-le pour vous connecter à votre compte.",
+  "A versão para Mac ainda não tem notarização da Apple. Se o sistema bloquear a abertura, entre na aula pelo navegador.": "La version Mac n’est pas encore notarisée par Apple. Si le système bloque son ouverture, rejoignez le cours dans le navigateur.",
+  "Como entrar nas aulas": "Comment rejoindre les cours",
+  "Abra o app e entre com seu email e senha para ver suas chamadas.": "Ouvrez l’application et connectez-vous avec votre adresse email et votre mot de passe pour voir vos appels.",
+  "Ao entrar numa aula pelo site, escolha “Abrir no app”. O portal continua no navegador.": "Pour rejoindre un cours depuis le site, choisissez « Ouvrir dans l’application ». Le portail reste dans le navigateur.",
+  "Escolha uma tela inteira ou uma janela para compartilhar. Para usar anotações sobre outros aplicativos, compartilhe a tela inteira.": "Choisissez un écran entier ou une fenêtre à partager. Pour annoter d’autres applications, partagez l’écran entier.",
+  "Ao minimizar uma chamada ativa, ela continua numa janela flutuante. Use caneta, laser e texto durante o compartilhamento; Esc libera os cliques na tela. No Mac, a barra pode aparecer na transmissão.": "Lorsque vous réduisez un appel actif, il continue dans une fenêtre flottante. Utilisez le stylo, le laser et le texte pendant le partage ; Échap permet de cliquer à nouveau sur l’écran. Sur Mac, la barre peut apparaître dans la diffusion.",
+  "Entrar pelo navegador": "Se connecter dans le navigateur"
 }
