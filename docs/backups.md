@@ -86,3 +86,12 @@ O teste do fluxo de reaproveitamento também concluiu um backup sem fornecer as 
 ## Execução natural confirmada em 31/10/2026
 
 A consulta autenticada ao GitHub confirmou runs com evento `schedule`, conclusão success e workflow publicado. Exemplos: [41201406887](https://github.com/mosaiclabsco/lessonara/actions/runs/41201406887) e [41224261252](https://github.com/mosaiclabsco/lessonara/actions/runs/41224261252), ambos de31/10. Assim, a pendência de observar a execução natural foi encerrada. Isto não é uma nova execução manual nem uma recuperação completa do produto. Segurança e recuperação isolada da configuração da sala estão registradas em [revisão da VPS](vps-security-review.md); offsite automático da VPS e alertas permanecem separados.
+
+
+## Falha de preparação e retentativas — 09/11/2026
+
+A execução [42398402043](https://github.com/mosaiclabsco/lessonara/actions/runs/42398402043), de 07/11 às 17h52 UTC, falhou ao baixar a chave pública do repositório PostgreSQL: `curl: (56) Failure when receiving data from the peer`. A etapa de instalação encerrou antes de acessar banco/R2; exportação e checagem foram ignoradas. O [backup do próprio dia](https://github.com/mosaiclabsco/lessonara/actions/runs/42375070903) havia concluído envio criptografado e leitura de verificação às 13h03 UTC. Em 08/11, [backup](https://github.com/mosaiclabsco/lessonara/actions/runs/42484894246) e [checagem](https://github.com/mosaiclabsco/lessonara/actions/runs/42508249275) concluíram normalmente.
+
+O download HTTPS passa a aceitar até cinco retentativas, incluindo resets de conexão, com intervalo de cinco segundos, limite de conexão de 15 segundos e de 60 segundos por transferência. A janela para iniciar novas tentativas é de 300 segundos; uma transferência já iniciada ainda respeita seu limite individual. Esgotadas as tentativas, a etapa falha e não instala o arquivo incompleto. A verificação TLS e a validação de assinatura do repositório pelo APT permanecem ativas.
+
+Validação local: YAML e sintaxe Bash conferidos; servidor descartável em loopback reproduziu duas interrupções `curl 56` antes de responder com sucesso, conferindo o conteúdo final completo. Em falha persistente, foram confirmadas seis tentativas totais e saída diferente de zero. A checagem no executor publicado deve ser registrada separadamente; não confundir esses testes com um novo backup ou restauração.

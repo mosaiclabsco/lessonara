@@ -28,7 +28,10 @@ jobs:
           persist-credentials: false
       - name: Install backup clients
         run: |
-          curl --fail --silent --show-error https://www.postgresql.org/media/keys/ACCC4CF8.asc -o "$RUNNER_TEMP/postgresql.asc"
+          curl --fail --silent --show-error \
+            --retry 5 --retry-all-errors --retry-delay 5 --retry-max-time 300 \
+            --connect-timeout 15 --max-time 60 \
+            https://www.postgresql.org/media/keys/ACCC4CF8.asc -o "$RUNNER_TEMP/postgresql.asc"
           sudo install -m 644 "$RUNNER_TEMP/postgresql.asc" /usr/share/keyrings/lessonara-postgresql.asc
           echo 'deb [signed-by=/usr/share/keyrings/lessonara-postgresql.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main' | sudo tee /etc/apt/sources.list.d/lessonara-postgresql.list > /dev/null
           sudo apt-get update -qq
