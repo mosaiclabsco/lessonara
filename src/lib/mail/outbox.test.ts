@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   claim: vi.fn(),
   plan: vi.fn(),
   ledger: vi.fn(),
+  payment: vi.fn(),
 }));
 vi.mock("../data", () => ({ loadLedgers: mocks.ledger }));
 vi.mock("./welcome-invite", () => ({
@@ -41,11 +42,13 @@ function db() {
     rpc: mocks.claim,
     from(table: string) {
       let values: unknown;
+      const filters: Record<string, unknown> = {};
       const query = {
         select() {
           return query;
         },
-        eq() {
+        eq(key: string, value: unknown) {
+          filters[key] = value;
           return query;
         },
         is() {
@@ -59,6 +62,15 @@ function db() {
           return query;
         },
         async maybeSingle() {
+          if (table === "renewal_requests") {
+            const result = await mocks.payment();
+            if (
+              result.data &&
+              !Object.entries(filters).every(([key, value]) => result.data[key] === value)
+            )
+              return { data: null, error: null };
+            return result;
+          }
           return table === "students" ? mocks.student() : mocks.challenge();
         },
         then(resolve: (value: unknown) => unknown) {
@@ -366,4 +378,121 @@ it("desativar lembretes de aula não bloqueia aviso de renovação", async () =>
     error: null,
   });
   expect((await processEmails()).sent).toBe(1);
+});
+
+function reportedJob(extra = {}) {
+  return {
+    ...base,
+    teacher_id: "teacher",
+    recipient: "teacher@example.com",
+    template: "payment_reported",
+    event_key: "payment_reported/request",
+    payload: { request_id: "request" },
+    ...extra,
+  };
+}
+it("avisa somente a professora, independentemente das preferências promocionais do aluno", async () => {
+  const student = await mocks.student();
+  mocks.student.mockResolvedValue({
+    data: {
+      ...student.data,
+      promotional_email_opt_out: true,
+      renewal_email_opt_out: true,
+      lesson_email_opt_out: true,
+    },
+    error: null,
+  });
+  mocks.payment.mockResolvedValue({
+    data: {
+      id: "request",
+      teacher_id: "teacher",
+      student_id: "student",
+      status: "pending",
+      plan_name: "Inglês",
+      amount: 400,
+      lessons: 8,
+    },
+    error: null,
+  });
+  mocks.claim.mockResolvedValue({ data: [reportedJob()], error: null });
+  expect((await processEmails()).sent).toBe(1);
+  expect(mocks.send).toHaveBeenCalledWith(
+    expect.objectContaining({
+      to: "teacher@example.com",
+      subject: "Pagamento informado pelo aluno",
+      text: expect.stringContaining("https://lessonara.example/payments"),
+    }),
+    "lessonara/job",
+  );
+  expect(mocks.send.mock.calls[0][0].text).toContain("Alice");
+  expect(mocks.send.mock.calls[0][0].replyTo).not.toBe("teacher@example.com");
+});
+it.each(["confirmed", "rejected", "cancelled", "other-tenant"])(
+  "não envia solicitação resolvida ou fora do vínculo: %s",
+  async (state) => {
+    mocks.payment.mockResolvedValue({
+      data: {
+        id: "request",
+        teacher_id: state === "other-tenant" ? "other" : "teacher",
+        student_id: "student",
+        status: state === "other-tenant" ? "pending" : state,
+      },
+      error: null,
+    });
+    mocks.claim.mockResolvedValue({ data: [reportedJob()], error: null });
+    expect((await processEmails()).cancelled).toBe(1);
+    expect(mocks.send).not.toHaveBeenCalled();
+  },
+);
+it("downgrade impede aviso já enfileirado", async () => {
+  mocks.plan.mockResolvedValue({ id: "essential", emails: false });
+  mocks.claim.mockResolvedValue({ data: [reportedJob()], error: null });
+  expect((await processEmails()).cancelled).toBe(1);
+  expect(mocks.send).not.toHaveBeenCalled();
+});
+it("recusa notificação com teacher_id de outra conta", async () => {
+  mocks.claim.mockResolvedValue({ data: [reportedJob({ teacher_id: "other" })], error: null });
+  expect((await processEmails()).cancelled).toBe(1);
+  expect(mocks.send).not.toHaveBeenCalled();
+});
+it("revalida email atual da professora mesmo com corpo de retry pronto", async () => {
+  const body = {
+    to: "old@example.com",
+    from: "Lessonara <aulas@example.com>",
+    subject: "Antigo",
+    html: "antigo",
+    text: "antigo",
+  };
+  mocks.claim.mockResolvedValue({
+    data: [
+      reportedJob({
+        recipient: "old@example.com",
+        delivery: { sealed: seal(body, "mail-delivery") },
+      }),
+    ],
+    error: null,
+  });
+  expect((await processEmails()).cancelled).toBe(1);
+  expect(mocks.send).not.toHaveBeenCalled();
+});
+it("falha temporária do provedor preserva aviso para retry idempotente", async () => {
+  mocks.payment.mockResolvedValue({
+    data: {
+      id: "request",
+      teacher_id: "teacher",
+      student_id: "student",
+      status: "pending",
+      plan_name: "Inglês",
+      amount: 400,
+      lessons: 8,
+    },
+    error: null,
+  });
+  mocks.claim.mockResolvedValue({ data: [reportedJob()], error: null });
+  mocks.send.mockRejectedValue(new EmailSendError("rate_limit_exceeded", true));
+  expect((await processEmails()).pending).toBe(1);
+  expect(mocks.send).toHaveBeenCalledWith(
+    expect.objectContaining({ to: "teacher@example.com" }),
+    "lessonara/job",
+  );
 });

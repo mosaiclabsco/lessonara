@@ -1,5 +1,7 @@
 "use server";
 import { studentPortalPath } from "@/lib/student-links";
+import { after } from "next/server";
+import { processEmails } from "@/lib/mail/outbox";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { authorizedStudent } from "@/lib/student-access";
@@ -68,6 +70,24 @@ export async function studentRenewal(
         ).error,
       );
     else throw new FormValidationError("", "Ação inválida.");
+    if (operation === "report") {
+      const requestId = formText(form, "request_id", 36, true);
+      after(async () => {
+        try {
+          const job = await db
+            .from("email_outbox")
+            .select("id")
+            .eq("event_key", `payment_reported/${requestId}`)
+            .eq("teacher_id", access.teacher_id)
+            .eq("student_id", access.id)
+            .eq("status", "pending")
+            .maybeSingle();
+          if (!job.error && job.data) await processEmails(job.data.id);
+        } catch {
+          /* The durable queue remains available to the scheduled worker. */
+        }
+      });
+    }
     revalidatePath(studentPortalPath(access.slug));
   });
 }

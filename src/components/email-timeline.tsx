@@ -98,15 +98,17 @@ export function EmailTimeline({ jobs }: { jobs: EmailStatus[] }) {
             <div className="flex flex-wrap justify-between gap-2">
               <p className="text-sm font-medium">
                 {t(
-                  job.template === "welcome"
-                    ? "Boas-vindas"
-                    : job.template === "campaign"
-                      ? "Campanha"
-                      : job.template === "lesson_notice"
-                        ? "Lembrete de aula"
-                        : job.template === "otp"
-                          ? "Código de acesso"
-                          : "Renovação do pacote",
+                  job.template === "payment_reported"
+                    ? "Pagamento informado pelo aluno"
+                    : job.template === "welcome"
+                      ? "Boas-vindas"
+                      : job.template === "campaign"
+                        ? "Campanha"
+                        : job.template === "lesson_notice"
+                          ? "Lembrete de aula"
+                          : job.template === "otp"
+                            ? "Código de acesso"
+                            : "Renovação do pacote",
                 )}{" "}
                 · {job.recipient}
               </p>

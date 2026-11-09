@@ -1,3 +1,4 @@
+// Aviso à professora de pagamento informado: Plus/Pro, capacidade emails; não confirma créditos.
 // Presença manual/configurável e atividades individuais: todos os planos, com cotas e isolamento existentes.
 // Links curtos e convites são autenticação básica em todos os planos; a URL nunca autoriza acesso.
 // Histórico retroativo, correções e pacotes: todos os planos; suporte só por operador verificado, sem ampliar o plano efetivo.

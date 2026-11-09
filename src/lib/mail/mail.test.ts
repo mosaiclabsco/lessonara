@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { seal, unseal, fingerprint } from "./crypto";
-import { otpEmail, welcomeEmail, reminderEmail } from "./templates";
+import { otpEmail, welcomeEmail, reminderEmail, paymentReportedEmail } from "./templates";
 beforeEach(() => {
   vi.stubEnv("EMAIL_ENCRYPTION_KEY", "01".repeat(32));
   vi.stubEnv("APP_URL", "https://lessonara.example");
@@ -53,3 +53,30 @@ it("emails declare a light presentation independently of the portal theme", () =
     expect(email.html).not.toContain("complete-logo-dark");
   }
 });
+
+it.each(["pt-BR", "en", "es", "fr"] as const)(
+  "aviso de pagamento traduzido, light e sem confirmar recebimento: %s",
+  (locale) => {
+    const email = paymentReportedEmail(
+      "Prof <script>",
+      "Aluno <img>",
+      "Inglês & conversa",
+      400,
+      8,
+      locale,
+    );
+    expect(email.html).not.toContain("<script>");
+    expect(email.html).toContain("&lt;img&gt;");
+    expect(email.html).toContain('name="color-scheme" content="light only"');
+    expect(email.text).toContain("https://lessonara.example/payments");
+    expect(email.text).not.toMatch(/\{value\d+\}/);
+    expect(email.subject).toBe(
+      {
+        "pt-BR": "Pagamento informado pelo aluno",
+        en: "Payment reported by student",
+        es: "Pago comunicado por el alumno",
+        fr: "Paiement signalé par l’élève",
+      }[locale],
+    );
+  },
+);

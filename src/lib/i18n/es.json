@@ -1073,5 +1073,12 @@
   "Ao entrar numa aula pelo site, escolha “Abrir no app”. O portal continua no navegador.": "Al entrar a una clase desde el sitio, elige “Abrir en la app”. El portal sigue en el navegador.",
   "Escolha uma tela inteira ou uma janela para compartilhar. Para usar anotações sobre outros aplicativos, compartilhe a tela inteira.": "Elige una pantalla completa o una ventana para compartir. Para anotar sobre otras aplicaciones, comparte la pantalla completa.",
   "Ao minimizar uma chamada ativa, ela continua numa janela flutuante. Use caneta, laser e texto durante o compartilhamento; Esc libera os cliques na tela. No Mac, a barra pode aparecer na transmissão.": "Al minimizar una llamada activa, continúa en una ventana flotante. Usa lápiz, láser y texto al compartir; Esc permite volver a hacer clic en la pantalla. En Mac, la barra puede aparecer en la transmisión.",
-  "Entrar pelo navegador": "Entrar desde el navegador"
+  "Entrar pelo navegador": "Entrar desde el navegador",
+  "Pagamento informado pelo aluno": "Pago comunicado por el alumno",
+  "Olá, {value1}!": "¡Hola, {value1}!",
+  "{value1} informou um pagamento pelo portal do aluno.": "{value1} comunicó un pago desde el portal del alumno.",
+  "Pacote: {value1} · {value2} aulas · Valor informado: {value3}.": "Paquete: {value1} · {value2} clases · Importe comunicado: {value3}.",
+  "Confira o recebimento na sua conta antes de confirmar no Lessonara. Este aviso não confirma o pagamento; os créditos só são liberados após a sua confirmação.": "Comprueba que has recibido el dinero en tu cuenta antes de confirmar en Lessonara. Este aviso no confirma el pago; los créditos solo se liberan después de tu confirmación.",
+  "Conferir pagamento": "Revisar pago",
+  "Lessonara · Suas aulas em um só lugar.": "Lessonara · Tus clases en un solo lugar."
 }

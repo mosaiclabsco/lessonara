@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   user: vi.fn(),
   admin: vi.fn(),
   rpc: vi.fn(),
+  after: vi.fn(),
   revalidate: vi.fn(),
   redirect: vi.fn((path: string) => {
     throw new Error(`redirect:${path}`);
@@ -11,6 +12,8 @@ const mocks = vi.hoisted(() => ({
 }));
 vi.mock("./student-access", () => ({ authorizedStudent: mocks.access }));
 vi.mock("./supabase/server", () => ({ requireUser: mocks.user, createAdminClient: mocks.admin }));
+vi.mock("next/server", () => ({ after: mocks.after }));
+vi.mock("@/lib/mail/outbox", () => ({ processEmails: vi.fn() }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidate }));
 vi.mock("next/navigation", () => ({ redirect: mocks.redirect }));
 import { studentRenewal, resolveRenewal, savePix } from "@/app/renewal-actions";
@@ -48,6 +51,7 @@ it("binds the payment report to the authenticated student and request", async ()
     p_cancel: false,
   });
   expect(mocks.revalidate).toHaveBeenCalledWith("/a/student-slug");
+  expect(mocks.after).toHaveBeenCalledOnce();
 });
 it("does not claim success when the report is stale or belongs to another student", async () => {
   mocks.rpc.mockResolvedValue({ error: { message: "not found" } });
@@ -55,6 +59,7 @@ it("does not claim success when the report is stale or belongs to another studen
   form.set("request_id", request);
   expect(await studentRenewal(student, "report", form)).toHaveProperty("validation.message");
   expect(mocks.revalidate).not.toHaveBeenCalled();
+  expect(mocks.after).not.toHaveBeenCalled();
 });
 it("teacher confirmation never accepts browser amount/credit overrides", async () => {
   const form = new FormData();

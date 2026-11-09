@@ -13,6 +13,7 @@ import {
   welcomeEmail,
   campaignEmail,
   lessonNoticeEmail,
+  paymentReportedEmail,
 } from "./templates";
 
 type MailStudent = {
@@ -33,8 +34,9 @@ type Job = {
   event_key: string;
   lease_id: string;
   student_id: string | null;
+  teacher_id: string | null;
   recipient: string;
-  template: "otp" | "welcome" | "reminder" | "campaign" | "lesson_notice";
+  template: "otp" | "welcome" | "reminder" | "campaign" | "lesson_notice" | "payment_reported";
   payload: Record<string, string>;
   attempts: number;
   delivery: { sealed: string } | null;
@@ -119,7 +121,8 @@ export async function processEmails(id?: string) {
       if (
         job.template === "reminder" ||
         job.template === "campaign" ||
-        job.template === "lesson_notice"
+        job.template === "lesson_notice" ||
+        job.template === "payment_reported"
       ) {
         const owner = await db
           .from("students")
@@ -129,6 +132,7 @@ export async function processEmails(id?: string) {
         if (owner.error) throw owner.error;
         if (
           !owner.data ||
+          (job.template === "payment_reported" && owner.data.teacher_id !== job.teacher_id) ||
           !(await loadTeacherPlan(owner.data.teacher_id, db))[
             job.template === "lesson_notice" ? "lessonReminders" : "emails"
           ]
@@ -154,15 +158,36 @@ export async function processEmails(id?: string) {
         if (
           !student ||
           !student.active ||
+          (job.template === "payment_reported" && student.teacher_id !== job.teacher_id) ||
           (job.template === "campaign" && student.promotional_email_opt_out) ||
           (job.template === "reminder" && student.renewal_email_opt_out) ||
           (job.template === "lesson_notice" && student.lesson_email_opt_out) ||
-          student.email?.trim().toLowerCase() !== job.recipient
+          (job.template === "payment_reported"
+            ? student.teachers.email?.trim().toLowerCase() !== job.recipient
+            : student.email?.trim().toLowerCase() !== job.recipient)
         ) {
           await finish({ status: "cancelled", payload: {}, delivery: null });
           result.cancelled++;
           continue;
         }
+      }
+      let payment: { plan_name: string; amount: number; lessons: number } | null = null;
+      if (job.template === "payment_reported") {
+        const request = await db
+          .from("renewal_requests")
+          .select("plan_name,amount,lessons")
+          .eq("id", job.payload.request_id)
+          .eq("teacher_id", job.teacher_id)
+          .eq("student_id", job.student_id)
+          .eq("status", "pending")
+          .maybeSingle();
+        if (request.error) throw new EmailSendError("database_unavailable", true);
+        if (!student || !request.data) {
+          await finish({ status: "cancelled", payload: {}, delivery: null });
+          result.cancelled++;
+          continue;
+        }
+        payment = request.data;
       }
       if (job.template === "otp") {
         const challengeKey = job.event_key.slice(4);
@@ -207,62 +232,72 @@ export async function processEmails(id?: string) {
         body = unseal<EmailInput>(job.delivery.sealed, "mail-delivery", { allowLegacy: true });
       else {
         const content =
-          job.template === "otp"
-            ? otpEmail(
-                unseal<{ code: string }>(job.payload.sealed, "otp", { allowLegacy: true }).code,
+          job.template === "payment_reported"
+            ? paymentReportedEmail(
+                student!.teachers.name,
+                student!.name,
+                payment!.plan_name,
+                Number(payment!.amount),
+                payment!.lessons,
               )
-            : job.template === "welcome"
-              ? welcomeEmail(
-                  student!.name,
-                  student!.teachers.name,
-                  student!.teacher_id,
-                  student!.slug,
-                  await createWelcomeInvite(student!),
+            : job.template === "otp"
+              ? otpEmail(
+                  unseal<{ code: string }>(job.payload.sealed, "otp", { allowLegacy: true }).code,
                 )
-              : job.template === "campaign"
-                ? (() => {
-                    const content = unseal<{ subject: string; message: string }>(
-                      job.payload.sealed,
-                      "campaign",
-                      { allowLegacy: true },
-                    );
-                    const origin =
-                      process.env.APP_URL || `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
-                    const token = createUnsubscribeToken({
-                      studentId: student!.id,
-                      teacherId: student!.teacher_id,
-                      email: student!.email,
-                    });
-                    return campaignEmail(
-                      student!.name,
-                      student!.teachers.name,
-                      content.subject,
-                      content.message,
-                      new URL(`/emails/unsubscribe?token=${encodeURIComponent(token)}`, origin)
-                        .href,
-                    );
-                  })()
-                : job.template === "lesson_notice"
-                  ? lessonNoticeEmail(
-                      student!.name,
-                      student!.teachers.name,
-                      job.payload.date,
-                      job.payload.time,
-                      student!.teacher_id,
-                      student!.slug,
-                    )
-                  : reminderEmail(
-                      student!.name,
-                      student!.teachers.name,
-                      job.payload.message,
-                      student!.teacher_id,
-                      student!.slug,
-                    );
+              : job.template === "welcome"
+                ? welcomeEmail(
+                    student!.name,
+                    student!.teachers.name,
+                    student!.teacher_id,
+                    student!.slug,
+                    await createWelcomeInvite(student!),
+                  )
+                : job.template === "campaign"
+                  ? (() => {
+                      const content = unseal<{ subject: string; message: string }>(
+                        job.payload.sealed,
+                        "campaign",
+                        { allowLegacy: true },
+                      );
+                      const origin =
+                        process.env.APP_URL ||
+                        `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+                      const token = createUnsubscribeToken({
+                        studentId: student!.id,
+                        teacherId: student!.teacher_id,
+                        email: student!.email,
+                      });
+                      return campaignEmail(
+                        student!.name,
+                        student!.teachers.name,
+                        content.subject,
+                        content.message,
+                        new URL(`/emails/unsubscribe?token=${encodeURIComponent(token)}`, origin)
+                          .href,
+                      );
+                    })()
+                  : job.template === "lesson_notice"
+                    ? lessonNoticeEmail(
+                        student!.name,
+                        student!.teachers.name,
+                        job.payload.date,
+                        job.payload.time,
+                        student!.teacher_id,
+                        student!.slug,
+                      )
+                    : reminderEmail(
+                        student!.name,
+                        student!.teachers.name,
+                        job.payload.message,
+                        student!.teacher_id,
+                        student!.slug,
+                      );
         body = {
           ...content,
           to: job.recipient,
           from: process.env.EMAIL_FROM || "Lessonara <onboarding@resend.dev>",
-          ...(student?.teachers.email &&
+          ...(job.template !== "payment_reported" &&
+          student?.teachers.email &&
           !/\.(test|invalid|localhost)$/i.test(student.teachers.email)
             ? { replyTo: student.teachers.email }
             : process.env.EMAIL_REPLY_TO

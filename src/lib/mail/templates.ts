@@ -1,3 +1,4 @@
+import { translator, localeTag, type Locale } from "../i18n/core";
 import { studentPortalPath } from "../student-links";
 export function escapeHtml(value: string): string {
   return value.replace(
@@ -15,8 +16,9 @@ export function studentLoginUrl(teacherId?: string, slug?: string) {
   return new URL(teacherId && slug ? studentPortalPath(slug) : "/student", origin).href;
 }
 
-function layout(title: string, content: string) {
-  return `<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light"><style>:root{color-scheme:light only;supported-color-schemes:light}body{color-scheme:light only}@media(prefers-color-scheme:dark){.email-page{background-color:#eaf2ed!important;color:#283d39!important}.email-card{background-color:#fff!important;color:#283d39!important}}[data-ogsc] .email-page{background-color:#eaf2ed!important;color:#283d39!important}[data-ogsc] .email-card{background-color:#fff!important;color:#283d39!important}</style></head><body class="email-page" bgcolor="#eaf2ed" style="color-scheme:light only;margin:0;padding:32px 16px;background:#eaf2ed;font-family:Arial,sans-serif;color:#283d39"><table role="presentation" style="width:100%;max-width:600px;margin:0 auto;border-spacing:0"><tr><td style="padding:26px 32px;background:#f7f8fa;border-radius:16px 16px 0 0"><img src="${escapeHtml(new URL("/brand/complete-logo.png", studentLoginUrl()).href)}" width="162" height="36" alt="Lessonara" style="display:block;border:0;width:162px;height:36px"></td></tr><tr><td class="email-card" bgcolor="#ffffff" style="padding:32px;background:#fff;border-radius:0 0 16px 16px;font-size:14px;line-height:1.75"><h1 style="font-size:23px;line-height:1.35;margin:0 0 28px;color:#283d39">${escapeHtml(title)}</h1>${content}<hr style="border:0;border-top:1px solid #e7ece9;margin:32px 0 20px"><p style="margin:0;font-size:12px;color:#74827f">Lessonara · Suas aulas em um só lugar.</p></td></tr></table></body></html>`;
+function layout(title: string, content: string, locale: Locale = "pt-BR") {
+  const t = translator(locale);
+  return `<!doctype html><html lang="${localeTag(locale)}"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light"><style>:root{color-scheme:light only;supported-color-schemes:light}body{color-scheme:light only}@media(prefers-color-scheme:dark){.email-page{background-color:#eaf2ed!important;color:#283d39!important}.email-card{background-color:#fff!important;color:#283d39!important}}[data-ogsc] .email-page{background-color:#eaf2ed!important;color:#283d39!important}[data-ogsc] .email-card{background-color:#fff!important;color:#283d39!important}</style></head><body class="email-page" bgcolor="#eaf2ed" style="color-scheme:light only;margin:0;padding:32px 16px;background:#eaf2ed;font-family:Arial,sans-serif;color:#283d39"><table role="presentation" style="width:100%;max-width:600px;margin:0 auto;border-spacing:0"><tr><td style="padding:26px 32px;background:#f7f8fa;border-radius:16px 16px 0 0"><img src="${escapeHtml(new URL("/brand/complete-logo.png", studentLoginUrl()).href)}" width="162" height="36" alt="Lessonara" style="display:block;border:0;width:162px;height:36px"></td></tr><tr><td class="email-card" bgcolor="#ffffff" style="padding:32px;background:#fff;border-radius:0 0 16px 16px;font-size:14px;line-height:1.75"><h1 style="font-size:23px;line-height:1.35;margin:0 0 28px;color:#283d39">${escapeHtml(title)}</h1>${content}<hr style="border:0;border-top:1px solid #e7ece9;margin:32px 0 20px"><p style="margin:0;font-size:12px;color:#74827f">${escapeHtml(t("Lessonara · Suas aulas em um só lugar."))}</p></td></tr></table></body></html>`;
 }
 const button = (teacherId?: string, slug?: string, inviteUrl?: string) =>
   `<p style="margin:28px 0"><a href="${escapeHtml(inviteUrl ?? studentLoginUrl(teacherId, slug))}" style="background:#3e7163;color:#fff;padding:13px 20px;border-radius:10px;text-decoration:none">Entrar na área do aluno</a></p>`;
@@ -101,5 +103,40 @@ export function lessonNoticeEmail(
       `<p>Oi, ${escapeHtml(name)}!</p><p>${escapeHtml(message)}</p>${button(teacherId, slug)}<p>Você pode desativar lembretes nas preferências de email da área do aluno.</p>`,
     ),
     text: `Oi, ${name}! ${message} Acesse ${studentLoginUrl(teacherId, slug)}. Você pode desativar lembretes nas preferências da área do aluno.`,
+  };
+}
+
+export function paymentReportedEmail(
+  teacher: string,
+  student: string,
+  plan: string,
+  amount: number,
+  lessons: number,
+  locale: Locale = "pt-BR",
+) {
+  const t = translator(locale);
+  const subject = t("Pagamento informado pelo aluno");
+  const greeting = t("Olá, {value1}!", { value1: teacher });
+  const message = t("{value1} informou um pagamento pelo portal do aluno.", { value1: student });
+  const details = t("Pacote: {value1} · {value2} aulas · Valor informado: {value3}.", {
+    value1: plan,
+    value2: lessons,
+    value3: new Intl.NumberFormat(localeTag(locale), { style: "currency", currency: "BRL" }).format(
+      amount,
+    ),
+  });
+  const caution = t(
+    "Confira o recebimento na sua conta antes de confirmar no Lessonara. Este aviso não confirma o pagamento; os créditos só são liberados após a sua confirmação.",
+  );
+  const label = t("Conferir pagamento");
+  const url = new URL("/payments", studentLoginUrl()).href;
+  return {
+    subject,
+    html: layout(
+      subject,
+      `<p>${escapeHtml(greeting)}</p><p>${escapeHtml(message)}</p><p>${escapeHtml(details)}</p><p>${escapeHtml(caution)}</p><p style="margin:28px 0"><a href="${escapeHtml(url)}" style="background:#3e7163;color:#fff;padding:13px 20px;border-radius:10px;text-decoration:none">${escapeHtml(label)}</a></p>`,
+      locale,
+    ),
+    text: `${greeting}\n\n${message}\n${details}\n\n${caution}\n${label}: ${url}`,
   };
 }

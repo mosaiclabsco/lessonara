@@ -1073,5 +1073,12 @@
   "Ao entrar numa aula pelo site, escolha “Abrir no app”. O portal continua no navegador.": "When joining a lesson on the website, choose “Open in app”. The portal stays in the browser.",
   "Escolha uma tela inteira ou uma janela para compartilhar. Para usar anotações sobre outros aplicativos, compartilhe a tela inteira.": "Choose an entire screen or a window to share. To annotate over other applications, share the entire screen.",
   "Ao minimizar uma chamada ativa, ela continua numa janela flutuante. Use caneta, laser e texto durante o compartilhamento; Esc libera os cliques na tela. No Mac, a barra pode aparecer na transmissão.": "When you minimize an active call, it continues in a floating window. Use the pen, laser and text while sharing; Esc lets you click the screen again. On Mac, the toolbar may appear in the broadcast.",
-  "Entrar pelo navegador": "Sign in with your browser"
+  "Entrar pelo navegador": "Sign in with your browser",
+  "Pagamento informado pelo aluno": "Payment reported by student",
+  "Olá, {value1}!": "Hello, {value1}!",
+  "{value1} informou um pagamento pelo portal do aluno.": "{value1} reported a payment through the student portal.",
+  "Pacote: {value1} · {value2} aulas · Valor informado: {value3}.": "Package: {value1} · {value2} lessons · Reported amount: {value3}.",
+  "Confira o recebimento na sua conta antes de confirmar no Lessonara. Este aviso não confirma o pagamento; os créditos só são liberados após a sua confirmação.": "Check that the money has reached your account before confirming in Lessonara. This notice does not confirm payment; credits are only released after your confirmation.",
+  "Conferir pagamento": "Review payment",
+  "Lessonara · Suas aulas em um só lugar.": "Lessonara · Your lessons in one place."
 }
