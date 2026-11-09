@@ -24,7 +24,7 @@ A assinatura é do professor. Pacotes pagos pelos alunos são outro domínio: tr
 | Central “O que preciso resolver” | Sim | Sim | Sim | Sim | Categorias premium omitidas e não consultadas sem direito |
 | Importação guiada e assistida | — | Sim | Sim | Sim | Aplicação e RPC privada de importação |
 | Google Calendar e links Meet | — | Sim | Sim | Sim | UI, OAuth, actions, leitura de tokens e worker |
-| Aviso à professora de pagamento informado | — | Sim | Sim | Preparado; migração 0043 pendente | Fila transacional; plano, tenant, destinatário e estado pendente revalidados no worker |
+| Aviso à professora de pagamento informado | — | Sim | Sim | Sim | Fila transacional; plano, tenant, destinatário e estado pendente revalidados no worker |
 | Avisos de renovação por email | — | Sim | Sim | Sim | Plano no enfileiramento e antes do envio; preferência do aluno |
 | Gestão de envios e falhas de email | — | Sim | Sim | Sim | Navegação, página, actions e RLS |
 | Campanhas de email | — | Sim | Sim | Sim | RPC, limites, supressão e opt-out promocional |
@@ -154,4 +154,4 @@ Aviso operacional à professora dos planos Plus/Pro (capacidade `emails`), quand
 
 O envio usa a fila existente e tentativa imediata após a resposta, com retomada pelo worker agendado. Revalida plano/suspensão, professor responsável, aluno ativo, email atual da professora e solicitação ainda pendente, inclusive em retries. Confirmação/rejeição antes do envio cancela o aviso. As preferências de marketing/lembretes do aluno não bloqueiam um aviso transacional à professora; supressão do destinatário, expiração e limites de tentativas continuam válidos.
 
-Template light e textos PT/EN/ES/FR preparados; a execução usa português, como os demais emails operacionais, pois ainda não há preferência persistida de idioma por professora. Gestão e rótulo do envio seguem o plano existente. Status de aplicação/publicação deve ser conferido no TASKS.md; implementação local não significa migração aplicada.
+Template light e textos PT/EN/ES/FR preparados; a execução usa português, como os demais emails operacionais, pois ainda não há preferência persistida de idioma por professora. Gestão e rótulo do envio seguem o plano existente. Aplicado em produção em 09/11/2026: migração 0043 via painel, deploy Vercel de `27b141e` concluído e Checks 42698312160 aprovados. Teste transacional na conta fictícia confirmou uma mensagem por solicitação, destinatário responsável, ausência de liberação de créditos e bloqueio de enfileiramento no Essencial. Todas as alterações de fixture foram desfeitas por rollback, sem envio externo. Entrega à caixa de entrada não foi simulada.
