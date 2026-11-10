@@ -162,4 +162,4 @@ Template light e textos PT/EN/ES/FR preparados; a execução usa português, com
 - **Todos os planos:** destaque visual e quantidade de pagamentos informados para conferência; confirmar mantém as permissões e a validação financeira existentes.
 - **Operadores de suporte previamente autorizados:** contador visual usa `session_expires_at` assinado. Não concede nem estende sessão: servidor, RLS e token já limitam a sessão a até 15 minutos. O token inicial de transferência é de uso único e tem validade própria de dois minutos; não é reutilizado para manter a sessão.
 
-Migração `0044` aplicada em produção em 09/11/2026 e validada com fixtures isoladas e rollback. Publicação da aplicação em andamento. Nenhum evento Google real alterado; as alterações transacionais de fixture foram desfeitas.
+Migração `0044` aplicada em produção em 09/11/2026 e validada com fixtures isoladas e rollback. Aplicação publicada em `d3d210e`, Vercel concluído e Checks 42737728510 aprovados em Node 24. Worker Calendar validado via HTTP 200 com fila vazia, sem falhas ou envios externos. Nenhum evento Google real alterado; as alterações transacionais de fixture foram desfeitas.
