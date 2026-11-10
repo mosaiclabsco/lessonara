@@ -6004,6 +6004,11 @@ html:has(.app-shell) {
   align-items: flex-start;
   gap: 16px;
 }
+.google-linked-lessons {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
 .schedule-choice-actions .schedule-config {
   flex-basis: 100%;
 }

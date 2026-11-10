@@ -283,7 +283,12 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
                   </li>
                 ))}
             </ul>
-            <div className="schedule-choice-actions">
+            <GoogleLessonLinker
+              studentId={id}
+              today={today}
+              enabled={platformPlan(teacher.platform_plan).google}
+              links={(googleLinks.data ?? []) as GoogleLessonLink[]}
+            >
               <ScheduleForm
                 key={`${plan?.id}-${plan?.frequency_period}-${plan?.scheduling_mode}-${plan?.frequency_count}`}
                 duration={teacherDuration.data?.lesson_minutes ?? 60}
@@ -299,13 +304,7 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
                 )}
                 today={today}
               />
-              <GoogleLessonLinker
-                studentId={id}
-                today={today}
-                enabled={platformPlan(teacher.platform_plan).google}
-                links={(googleLinks.data ?? []) as GoogleLessonLink[]}
-              />
-            </div>
+            </GoogleLessonLinker>
           </section>
         }
         dados={

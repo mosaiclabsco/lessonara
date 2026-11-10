@@ -1,5 +1,5 @@
 "use client";
-import { useState, useTransition, useId } from "react";
+import { useState, useTransition, useId, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { Button, ButtonLink, FormActions } from "./button";
 import { Dialog, ConfirmDialog } from "./dialog";
@@ -32,11 +32,13 @@ export function GoogleLessonLinker({
   today,
   enabled,
   links,
+  children,
 }: {
   studentId: string;
   today: string;
   enabled: boolean;
   links: GoogleLessonLink[];
+  children: ReactNode;
 }) {
   const { t, locale } = useI18n(),
     router = useRouter(),
@@ -64,51 +66,58 @@ export function GoogleLessonLinker({
     });
   }
   return (
-    <div className="space-y-4">
-      {enabled && (
-        <Button
-          icon="calendar"
-          onClick={() => {
-            setOpen(true);
-            setChoices(null);
-            setPreview(null);
-            setSelected("");
-            setError("");
-          }}
-        >
-          {t("Vincular aula do Google")}
-        </Button>
-      )}
-      {links.map((link) => (
-        <div key={link.id} className="rounded-xl border border-line p-4 space-y-3">
-          <div>
-            <strong>{link.title === "Evento sem título" ? t(link.title) : link.title}</strong>
-            <p className="text-sm text-muted">
-              {t("Gerenciado no Google Calendar")} ·{" "}
-              {t(link.recurring ? "Série recorrente" : "Aula avulsa")} · {t("A partir de")}{" "}
-              {formatDate(link.starts_on, locale)}
-            </p>
-          </div>
-          {link.last_error && (
-            <p className="text-sm text-warn" role="status">
-              {t(link.last_error)}
-            </p>
-          )}
-          <div className="flex flex-wrap gap-3">
-            <ButtonLink
-              icon="calendar"
-              href="https://calendar.google.com/calendar/u/0/r"
-              target="_blank"
-              rel="noreferrer"
-            >
-              {t("Abrir no Google Calendar")}
-            </ButtonLink>
-            <Button icon="close" onClick={() => setRemoving(link.id)}>
-              {t("Desvincular do Lessonara")}
-            </Button>
-          </div>
+    <>
+      <div className="schedule-choice-actions">
+        {children}
+        {enabled && (
+          <Button
+            icon="calendar"
+            onClick={() => {
+              setOpen(true);
+              setChoices(null);
+              setPreview(null);
+              setSelected("");
+              setError("");
+            }}
+          >
+            {t("Vincular aula do Google")}
+          </Button>
+        )}
+      </div>
+      {links.length > 0 && (
+        <div className="google-linked-lessons">
+          {links.map((link) => (
+            <div key={link.id} className="rounded-xl border border-line p-4 space-y-3">
+              <div>
+                <strong>{link.title === "Evento sem título" ? t(link.title) : link.title}</strong>
+                <p className="text-sm text-muted">
+                  {t("Gerenciado no Google Calendar")} ·{" "}
+                  {t(link.recurring ? "Série recorrente" : "Aula avulsa")} · {t("A partir de")}{" "}
+                  {formatDate(link.starts_on, locale)}
+                </p>
+              </div>
+              {link.last_error && (
+                <p className="text-sm text-warn" role="status">
+                  {t(link.last_error)}
+                </p>
+              )}
+              <div className="flex flex-wrap gap-3">
+                <ButtonLink
+                  icon="calendar"
+                  href="https://calendar.google.com/calendar/u/0/r"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t("Abrir no Google Calendar")}
+                </ButtonLink>
+                <Button icon="close" onClick={() => setRemoving(link.id)}>
+                  {t("Desvincular do Lessonara")}
+                </Button>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
       <Dialog
         open={open}
         busy={pending}
@@ -274,6 +283,6 @@ export function GoogleLessonLinker({
           });
         }}
       />
-    </div>
+    </>
   );
 }
