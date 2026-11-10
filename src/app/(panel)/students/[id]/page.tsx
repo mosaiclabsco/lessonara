@@ -1,9 +1,12 @@
+import { GoogleLessonLinker } from "@/components/google-lesson-linker";
+import { platformPlan } from "@/lib/platform-plans";
+import type { GoogleLessonLink } from "@/lib/google/lesson-links";
 import { EndScheduleButton } from "@/components/end-schedule-button";
 import { studentPortalPath } from "@/lib/student-links";
 import { ImportedHistoryManager } from "@/components/imported-history-manager";
 import { PaidPackages } from "@/components/paid-packages";
 import { ReplacementManager } from "@/components/replacement-manager";
-import { FormActions } from "@/components/button";
+import { ButtonLink, FormActions } from "@/components/button";
 import { needsSchedule } from "@/lib/student-setup";
 import { ReplacementPrompt, CancelLessonButton } from "@/components/cancel-lesson-button";
 import { planFrequency } from "@/lib/plan-frequency";
@@ -50,7 +53,15 @@ export default function StudentPage({ params }: PageProps<"/students/[id]">) {
 async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "params">) {
   const { t, locale } = await getTranslator();
   const { id } = await params;
-  const { supabase, userId } = await requireUser();
+  const { supabase, userId, teacher } = await requireUser();
+  const googleLinks = await supabase
+    .from("google_lesson_links")
+    .select("*")
+    .eq("teacher_id", userId)
+    .eq("student_id", id)
+    .eq("active", true)
+    .order("created_at");
+  if (googleLinks.error) throw new Error("Não foi possível consultar os vínculos Google.");
   const [{ data: student }, { data: plansData }] = await Promise.all([
     supabase.from("students").select("*").eq("id", id).maybeSingle<Student>(),
     supabase.from("plans").select("*").order("sort_order").order("created_at").order("id"),
@@ -89,8 +100,22 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
     (l) => l.event?.kind === "desmarcada" && !replaced.has(l.event.id),
   );
   const link = `${await getOrigin()}${studentPortalPath(student.slug)}`;
+  const externalSources = new Set(
+    (appointments ?? []).filter((a) => a.google_link_id).map((a) => a.id),
+  );
   const lessonActions = (l: (typeof lessons)[number]) =>
-    l.status === "feriado" || l.status === "desmarcada" ? null : l.past && l.historyId ? (
+    l.status === "feriado" || l.status === "desmarcada" ? null : !l.past &&
+      externalSources.has(l.sourceId ?? "") ? (
+      <ButtonLink
+        icon="calendar"
+        className="btn-xs"
+        href="https://calendar.google.com/calendar/u/0/r"
+        target="_blank"
+        rel="noreferrer"
+      >
+        {t("Abrir no Google Calendar")}
+      </ButtonLink>
+    ) : l.past && l.historyId ? (
       <>
         {l.status !== "dada" && (
           <ActionForm action={confirmLessonAttendance.bind(null, id, l.historyId, "dada")}>
@@ -220,7 +245,8 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
             amount={studentPrice(student, plan)}
             needsSchedule={
               plan?.scheduling_mode !== "flexible" &&
-              !schedules.some((schedule) => !schedule.ends_on || schedule.ends_on >= today)
+              !schedules.some((schedule) => !schedule.ends_on || schedule.ends_on >= today) &&
+              !(appointments ?? []).some((a) => a.date >= today && Boolean(a.google_link_id))
             }
           />
         }
@@ -257,21 +283,29 @@ async function StudentContent({ params }: Pick<PageProps<"/students/[id]">, "par
                   </li>
                 ))}
             </ul>
-            <ScheduleForm
-              key={`${plan?.id}-${plan?.frequency_period}-${plan?.scheduling_mode}-${plan?.frequency_count}`}
-              duration={teacherDuration.data?.lesson_minutes ?? 60}
-              studentId={id}
-              schedules={schedules}
-              limit={scheduleLimit}
-              frequency={planFrequency(plan)}
-              appointments={(appointments ?? []).filter(
-                (a) =>
-                  !ledger.lessons.some(
-                    (l) => l.date === a.date && l.time === a.time && l.status === "desmarcada",
-                  ),
-              )}
-              today={today}
-            />
+            <div className="schedule-choice-actions">
+              <ScheduleForm
+                key={`${plan?.id}-${plan?.frequency_period}-${plan?.scheduling_mode}-${plan?.frequency_count}`}
+                duration={teacherDuration.data?.lesson_minutes ?? 60}
+                studentId={id}
+                schedules={schedules}
+                limit={scheduleLimit}
+                frequency={planFrequency(plan)}
+                appointments={(appointments ?? []).filter(
+                  (a) =>
+                    !ledger.lessons.some(
+                      (l) => l.date === a.date && l.time === a.time && l.status === "desmarcada",
+                    ),
+                )}
+                today={today}
+              />
+              <GoogleLessonLinker
+                studentId={id}
+                today={today}
+                enabled={platformPlan(teacher.platform_plan).google}
+                links={(googleLinks.data ?? []) as GoogleLessonLink[]}
+              />
+            </div>
           </section>
         }
         dados={

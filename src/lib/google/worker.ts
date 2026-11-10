@@ -76,6 +76,10 @@ export async function processCalendarJobs(teacherId?: string) {
         .maybeSingle();
       if (source.error) throw new Error("source_read_failed");
       const item = source.data;
+      if (item?.google_link_id) {
+        await finish({ status: "cancelled", last_error: null });
+        continue;
+      }
       let remove = job.operation === "delete" || !item || !item.students.active;
       if (item && job.source_kind === "appointment") {
         const cancelled = await db

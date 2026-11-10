@@ -57,7 +57,12 @@ export async function previewGoogleSync() {
         .select("id")
         .in("student_id", ids)
         .or(`ends_on.is.null,ends_on.gte.${today}`),
-      supabase.from("appointments").select("id").in("student_id", ids).gte("date", today),
+      supabase
+        .from("appointments")
+        .select("id")
+        .in("student_id", ids)
+        .is("google_link_id", null)
+        .gte("date", today),
     ]);
     if (schedules.error || appointments.error)
       throw new Error("Não foi possível consultar as aulas.");
@@ -100,6 +105,7 @@ export async function syncGoogle() {
     const appointments = await supabase
       .from("appointments")
       .select("id")
+      .is("google_link_id", null)
       .in("student_id", ids)
       .gte("date", today);
     for (const item of schedules.data ?? [])

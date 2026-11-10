@@ -155,3 +155,11 @@ Aviso operacional à professora dos planos Plus/Pro (capacidade `emails`), quand
 O envio usa a fila existente e tentativa imediata após a resposta, com retomada pelo worker agendado. Revalida plano/suspensão, professor responsável, aluno ativo, email atual da professora e solicitação ainda pendente, inclusive em retries. Confirmação/rejeição antes do envio cancela o aviso. As preferências de marketing/lembretes do aluno não bloqueiam um aviso transacional à professora; supressão do destinatário, expiração e limites de tentativas continuam válidos.
 
 Template light e textos PT/EN/ES/FR preparados; a execução usa português, como os demais emails operacionais, pois ainda não há preferência persistida de idioma por professora. Gestão e rótulo do envio seguem o plano existente. Aplicado em produção em 09/11/2026: migração 0043 via painel, deploy Vercel de `27b141e` concluído e Checks 42698312160 aprovados. Teste transacional na conta fictícia confirmou uma mensagem por solicitação, destinatário responsável, ausência de liberação de créditos e bloqueio de enfileiramento no Essencial. Todas as alterações de fixture foram desfeitas por rollback, sem envio externo. Entrega à caixa de entrada não foi simulada.
+
+### Vínculos Google e ajustes de suporte — 09/11/2026
+
+- **Plus/Pro:** vincular eventos existentes da agenda Google principal aos alunos, com prévia, data inicial e espelhamento futuro somente leitura. Reusa a capacidade `google` no servidor, RPCs e worker. Desvinculação própria continua disponível após downgrade. Limites e implantação em [Google Calendar](google-calendar.md).
+- **Todos os planos:** destaque visual e quantidade de pagamentos informados para conferência; confirmar mantém as permissões e a validação financeira existentes.
+- **Operadores de suporte previamente autorizados:** contador visual usa `session_expires_at` assinado. Não concede nem estende sessão: servidor, RLS e token já limitam a sessão a até 15 minutos. O token inicial de transferência é de uso único e tem validade própria de dois minutos; não é reutilizado para manter a sessão.
+
+Migração `0044` aplicada em produção em 09/11/2026 e validada com fixtures isoladas e rollback. Publicação da aplicação em andamento. Nenhum evento Google real alterado; as alterações transacionais de fixture foram desfeitas.

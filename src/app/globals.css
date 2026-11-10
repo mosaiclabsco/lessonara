@@ -5984,3 +5984,54 @@ html:has(.app-shell) {
     justify-content: center;
   }
 }
+
+.support-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.renewal-review-highlight {
+  border-inline-start: 4px solid var(--warn);
+  background: color-mix(in srgb, var(--warn) 4%, var(--surface));
+}
+
+.schedule-choice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+}
+.schedule-choice-actions .schedule-config {
+  flex-basis: 100%;
+}
+@media (max-width: 639px) {
+  .schedule-choice-actions > *,
+  .schedule-choice-actions > div > button {
+    width: 100%;
+  }
+}
+
+.renewal-review-heading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+.renewal-review-heading .h2 {
+  margin: 0;
+}
+.renewal-review-heading .count-badge {
+  justify-self: start;
+  white-space: nowrap;
+}
+@media (max-width: 639px) {
+  .renewal-review-heading {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .renewal-review-heading .count-badge {
+    grid-column: 2;
+  }
+}

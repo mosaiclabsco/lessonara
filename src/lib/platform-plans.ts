@@ -5,6 +5,7 @@
 // Convites e definição de senha são autenticação básica em todos os planos.
 // A criação/reemissão pertence exclusivamente ao admin; não é a feature comercial emails.
 export type PlatformPlan = "essential" | "plus" | "pro";
+// Google lesson links use the existing Google capability (Plus/Pro); external events stay read-only.
 export type PlatformFeature =
   "emails" | "classroom" | "imports" | "google" | "exports" | "lessonReminders";
 const MB = 1024 * 1024,

@@ -64,7 +64,13 @@ const trimTime = (t: string | null) => (t ? t.slice(0, 5) : t);
 export type StudentLedger = {
   ledger: Ledger;
   schedules: ScheduleRow[];
-  appointments?: { id: string; date: string; time: string; meet_url?: string | null }[];
+  appointments?: {
+    id: string;
+    date: string;
+    time: string;
+    meet_url?: string | null;
+    google_link_id?: string | null;
+  }[];
   packages: Package[];
   today: string;
 };
@@ -143,7 +149,8 @@ export async function loadLedgers(
           date: string;
           time: string;
           meet_url: string | null;
-        }>("appointments", "id,student_id,date,time,meet_url,duration_minutes"),
+          google_link_id?: string | null;
+        }>("appointments", "id,student_id,date,time,meet_url,duration_minutes,google_link_id"),
         rulesPromise,
         loadLessonHistory(supabase, studentIds),
         attendancePromise,

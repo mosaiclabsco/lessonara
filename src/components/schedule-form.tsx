@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "./button";
 import { Toast } from "./toast";
 import { AvailabilityPreview } from "./availability-preview";
 import { canConfigureNewSchedule } from "@/lib/schedule-rules";
@@ -28,6 +29,7 @@ export function ScheduleForm({
   appointments?: { id: string; date: string; time: string }[];
 }) {
   const { t, locale } = useI18n();
+  const [expanded, setExpanded] = useState(false);
   const [day, setDay] = useState(1);
   const [time, setTime] = useState("");
   const [startsOn, setStartsOn] = useState(today);
@@ -74,8 +76,19 @@ export function ScheduleForm({
     return (
       <p className="text-xs text-muted">{t("Todos os horários do plano estão configurados.")}</p>
     );
+  if (!expanded)
+    return (
+      <Button icon="plus" variant="primary" onClick={() => setExpanded(true)}>
+        {t("Agendar nova aula")}
+      </Button>
+    );
   return (
     <div className="schedule-config">
+      <div className="mb-4">
+        <Button icon="back" disabled={pending} onClick={() => setExpanded(false)}>
+          {t("Voltar às opções de agendamento")}
+        </Button>
+      </div>
       <h3 className="mb-4 text-sm font-semibold">
         {t(flexible ? "Agendar aula avulsa" : "Configurar novo horário")}
       </h3>
